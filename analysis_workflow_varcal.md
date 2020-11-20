@@ -1,4 +1,4 @@
-### Notes on cleaning Attenuata data 8/20
+### Notes on cleaning NovaSeq flow cell from 11/20, barcode parsing for multiple projects, and analyses of Attenuata data 
 
 
 `NOTE`: Here we need to clean two lanes of NovaSeq data. The first (sample-1_S1_L001_R1_001.fastq.gz) has PHHA, ACTH, CHDO, and PIAT. The second (sample-2_S2_L002_R1_001.fastq.gz) has POSE, PIAT, and some quadrus. We will need to clean and parse both to get all of the attenuata samples into working. 
