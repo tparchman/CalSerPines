@@ -33,19 +33,18 @@ After .clean.fastq has been produced, recompress raw data:
 
 Number of reads **before** cleaning:
 
-    $ grep -c "^@" L2-timema_S2_L002_R1_001.fastq > number_of_rawreads.txt
-    $ less number_of_rawreads.txt
-    # 2,113,546,977
+    $ grep -c "^@" sample-1_S1_L001_R1_001.fastq > S1_number_of_rawreads.txt
+    $ grep -c "^@" sample-2_S2_L002_R1_001.fastq > S2_number_of_rawreads.txt
     
 Number of reads **after** cleaning:
 
     $ grep "^@" S1_11_20.clean.fastq -c > S1_No_ofcleanreads.txt &
     $ less S1_No_ofcleanreads.txt
-    # lane 1
+    # lane 1: 1,520,946,461
 
     $ grep "^@" S2_11_20.clean.fastq -c > S2_No_ofcleanreads.txt &
     $ less S2_No_ofcleanreads.txt
-    # 
+    # lane 2: 
     
 ## Barcode parsing:
 
