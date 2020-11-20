@@ -25,10 +25,12 @@ Being executed on ponderosa using tapioca pipeline. Commands in bash script, exe
 
 # DONE TO HERE, BELOW IS PLACEHOLDER FROM TPOD
 
-After tpodura.clean.fastq has been produced, clean out duplicate raw data:
+After .clean.fastq has been produced, recompress raw data:
 
-    $ rm -rf L2-timema_S2_L002_R1_001.fastq
- 
+    $ gzip sample-1_S1_L001_R1_001.fastq &
+    $ gzip sample-2_S2_L002_R1_001.fastq &
+
+
 Number of reads **before** cleaning:
 
     $ grep -c "^@" L2-timema_S2_L002_R1_001.fastq > number_of_rawreads.txt
@@ -37,10 +39,14 @@ Number of reads **before** cleaning:
     
 Number of reads **after** cleaning:
 
-    $ grep -c "^@" tpodura.clean.fastq > number_of_cleanreads.txt
-    $ less number_of_cleanreads.txt
-    # 1,675,695,246
-        
+    $ grep "^@" S1_11_20.clean.fastq -c > S1_No_ofcleanreads.txt &
+    $ less S1_No_ofcleanreads.txt
+    # lane 1
+
+    $ grep "^@" S2_11_20.clean.fastq -c > S2_No_ofcleanreads.txt &
+    $ less S2_No_ofcleanreads.txt
+    # 
+    
 ## Barcode parsing:
 
 Barcode keyfile is `/working/parchman/tpodura/timema_podura_bcode.csv`
