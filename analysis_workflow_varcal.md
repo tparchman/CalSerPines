@@ -23,7 +23,6 @@ Being executed on ponderosa using tapioca pipeline. Commands in bash script, exe
     
     $ bash cleaning_bash.sh &
 
-# DONE TO HERE, BELOW IS PLACEHOLDER FROM TPOD
 
 After .clean.fastq has been produced, recompress raw data:
 
@@ -45,7 +44,9 @@ Number of reads **after** cleaning:
     $ grep "^@" S2_11_20.clean.fastq -c > S2_No_ofcleanreads.txt &
     $ less S2_No_ofcleanreads.txt
     # lane 2: 
-    
+
+# DONE TO HERE, BELOW IS PLACEHOLDER FROM TPOD
+
 ## Barcode parsing:
 
 Barcode keyfile is `/working/parchman/tpodura/timema_podura_bcode.csv`
