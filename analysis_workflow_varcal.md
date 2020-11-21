@@ -49,9 +49,17 @@ Number of reads **after** cleaning:
 
 ## Barcode parsing:
 
-Barcode keyfile is `/working/parchman/tpodura/timema_podura_bcode.csv`
-  
-    $ perl parse_barcodes768.pl final_timema3_Piper1_bcode.csv tpodura.clean.fastq A00 &
+Barcode keyfile are `/mnt/UTGSAF_11_20/11_20_GSAF_lane1BCODEKEY.csv` and `/mnt/UTGSAF_11_20/11_20_GSAF_lane1BCODEKEY.csv`
+
+Parsing library 1:
+
+    $ perl parse_barcodes768.pl 11_20_GSAF_lane1BCODEKEY.csv S1_11_20.clean.fastq A00 &
+
+# DONE TO HERE, BELOW IS PLACEHOLDER FROM TPOD
+
+Parsing library 2:
+
+    $ perl parse_barcodes768.pl 11_20_GSAF_lane2BCODEKEY.csv S2_11_20.clean.fastq A00 &
 
 `NOTE`: the A00 object is the code that identifies the sequencer (first three characters after the @ in the fastq identifier).
 
