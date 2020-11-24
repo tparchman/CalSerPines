@@ -62,17 +62,41 @@ Parsing library 2:
 
 # DONE TO HERE, BELOW IS PLACEHOLDER FROM TPOD
 
-    $ less parsereport_tpodura.clean.fastq
-    #Good mids count: 1617562664
-    #Bad mids count: 58132389
-    #Number of seqs with potential MSE adapter in seq: 305112
-    #Seqs that were too short after removing MSE and beyond: 193
-          
-Cleaning up the directory:
+    $ less parsereport_S1_11_20.clean.fastq
+ 
+     $ less parsereport_S1_11_20.clean.fastq
 
-    $ rm tpodura.clean.fastq
-    $ rm miderrors_tpodura.clean.fastq
-    $ rm parsereport_tpodura.clean.fastq
+          
+Cleaning up the LIB1 directory:
+
+    $ rm S1_11_20.clean.fastq
+    $ rm miderrors_S1_11_20.clean.fastq
+    $ rm parsereport_S1_11_20.clean.fastq
+
+Cleaning up the LIB2 directory:
+
+    $ rm S2_11_20.clean.fastq
+    $ rm miderrors_S2_11_20.clean.fastq
+    $ rm parsereport_S2_11_20.clean.fastq
+
+## Moving fastqs to project specific directories
+
+For LIB1:
+
+    $mv AT_*fastq thurbers
+    $mv PH_*fastq phacelia
+    $mv PA_*fastq CalSer
+    $mv CD_*fastq chanaectis
+
+For LIB2:
+
+    $mv PS_*fastq poa
+    $mv PX_*fastq ../LIB1/CalSer
+    $mv PA_*fastq ../LIB1/CalSer
+    $mv PM_*fastq ../LIB1/CalSer
+    $mv PR_*fastq ../LIB1/CalSer
+    $mv ONLY QUADRUS SHOULD BE LEFT.
+
 
 ### Alignment to *T. cristinae* genome and variant calling.
 New software needs to be installed on ponderosa, including:
