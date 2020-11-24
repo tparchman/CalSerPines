@@ -45,7 +45,6 @@ Number of reads **after** cleaning:
     $ less S2_No_ofcleanreads.txt
     # lane 2: 
 
-# DONE TO HERE, BELOW IS PLACEHOLDER FROM TPOD
 
 ## Barcode parsing:
 
@@ -55,13 +54,13 @@ Parsing library 1:
 
     $ perl parse_barcodes768.pl 11_20_GSAF_lane1BCODEKEY.csv S1_11_20.clean.fastq A00 &
 
-# DONE TO HERE, BELOW IS PLACEHOLDER FROM TPOD
-
 Parsing library 2:
 
     $ perl parse_barcodes768.pl 11_20_GSAF_lane2BCODEKEY.csv S2_11_20.clean.fastq A00 &
 
 `NOTE`: the A00 object is the code that identifies the sequencer (first three characters after the @ in the fastq identifier).
+
+# DONE TO HERE, BELOW IS PLACEHOLDER FROM TPOD
 
     $ less parsereport_tpodura.clean.fastq
     #Good mids count: 1617562664
