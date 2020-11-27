@@ -43,7 +43,7 @@ Number of reads **after** cleaning:
 
     $ grep "^@" S2_11_20.clean.fastq -c > S2_No_ofcleanreads.txt &
     $ less S2_No_ofcleanreads.txt
-    # lane 2: 
+    # lane 2: 1,521,453,849
 
 
 ## Barcode parsing:
@@ -60,13 +60,19 @@ Parsing library 2:
 
 `NOTE`: the A00 object is the code that identifies the sequencer (first three characters after the @ in the fastq identifier).
 
-# DONE TO HERE, BELOW IS PLACEHOLDER FROM TPOD
+    $ less parsereport_S1_11_20.clean.fastq
+    Good mids count: 1484409965
+    Bad mids count: 36536312
+    Number of seqs with potential MSE adapter in seq: 337486
+    Seqs that were too short after removing MSE and beyond: 184
 
     $ less parsereport_S1_11_20.clean.fastq
- 
-     $ less parsereport_S1_11_20.clean.fastq
+    Good mids count: 1475831187
+    Bad mids count: 45622449
+    Number of seqs with potential MSE adapter in seq: 332950
+    Seqs that were too short after removing MSE and beyond: 213
 
-          
+
 Cleaning up the LIB1 directory:
 
     $ rm S1_11_20.clean.fastq
@@ -78,6 +84,46 @@ Cleaning up the LIB2 directory:
     $ rm S2_11_20.clean.fastq
     $ rm miderrors_S2_11_20.clean.fastq
     $ rm parsereport_S2_11_20.clean.fastq
+
+## splitting fastqs
+
+Make ids file
+
+    $ cut -f 3 -d "," 11_20_GSAF_lane1BCODEKEY.csv | grep "_" > L1_ids_noheader.txt
+
+    $ cut -f 3 -d "," 11_20_GSAF_lane2BCODEKEY.csv | grep "_" > L2_ids_noheader.txt
+
+Split fastqs by individual
+
+    $ perl splitFastq_universal_regex.pl L1_ids_noheader.txt parsed_S1_11_20.clean.fastq &
+
+    $ perl splitFastq_universal_regex.pl L2_ids_noheader.txt parsed_S2_11_20.clean.fastq &
+
+# DONE TO HERE
+
+Clean up the directory:
+
+    $ rm -rf parsed_S1_11_20.clean.fastq
+    $ rm -rf parsed_S2_11_20.clean.fastq
+
+Total reads for grouse (127 individuals)
+
+    $ grep -c "^@" raw_fastqs/*fastq > seqs_per_ind.txt
+
+Summarize in R
+
+    R
+    dat <- read.delim("seqs_per_ind.txt", header=F, sep=":")
+        dim(dat)
+        head(dat)
+        
+    sum(dat[,2])
+        236743153
+
+Zip the fastqs
+
+    $ gzip raw_fastqs/*fastq
+
 
 ## Moving fastqs to project specific directories
 
@@ -96,6 +142,10 @@ For LIB2:
     $mv PM_*fastq ../LIB1/CalSer
     $mv PR_*fastq ../LIB1/CalSer
     $mv ONLY QUADRUS SHOULD BE LEFT.
+
+
+
+
 
 
 ### Alignment to *T. cristinae* genome and variant calling.
