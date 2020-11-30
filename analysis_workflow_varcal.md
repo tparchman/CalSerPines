@@ -99,16 +99,19 @@ Split fastqs by individual
 
     $ perl splitFastq_universal_regex.pl L2_ids_noheader.txt parsed_S2_11_20.clean.fastq &
 
-# DONE TO HERE
 
-Clean up the directory:
+Zip the parsed*fastq files for now, but delete once patterns and qc are verified:
 
-    $ rm -rf parsed_S1_11_20.clean.fastq
-    $ rm -rf parsed_S2_11_20.clean.fastq
+    $ gzip parsed_S1_11_20.clean.fastq
+    $ gzip parsed_S2_11_20.clean.fastq
 
-Total reads for grouse (127 individuals)
+Total reads for muricata, radiata, and attenuata (473 individuals)
 
-    $ grep -c "^@" raw_fastqs/*fastq > seqs_per_ind.txt
+    $ grep -c "^@" *fastq > seqs_per_ind.txt
+
+
+
+## *havent done this step in R, because I didnt want to unzip fastqs yet*
 
 Summarize in R
 
@@ -118,11 +121,10 @@ Summarize in R
         head(dat)
         
     sum(dat[,2])
-        236743153
 
-Zip the fastqs
+Zipped all .fastq files.
 
-    $ gzip raw_fastqs/*fastq
+    $ gzip *fastq
 
 
 ## Moving fastqs to project specific directories
@@ -143,8 +145,9 @@ For LIB2:
     $mv PR_*fastq ../LIB1/CalSer
     $mv ONLY QUADRUS SHOULD BE LEFT.
 
+### Moved the parsed files for all of the above project to /archive/parchman_lab/rawdata_to_backup
 
-
+# DONE TO HERE, BELOW IS JUST PLACEHOLDER
 
 
 
