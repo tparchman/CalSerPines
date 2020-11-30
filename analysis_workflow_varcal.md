@@ -131,18 +131,18 @@ Zipped all .fastq files.
 
 For LIB1:
 
-    $mv AT_*fastq thurbers
-    $mv PH_*fastq phacelia
+    $mv AT_*fastq ACTH
+    $mv PH_*fastq PHHA
     $mv PA_*fastq CalSer
-    $mv CD_*fastq chanaectis
+    $mv CD_*fastq CHDO
 
 For LIB2:
 
     $mv PS_*fastq poa
-    $mv PX_*fastq ../LIB1/CalSer
-    $mv PA_*fastq ../LIB1/CalSer
-    $mv PM_*fastq ../LIB1/CalSer
-    $mv PR_*fastq ../LIB1/CalSer
+    $mv PX_*fastq CalSer
+    $mv PA_*fastq CalSer
+    $mv PM_*fastq CalSer
+    $mv PR_*fastq CalSer
     $mv ONLY QUADRUS SHOULD BE LEFT.
 
 ### Moved the parsed files for all of the above project to /archive/parchman_lab/rawdata_to_backup
