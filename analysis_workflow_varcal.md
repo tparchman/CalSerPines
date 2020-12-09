@@ -1,4 +1,4 @@
-### Notes on cleaning NovaSeq flow cell from 11/20, barcode parsing for multiple projects, and analyses of Attenuata data 
+### Notes on cleaning NovaSeq flow cell from 11/20, barcode parsing for multiple projects, and analyses of pine data 
 
 
 `NOTE`: Here we need to clean two lanes of NovaSeq data. The first (sample-1_S1_L001_R1_001.fastq.gz) has PHHA, ACTH, CHDO, and PIAT. The second (sample-2_S2_L002_R1_001.fastq.gz) has POSE, PIAT, and some quadrus. We will need to clean and parse both to get all of the attenuata samples into working shape. 
@@ -9,12 +9,15 @@
 1) cleaning contaminants using tapioca
 2) parsing barcodes
 3) splitting fastqs 
-4) 
-5) calling variants
-6) filtering
-7) entropy for genotype probabilities.
+4) de novo assembly
+5) reference based assembly
+6) calling variants
+7) filtering
+8) entropy for genotype probabilities.
 
-## Cleaning contaminants
+####################################################################################
+## 1. Cleaning contaminants
+####################################################################################
 
 Being executed on ponderosa using tapioca pipeline. Commands in bash script, executed as below (11/17/20).
 
@@ -45,8 +48,9 @@ Number of reads **after** cleaning:
     $ less S2_No_ofcleanreads.txt
     # lane 2: 1,521,453,849
 
-
-## Barcode parsing:
+####################################################################################
+## 2. Barcode parsing:
+####################################################################################
 
 Barcode keyfile are `/mnt/UTGSAF_11_20/11_20_GSAF_lane1BCODEKEY.csv` and `/mnt/UTGSAF_11_20/11_20_GSAF_lane1BCODEKEY.csv`
 
@@ -84,8 +88,10 @@ Cleaning up the LIB2 directory:
     $ rm S2_11_20.clean.fastq
     $ rm miderrors_S2_11_20.clean.fastq
     $ rm parsereport_S2_11_20.clean.fastq
-
-## splitting fastqs
+    
+####################################################################################
+## 3. splitting fastqs
+####################################################################################
 
 Make ids file
 
@@ -109,25 +115,7 @@ Total reads for muricata, radiata, and attenuata (473 individuals)
 
     $ grep -c "^@" *fastq > seqs_per_ind.txt
 
-
-
-## *havent done this step in R, because I didnt want to unzip fastqs yet*
-
-Summarize in R
-
-    R
-    dat <- read.delim("seqs_per_ind.txt", header=F, sep=":")
-        dim(dat)
-        head(dat)
-        
-    sum(dat[,2])
-
-Zipped all .fastq files.
-
-    $ gzip *fastq
-
-
-## Moving fastqs to project specific directories
+### Moving fastqs to project specific directories
 
 For LIB1:
 
@@ -147,25 +135,288 @@ For LIB2:
 
 ### Moved the parsed files for all of the above project to /archive/parchman_lab/rawdata_to_backup
 
-# DONE TO HERE, BELOW IS JUST PLACEHOLDER
+####################################################################################
+### Lanie started here: begin with attenuata
+####################################################################################
+
+    /working/lgalland/attenuata/
+
+####################################################################################
+## 4. de novo assembly
+####################################################################################
+
+
+### removed individuals with <35M of sequence data
+kept data threshold low to retain Mexican island populations
+
+    rm -rf PA_LA_0074.fastq.gz
+    rm -rf PA_OC_0093.fastq.gz
+    rm -rf PA_OC_0096.fastq.gz
+    rm -rf PA_OC_0100.fastq.gz
+    rm -rf PA_SB_0082.fastq.gz
+    rm -rf PA_SB_0083.fastq.gz
+    rm -rf PA_SB_0085.fastq.gz
+    rm -rf PM_DC_0236.fastq.gz
+    rm -rf PM_FR_0019.fastq.gz
+    rm -rf PM_NR_0064.fastq.gz
+    rm -rf PM_SP_0210.fastq.gz
+    rm -rf PM_SR_0037.fastq.gz
+    rm -rf PR_CN_0819.fastq.gz
+    rm -rf PR_CS_0822.fastq.gz
+    rm -rf PR_GU_0818.fastq.gz
+    rm -rf PR_GU_0820.fastq.gz
+    rm -rf PR_GU_0821.fastq.gz
+    rm -rf PR_MR_0780.fastq.gz
+    rm -rf PX_SC_0810.fastq.gz
+
+removed 19 individuals. new total = 454 individuals
+
+### Combined pines, de novo assembly
+
+#### 1. gzip files (already done, takes time)
+    nohup gzip *fastq &>/dev/null &
+
+#### 2. make list of fastqs
+    ls *.fastq.gz > namelist
+
+#### 3. one-liner to remove '.fastq.gz' from namelist (instant)
+    sed -i'' -e 's/.fastq.gz//g' namelist
+    
+#### 4. set variables (run as one chunk command, instant)
+    AWK1='BEGIN{P=1}{if(P==1||P==2){gsub(/^[@]/,">");print}; if(P==4)P=0; P++}'
+    AWK2='!/>/'
+    AWK3='!/NNN/'
+    PERLT='while (<>) {chomp; $z{$_}++;} while(($k,$v) = each(%z)) {print "$v\t$k\n";}'
+    
+#### 5. create list of sequences and counts for each individual (few minutes)
+    cat namelist | parallel --no-notice -j 8 "zcat {}.fastq | mawk '$AWK1' | mawk '$AWK2' | perl -e '$PERLT' > {}.uniq.seqs" &
+    
+#### 6. combine files for all individuals (about 15 seconds)
+    cat *.uniq.seqs > uniq.seqs
+
+#### 7. select those sequences that have 4 reads (or however you want to choose - pretty instant, about 1 minute)
+    parallel --no-notice -j 8 mawk -v x=4 \''$1 >= x'\' ::: *.uniq.seqs | cut -f2 | perl -e 'while (<>) {chomp;    $z{$_}++;} while(($k,$v) = each(%z))     {print "$v\t$k\n";}' > uniqCperindv
+    
+    wc -l uniqCperindv
+12696842 uniq sequences per individual
+
+#### 8. restrict the data by how many individuals have that read
+    for ((i = 2; i <= 10; i++));
+    do
+    echo $i >> ufile
+    done
+
+NOTE: the above bash loop just makes a list from 2 to 10
+    
+    cat ufile | parallel --no-notice "echo -n {}xxx && mawk -v x={} '\$1 >= x' uniqCperindv | wc -l" | mawk  '{gsub("xxx","\t",$0); print;}'| sort -g > uniqseq.peri.data
+    
+    more uniqseq.peri.data
+
+2	3719956
+3	2020056
+4	1347546
+5	996134
+6	780431
+7	635769
+8	532158
+9	453801
+10	392907
+
+    rm -rf ufile
+    
+#### 9. restrict sequences to those that are found in at least 4 inds (few seconds per ind)
+    mawk -v x=4 '$1 >= x' uniqCperindv > uniq.k.4.c.4.seqs
+    wc -l uniq.k.4.c.4.seqs
+1347546 uniq.k.4.c.4.seqs
+
+#### 10. Convert these sequences to fasta format (both pretty instant)
+    cut -f2 uniq.k.4.c.4.seqs > totaluniqseq
+    mawk '{c= c + 1; print ">Contig_" c "\n" $1}' totaluniqseq > uniq.fasta
+
+#### 11. Extract the forward reads
+    sed -e 's/NNNNNNNNNN/\t/g' uniq.fasta | cut -f1 > uniq.F.fasta
+
+#### 12. cdhit assembly. takes some time.
+    module load cd-hit/4.6
+    
+the -c 0.8 in the line below means that you're aligning sequences that have 0.8 similarity and above (sequence similarity threshold - the default is 0.9, so increase it from 0.8 to 0.9)
+#do 90, 93, and 95 and see how many contigs we have - run each of these and then record number of contigs
+#in the lines below, cdhit is using uniq.F.fasta to create/write (or overwrite) the file called reference.fasta.original. First line listed below takes about 5 mins.
+
+    nohup cd-hit-est -i uniq.F.fasta -o reference.fasta.original -M 0 -T 0 -c 0.8 &>/dev/null &
+    grep "^>" reference.fasta.original -c
+
+206818 contigs (grepped below)
+
+    nohup cd-hit-est -i uniq.F.fasta -o reference.fasta.original -M 0 -T 0 -c 0.9 &>/dev/null &
+    grep "^>" reference.fasta.original -c
+    
+349768 contigs
+
+MOVING FORWARD WITH 0.9 MATCH THRESHOLD
+
+### GET RID OF .UNIQ.SEQS FILES!!!
+
+    /working/lgalland/pines_combined
+
+    mkdir bwa
+    mv /working/lgalland/pines_combined/reference.fasta.original bwa/
+    rm reference.fasta.original.clstr
+    
+    /working/lgalland/pines_combined/bwa/
+
+Artificial reference is: reference.fasta.original
+    
+    grep "^>" reference.fasta.original -c
+349768 contigs for -c 0.9
+
+#### renaming id lines from contig to scaffold:
+    
+    sed "s/Contig/scaffold/" reference.fasta.original > pine_ref.fasta
+pine_ref.fasta is the reference to use below
+
+    rm reference.fasta.original
+    grep ">" pine_ref.fasta -c
+349768 contigs in the reference
+
+#### index reference genome:
+about 1 minute. makes other ref files (.amb, etc.)
+    
+    module load bwa/0.7.8
+    nohup bwa index -p pine_ref -a is pine_ref.fasta &>/dev/null &
+    cd /working/lgalland/pines_combined/
+    mv *.gz /working/lgalland/pines_combined/bwa/
+    cd /working/lgalland/pines_combined/bwa
+    
+Unzipping fastqs. Originally did about 5 per minute:
+    
+    nohup gunzip *fastq.gz &>/dev/null &
+
+## ALREADY REMOVED LOW COVERAGE INDIVIDUALS
+
+    /working/lgalland/pines_combined/bwa
+    
+#### Calculate the mean number of reads per individual, from your individual fastqs
+
+    grep "^@" -c *.fastq > meanReads_perInd.txt &
+    
+    R
+    meanReads <- read.delim("meanReads_perInd.txt", header=FALSE, sep=":")
+    mean(meanReads[,2])
+2016325 (this is the mean!)
+
+    quit()
+
+####################################################################################
+## 5. reference based assembly using bwa/0.7.5a
+####################################################################################
+
+map sequneces to the reference genome using bwa via a perl wrapper to iterate over individuals = multiple fastq files. This perl script runs bwa aln and bwa samse (single end reads). This will produce alignments of the reads for each individual, mapped onto the artificial reference genome.
+
+Running BWA. Note that the script must be modified with the correct reference name (which must be changed in TWO places in the script). Example: the runbwa.pl script references sheep_ref in two places. Change to accurate species. NOTE: We do not have this "sheep_ref" as a file. Rather, it represents the conglomeration of the sheep_ref.amb, .ann, .bwt, .fasta, .pac, and .sa files
+
+Edit distance of 4. This step takes several hours (e.g., 6 hours for 279 pines).
+**Working with old bwa 7.5 and samtools 1.3 and bcftools 1.3; following monia and alex's notes. 
+
+    module load bwa/0.7.5a
+    nohup bwa index -p pine_ref -a is pine_ref.fasta &>/dev/null &
+    nohup perl runbwa.pl *fastq &>/dev/null &
 
 
 
-### Alignment to *T. cristinae* genome and variant calling.
-New software needs to be installed on ponderosa, including:
-- bwa 0.7.17-r1188 (https://github.com/lh3/bwa/releases)
-- bcftools 1.9 (under https://sourceforge.net/projects/samtools/files/samtools/1.9/)
-- samtools 1.10 (under https://sourceforge.net/projects/samtools/files/samtools/1.10/)
-## mapping with `bwa`
 
 
-## alignment with bwa 0.7.17-r1188
-## assumes genome = genome.fasta and the sample is tpod1
 
-bwa mem -k 20 -w 100 -r 1.3 -T 30 -R @RG        ID:tpod1        PL:ILLUMINA     LB:tpod1        SM:tpod1 genome.fasta tpod1.fastq > aln_tpod1.sam 2> tpod1.log
 
-## standard sam to bam, sorting and indexing; code not included, same as it has always been
-## at present using samtools 1.10 and bcftools 1.9
+
+
+
+# DONE TO HERE. LG 12/8 4:40pm
+
+
+
+
+
+
+
+
+
+
+
+#### convert sam to bam
+Takes some time. About 10 minutes per 70 individuals.
+
+    /working/lgalland/pines_combined/bwa/sam_sai
+    module load samtools/1.3
+    nohup perl /working/lgalland/perl_scripts/sam2bamV1.3.pl *.sam &>/dev/null &
+
+Few minutes for the following:
+
+    module load samtools/1.3
+    nohup perl /working/lgalland/perl_scripts/count_assembled.pl *.sorted.bam &>/dev/null &
+    
+    rm -rf *.sam
+    rm -rf *.sai
+
+#### make a plot in R of assembled vs. raw read counts per individual
+    scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/assembled_perind.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa
+    
+###### In R:
+    setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa")
+
+	pdf(file="number_of_reads.pdf", width=6, height=6)
+
+	reads<-read.csv("assembled_perind.txt", header=F)
+	hist(reads[,2], breaks=15, col="grey", main="")
+
+	dev.off()
+
+####################################################################################
+## 6. calling variants 
+####################################################################################
+
+    module load bcftools/1.3
+    module load samtools/1.3
+    
+    cp /working/lgalland/pines_combined/bwa/pine_ref* /working/lgalland/pines_combined/bwa/sam_sai/
+    /working/lgalland/pines_combined/bwa/sam_sai/
+
+This takes several (2-4) hours:
+
+    samtools mpileup -P ILLUMINA --BCF --max-depth 100 --adjust-MQ 50 --min-BQ 20 --min-MQ 20 --skip-indels --output-tags DP,AD --fasta-ref pine_ref.fasta aln*sorted.bam | \
+    bcftools call -m --variants-only --format-fields GQ --skip-variants indels | \
+    bcftools filter --set-GTs . -i 'QUAL > 19 && FMT/GQ >9' | \
+    bcftools view -m 2 -M 2 -v snps --apply-filter "PASS" --output-type v --output-file variants_rawfiltered_19MAR2020.vcf &
+
+#### making id file for reheadering:
+    sed -s "s/aln_//" assembled_perind.txt | sed -s "s/.sorted.bam//" > pine_ids_col.txt
+
+    module load bcftools/1.3
+    module load samtools/1.3
+
+This step is reheadering variants_rawfiltered_19MAR2020.vcf:
+    
+    nohup bcftools reheader -s pine_ids_col.txt variants_rawfiltered_19MAR2020.vcf -o rehead_variants_rawfiltered_19MAR2020.vcf &>/dev/null & 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## variant calling with bcftools 1.9
 ## bams is a text file with all of the sorted bam files listed, one per line
