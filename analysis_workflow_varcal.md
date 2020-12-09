@@ -325,27 +325,6 @@ Edit distance of 4. This step takes several hours (e.g., 6 hours for 279 pines).
     nohup bwa index -p pine_ref -a is pine_ref.fasta &>/dev/null &
     nohup perl runbwa.pl *fastq &>/dev/null &
 
-
-
-
-
-
-
-
-
-
-# DONE TO HERE. LG 12/8 4:40pm
-
-
-
-
-
-
-
-
-
-
-
 #### convert sam to bam
 Takes some time. About 10 minutes per 70 individuals.
 
@@ -381,15 +360,35 @@ Few minutes for the following:
     module load bcftools/1.3
     module load samtools/1.3
     
-    cp /working/lgalland/pines_combined/bwa/pine_ref* /working/lgalland/pines_combined/bwa/sam_sai/
+    mv /working/lgalland/pines_combined/bwa/pine_ref* /working/lgalland/pines_combined/bwa/sam_sai/
     /working/lgalland/pines_combined/bwa/sam_sai/
 
-This takes several (2-4) hours:
+This takes several (2-4) hours. Run as one large chunk of code:
 
     samtools mpileup -P ILLUMINA --BCF --max-depth 100 --adjust-MQ 50 --min-BQ 20 --min-MQ 20 --skip-indels --output-tags DP,AD --fasta-ref pine_ref.fasta aln*sorted.bam | \
     bcftools call -m --variants-only --format-fields GQ --skip-variants indels | \
     bcftools filter --set-GTs . -i 'QUAL > 19 && FMT/GQ >9' | \
-    bcftools view -m 2 -M 2 -v snps --apply-filter "PASS" --output-type v --output-file variants_rawfiltered_19MAR2020.vcf &
+    bcftools view -m 2 -M 2 -v snps --apply-filter "PASS" --output-type v --output-file variants_rawfiltered_9DEC2020.vcf &
+
+
+
+
+
+
+
+
+
+# DONE TO HERE. LG 12/8 4:40pm
+
+
+
+
+
+
+
+
+
+
 
 #### making id file for reheadering:
     sed -s "s/aln_//" assembled_perind.txt | sed -s "s/.sorted.bam//" > pine_ids_col.txt
@@ -401,22 +400,80 @@ This step is reheadering variants_rawfiltered_19MAR2020.vcf:
     
     nohup bcftools reheader -s pine_ids_col.txt variants_rawfiltered_19MAR2020.vcf -o rehead_variants_rawfiltered_19MAR2020.vcf &>/dev/null & 
 
+####################################################################################
+## 7. filtering
+####################################################################################
 
+#### common MAF 0.05
+VCFtools (0.1.14)
 
+Adam Auton and Anthony Marcketta 2009
 
+Filtering the entire vcf files, at least 90% of individuals have at least one read, and filtering on maf (filtering on loci)
+	
+	module load vcftools/0.1.14
+	module load bcftools/1.3
 
+	vcftools --vcf rehead_variants_rawfiltered_19MAR2020.vcf --out variants_miss10_common --remove-filtered-all --maf 0.05 --max-		missing 0.9 --recode --thin 90 &
+** After filtering, kept 279 out of 279 individuals
+** After filtering, kept 1584 out of a possible 1743422 Sites 
 
+	vcftools --vcf rehead_variants_rawfiltered_19MAR2020.vcf --out variants_miss20_common --remove-filtered-all --maf 0.05 --max-		missing 0.8 --recode --thin 90 &
+** After filtering, kept 279 out of 279 Individuals
+** After filtering, kept 5553 out of a possible 1743422 Sites 
 
+	vcftools --vcf rehead_variants_rawfiltered_19MAR2020.vcf --out variants_miss30_common --remove-filtered-all --maf 0.05 --max-		missing 0.7 --recode --thin 90 &
+** After filtering, kept 279 out of 279 Individuals
+** After filtering, kept 5553 out of a possible 1743422 Sites
 
+	vcftools --vcf rehead_variants_rawfiltered_19MAR2020.vcf --out variants_miss40_common --remove-filtered-all --maf 0.05 --max-		missing 0.6 --recode --thin 90 &
+** After filtering, kept 279 out of 279 Individuals
+** After filtering, kept 5553 out of a possible 1743422 Sites
 
+#### generate depth of coverage files
 
+	vcftools --vcf variants_miss10_common.recode.vcf --depth -c > variants_miss10_common.txt &
+	vcftools --vcf variants_miss20_common.recode.vcf --depth -c > variants_miss20_common.txt &
+	vcftools --vcf variants_miss30_common.recode.vcf --depth -c > variants_miss30_common.txt &
+	vcftools --vcf variants_miss40_common.recode.vcf --depth -c > variants_miss40_common.txt &
 
+#### generate .mpgl and pntest for each (pntest is genotype likelihood file - use for PCA)
 
+	perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss10_common.recode.vcf
+	perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss20_common.recode.vcf
+	perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss30_common.recode.vcf
+	perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss40_common.recode.vcf
 
+The following writes variants_miss40_common.recode.mpgl, variants_miss30_common.recode.mpgl, etc.
 
+	perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss10_common.recode.mpgl mean
+	perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss20_common.recode.mpgl mean
+	perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_common.recode.mpgl mean
+	perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss40_common.recode.mpgl mean
 
+	module load bcftools/1.3
+	module load samtools/1.3
 
+The following cuts the first column and puts it into a new file, which is labeled "good head," but it really isn't. 
+	
+	cut -d "," -f 1 pine_ids_col.txt > pine_ids_good_head.txt
+	
+Need to nano the file and add "ind" to the top of the column so it's in proper format:
+	
+	nano pine_ids_good_head.txt
 
+#### make coverage file
+Give it your  mpgl file, your ids file a header (hence "good_head"), and the location of your bam files - RUNNING FOR MISS10, MISS20, MISS30, AND MISS40. (We typically choose one with which we will move forward (e.g., only progressing with miss50), but for radiata, we wanted to see all of the PCAs) (Each takes 5-10 minutes, but is based  on number of individuals. The output file is variants_miss10_common.recode.mpgl_coverage.csv, for example. You can go in another terminal window and verify this file is increasing in size.) Here, for combined pines, we will move forward with miss30.
+	
+	perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_common.recode.mpgl pine_ids_good_head.txt 			/working/lgalland/pines_combined/bwa/sam_sai/ &
+	
+	
+	
+	
+	
+	
+	
+	
 
 
 
