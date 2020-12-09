@@ -318,6 +318,9 @@ Running BWA. Note that the script must be modified with the correct reference na
 Edit distance of 4. This step takes several hours (e.g., 6 hours for 279 pines).
 **Working with old bwa 7.5 and samtools 1.3 and bcftools 1.3; following monia and alex's notes. 
 
+    cp /working/lgalland/perl_scripts/runbwa.pl /working/lgalland/pines_combined/bwa/
+    nano runbwa.pl
+    
     module load bwa/0.7.5a
     nohup bwa index -p pine_ref -a is pine_ref.fasta &>/dev/null &
     nohup perl runbwa.pl *fastq &>/dev/null &
