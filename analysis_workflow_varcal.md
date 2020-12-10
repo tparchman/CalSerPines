@@ -499,18 +499,18 @@ This will print out the PC scores, which will be in the same order as the ids fi
 #### R code is called verification_PCs_WORKING_radiata.r in the following directory outlined below
 #########################
 
-setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA")
+	setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA")
 
-Make sure you run all the miss40 stuff before all the miss50 stuff. Otherwise, you're just writing over the files as you go.
+Make sure you run all the miss40 stuff before all the miss50 stuff. Otherwise, you are just writing over the files as you go.
 
 ######miss 30 
-
-read.table("pntest_mean_variants_miss30_common.recode.txt", header=F)->gl
-read.table("pine_ids_col.txt", header=F)->ids
-read.table("pine_pops.txt", header=F)->pops
-t(gl)->tgl
-cbind(ids, pops, tgl)->tidsgl
-write.table(tidsgl, file="pine_gl_matrix_miss30.txt", sep=" ", row.names=F, col.names=F , quote=F)
+	
+	read.table("pntest_mean_variants_miss30_common.recode.txt", header=F)->gl
+	read.table("pine_ids_col.txt", header=F)->ids
+	read.table("pine_pops.txt", header=F)->pops
+	t(gl)->tgl
+	cbind(ids, pops, tgl)->tidsgl
+	write.table(tidsgl, file="pine_gl_matrix_miss30.txt", sep=" ", row.names=F, col.names=F , quote=F)
 
 ###########
 ### Now, the files are ready for PCA
@@ -518,180 +518,163 @@ write.table(tidsgl, file="pine_gl_matrix_miss30.txt", sep=" ", row.names=F, col.
 
 ######miss 30
 
-miss30 <- read.delim("pine_gl_matrix_miss30.txt", header=FALSE, sep=" ")
-miss30[1:10,1:10]
-dim(miss30) #454 * 13468 ####two more than loci because first column is whole ID identifier, second column is population identifier
+	miss30 <- read.delim("pine_gl_matrix_miss30.txt", header=FALSE, sep=" ")
+	miss30[1:10,1:10]
+	dim(miss30) #454 * 13468 ####two more than loci because first column is whole ID identifier, second column is population identifier
 
 (Notes on deleting rows can be found in contorta working PCs verification file)
 
-g30 <- t(miss30[,3:13468])
-dim(g30) # 13466 * 454
-g30[1:10,1:10]
+	g30 <- t(miss30[,3:13468])
+	dim(g30) # 13466 * 454
+	g30[1:10,1:10]
 
-gmn30 <- apply(g30, 1, mean, na.rm=TRUE)
-gmnmat30 <- matrix(gmn30, nrow=13466, ncol=454)
-gprime30 <- g30 - gmnmat30
-gcovarmat30 <- matrix(NA, nrow=454, ncol=454)
+	gmn30 <- apply(g30, 1, mean, na.rm=TRUE)
+	gmnmat30 <- matrix(gmn30, nrow=13466, ncol=454)
+	gprime30 <- g30 - gmnmat30
+	gcovarmat30 <- matrix(NA, nrow=454, ncol=454)
 
-for (i in 1:454)
-{
-  for (j in 1:454)
-  {
-    if (i==j)
-    {
-      gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
-    }
-    else
-    {
-      gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
-      gcovarmat30[j,i] <- gcovarmat30[i,j]
-    }
-  }
-}
+	for (i in 1:454)
+	{
+  		for (j in 1:454)
+  		{
+  		if (i==j)
+  		{
+  		gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+  		}
+  		else
+  		{
+  		gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+  		gcovarmat30[j,i] <- gcovarmat30[i,j]
+  		}
+  		}
+	}
 
-pcgcov30<-prcomp(x=gcovarmat30,center=TRUE,scale=FALSE)
-imp30 <- summary(pcgcov30)
-summary(pcgcov30)
-
-
-############## Plotting PCs, miss30
-
-colors <-c(
-  "#1795ea",
-  "#f7b84f",
-  "#198c49",
-  "#62a754",
-  "#57c39b",
-  "#d7453d",
-  "#945fcd",
-  "#dc9447",
-  "#6c80cc",
-  "#b9b049",
-  "#b86fad",
-  "#388054",
-  "#c45f6f",
-  "#74772e",
-  "#b06337")
-
-# using 6 colors to correspond to 8 "populations." Keep in mind that some individuals were marked as "PX" because they were presumed hybrids!!!!
+	pcgcov30<-prcomp(x=gcovarmat30,center=TRUE,scale=FALSE)
+	imp30 <- summary(pcgcov30)
+	summary(pcgcov30)
 
 
-pcgcov30$x[,1]
+########Plotting PCs, miss30
+
+	colors <-c(
+  		"#1795ea",
+  		"#f7b84f",
+  		"#198c49",
+  		"#d69680",
+  		"#864ad1",
+  		"#bfd048",
+  		"#8f13a2",
+  		"#4edf95",
+  		"#ff63d7",
+  		"#12601c",
+  		"#2349b6",
+  		"#a55d00",
+  		"#5c9bff",
+  		"#cf0029",
+  		"#5ad6ef",
+  		"#ff5971",
+  		"#5fc1ff",
+  		"#ff7f50",
+  		"#017499",
+  		"#972d17",
+  		"#cbbcff",
+  		"#695500",
+  		"#862c86",
+  		"#d992a9",
+  		"#3b5189",
+  		"#a30355",
+  		"#ff9ac9",
+  		"#ff8acc")
+
+
+
+	pcgcov30$x[,1]
 ####### PC 1v2, miss30, independent colors
 
-# the plot function in the line below sets the axes right off the bat
-# so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
-# must change these for the other PCAs!!!
-plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines combined, first look miss30", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+The pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
+Must change these for the other PCAs!!!
+	
+	plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines combined, first look miss30", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
 
-# the blue 1 and 2 in the points function refer to the PCs
-# must change these to 2 and 3 for PCs 2 v 3, for example!
-#### SC and MR populations containe presumed hybrids!
-points(pcgcov30$x[which(pops=="DC"),1], pcgcov30$x[which(pops=="DC"), 2], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="FR"),1], pcgcov30$x[which(pops=="FR"), 2], pch=21, bg=colors[2], cex=1)
-points(pcgcov30$x[which(pops=="NR"),1], pcgcov30$x[which(pops=="NR"), 2], pch=21, bg=colors[3], cex=1)
-points(pcgcov30$x[which(pops=="PA"),1], pcgcov30$x[which(pops=="PA"), 2], pch=21, bg=colors[5], cex=1)
-points(pcgcov30$x[which(pops=="PP"),1], pcgcov30$x[which(pops=="PP"), 2], pch=21, bg=colors[6], cex=1)
-points(pcgcov30$x[which(pops=="SP"),1], pcgcov30$x[which(pops=="SP"), 2], pch=21, bg=colors[14], cex=1)
-points(pcgcov30$x[which(pops=="SR"),1], pcgcov30$x[which(pops=="SR"), 2], pch=21, bg=colors[15], cex=1)
-points(pcgcov30$x[which(pops=="PR"),1], pcgcov30$x[which(pops=="PR"), 2], pch=21, bg=colors[12], cex=1)
+The blue 1 and 2 in the points function refer to the PCs. Must change these to 2 and 3 for PCs 2 v 3, for example!
 
-points(pcgcov30$x[which(pops=="CG"),1], pcgcov30$x[which(pops=="CG"), 2], pch=21, bg=colors[4], cex=1)
+	points(pcgcov30$x[which(pops=="DC"),1], pcgcov30$x[which(pops=="DC"), 2], pch=21, bg=colors[1], cex=1)
+	points(pcgcov30$x[which(pops=="FR"),1], pcgcov30$x[which(pops=="FR"), 2], pch=21, bg=colors[2], cex=1)
+	points(pcgcov30$x[which(pops=="NR"),1], pcgcov30$x[which(pops=="NR"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="PA"),1], pcgcov30$x[which(pops=="PA"), 2], pch=21, bg=colors[4], cex=1)
+	points(pcgcov30$x[which(pops=="PP"),1], pcgcov30$x[which(pops=="PP"), 2], pch=21, bg=colors[5], cex=1)
+	points(pcgcov30$x[which(pops=="SP"),1], pcgcov30$x[which(pops=="SP"), 2], pch=21, bg=colors[6], cex=1)
+	points(pcgcov30$x[which(pops=="SR"),1], pcgcov30$x[which(pops=="SR"), 2], pch=21, bg=colors[7], cex=1)
+	points(pcgcov30$x[which(pops=="PR"),1], pcgcov30$x[which(pops=="PR"), 2], pch=21, bg=colors[8], cex=1)
 
-points(pcgcov30$x[which(pops=="CM"),1], pcgcov30$x[which(pops=="CM"), 2], pch=21, bg=colors[7], cex=1)
-points(pcgcov30$x[which(pops=="CN"),1], pcgcov30$x[which(pops=="CN"), 2], pch=21, bg=colors[8], cex=1)
-points(pcgcov30$x[which(pops=="CS"),1], pcgcov30$x[which(pops=="CS"), 2], pch=21, bg=colors[9], cex=1)
-points(pcgcov30$x[which(pops=="GU"),1], pcgcov30$x[which(pops=="GU"), 2], pch=21, bg=colors[10], cex=1)
-points(pcgcov30$x[which(pops=="MR"),1], pcgcov30$x[which(pops=="MR"), 2], pch=21, bg=colors[11], cex=1)
-points(pcgcov30$x[which(pops=="SC"),1], pcgcov30$x[which(pops=="SC"), 2], pch=21, bg=colors[13], cex=1)
+	points(pcgcov30$x[which(pops=="AH"),1], pcgcov30$x[which(pops=="AH"), 2], pch=21, bg=colors[9], cex=1)
+	points(pcgcov30$x[which(pops=="AL"),1], pcgcov30$x[which(pops=="AL"), 2], pch=21, bg=colors[10], cex=1)
+	points(pcgcov30$x[which(pops=="BS"),1], pcgcov30$x[which(pops=="BS"), 2], pch=21, bg=colors[11], cex=1)
+	points(pcgcov30$x[which(pops=="CG"),1], pcgcov30$x[which(pops=="CG"), 2], pch=21, bg=colors[12], cex=1)
+	points(pcgcov30$x[which(pops=="LA"),1], pcgcov30$x[which(pops=="LA"), 2], pch=21, bg=colors[13], cex=1)
+	points(pcgcov30$x[which(pops=="LS"),1], pcgcov30$x[which(pops=="LS"), 2], pch=21, bg=colors[14], cex=1)
+	points(pcgcov30$x[which(pops=="OC"),1], pcgcov30$x[which(pops=="OC"), 2], pch=21, bg=colors[15], cex=1)
+	points(pcgcov30$x[which(pops=="PF"),1], pcgcov30$x[which(pops=="PF"), 2], pch=21, bg=colors[16], cex=1)
+	points(pcgcov30$x[which(pops=="SB"),1], pcgcov30$x[which(pops=="SB"), 2], pch=21, bg=colors[17], cex=1)
+	points(pcgcov30$x[which(pops=="SH"),1], pcgcov30$x[which(pops=="SH"), 2], pch=21, bg=colors[18], cex=1)
+	points(pcgcov30$x[which(pops=="SL"),1], pcgcov30$x[which(pops=="SL"), 2], pch=21, bg=colors[19], cex=1)
+	points(pcgcov30$x[which(pops=="ST"),1], pcgcov30$x[which(pops=="ST"), 2], pch=21, bg=colors[20], cex=1)
+	points(pcgcov30$x[which(pops=="YA"),1], pcgcov30$x[which(pops=="YA"), 2], pch=21, bg=colors[21], cex=1)
+	points(pcgcov30$x[which(pops=="YB"),1], pcgcov30$x[which(pops=="YB"), 2], pch=21, bg=colors[22], cex=1)
+
+	points(pcgcov30$x[which(pops=="CM"),1], pcgcov30$x[which(pops=="CM"), 2], pch=21, bg=colors[23], cex=1)
+	points(pcgcov30$x[which(pops=="CN"),1], pcgcov30$x[which(pops=="CN"), 2], pch=21, bg=colors[24], cex=1)
+	points(pcgcov30$x[which(pops=="CS"),1], pcgcov30$x[which(pops=="CS"), 2], pch=21, bg=colors[25], cex=1)
+	points(pcgcov30$x[which(pops=="GU"),1], pcgcov30$x[which(pops=="GU"), 2], pch=21, bg=colors[26], cex=1)
+	points(pcgcov30$x[which(pops=="MR"),1], pcgcov30$x[which(pops=="MR"), 2], pch=21, bg=colors[27], cex=1)
+	points(pcgcov30$x[which(pops=="SC"),1], pcgcov30$x[which(pops=="SC"), 2], pch=21, bg=colors[28], cex=1)
+
+	legend("bottomright", legend=c("PIMU, Diablo Canyon (SLO)", "PIMU, Fort Ross", "PIMU, Navarro River", "PIMU, Point Arena", "PIMU, Patrick's Point", "PIMU, Salt Point", "PIMU, Sea Ranch", "PIMU, Point Reyes",
+      "PIAT, Auburn High", "PIAT, Auburn Low", "PIAT, Big Sur", "PIAT, Cuesta Grade (SLO)", "PIAT, Los Angeles", "PIAT, Lake Shasta", "PIAT, Orange County", "PIAT, Panther Flat (OR border)", "PIAT, San Bernardino", 
+      "PIAT, Santa Cruz High", "PIAT, Santa Cruz Low", "PIAT, Santa Cruz Top", "PIAT, Yosemite A", "PIAT, Yosemite B",
+      "PIRA, Cambria (SLO)", "PIRA, Cedros North", "PIRA, Cedros South", "PIRA, Guadalupe", "PIRA, Monterey", "PIRA, Santa Cruz"), pch=c(16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16), ncol=2, col=colors[1:28], cex=.8)
+
+Save plot window as pines_combined_firstLook_miss30.pdf
 
 ####### PC 1v2, miss30, grouped on species
 
-# the plot function in the line below sets the axes right off the bat
-# so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
-# must change these for the other PCAs!!!
-plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "PC1 vs. PC2", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+	plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines conbined, FirstLook miss 30, by species", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
 
-# the blue 1 and 2 in the points function refer to the PCs
-# must change these to 2 and 3 for PCs 2 v 3, for example!
-#### SC and MR populations containe presumed hybrids!
-points(pcgcov30$x[which(pops=="DC"),1], pcgcov30$x[which(pops=="DC"), 2], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="FR"),1], pcgcov30$x[which(pops=="FR"), 2], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="NR"),1], pcgcov30$x[which(pops=="NR"), 2], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="PA"),1], pcgcov30$x[which(pops=="PA"), 2], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="PP"),1], pcgcov30$x[which(pops=="PP"), 2], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="SP"),1], pcgcov30$x[which(pops=="SP"), 2], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="SR"),1], pcgcov30$x[which(pops=="SR"), 2], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="PR"),1], pcgcov30$x[which(pops=="PR"), 2], pch=21, bg=colors[1], cex=1)
+	points(pcgcov30$x[which(pops=="DC"),1], pcgcov30$x[which(pops=="DC"), 2], pch=21, bg=colors[1], cex=1)
+	points(pcgcov30$x[which(pops=="FR"),1], pcgcov30$x[which(pops=="FR"), 2], pch=21, bg=colors[1], cex=1)
+	points(pcgcov30$x[which(pops=="NR"),1], pcgcov30$x[which(pops=="NR"), 2], pch=21, bg=colors[1], cex=1)
+	points(pcgcov30$x[which(pops=="PA"),1], pcgcov30$x[which(pops=="PA"), 2], pch=21, bg=colors[1], cex=1)
+	points(pcgcov30$x[which(pops=="PP"),1], pcgcov30$x[which(pops=="PP"), 2], pch=21, bg=colors[1], cex=1)
+	points(pcgcov30$x[which(pops=="SP"),1], pcgcov30$x[which(pops=="SP"), 2], pch=21, bg=colors[1], cex=1)
+	points(pcgcov30$x[which(pops=="SR"),1], pcgcov30$x[which(pops=="SR"), 2], pch=21, bg=colors[1], cex=1)
+	points(pcgcov30$x[which(pops=="PR"),1], pcgcov30$x[which(pops=="PR"), 2], pch=21, bg=colors[1], cex=1)
 
-points(pcgcov30$x[which(pops=="CG"),1], pcgcov30$x[which(pops=="CG"), 2], pch=21, bg=colors[3], cex=1)
-
-points(pcgcov30$x[which(pops=="CM"),1], pcgcov30$x[which(pops=="CM"), 2], pch=21, bg=colors[2], cex=1)
-points(pcgcov30$x[which(pops=="CN"),1], pcgcov30$x[which(pops=="CN"), 2], pch=21, bg=colors[2], cex=1)
-points(pcgcov30$x[which(pops=="CS"),1], pcgcov30$x[which(pops=="CS"), 2], pch=21, bg=colors[2], cex=1)
-points(pcgcov30$x[which(pops=="GU"),1], pcgcov30$x[which(pops=="GU"), 2], pch=21, bg=colors[2], cex=1)
-points(pcgcov30$x[which(pops=="MR"),1], pcgcov30$x[which(pops=="MR"), 2], pch=21, bg=colors[2], cex=1)
-points(pcgcov30$x[which(pops=="SC"),1], pcgcov30$x[which(pops=="SC"), 2], pch=21, bg=colors[2], cex=1)
-
-#legend("bottomleft", legend=c("P. muricata", "P. radiata", "P. attenuata"), pch=c(16,16,16), ncol=1, col=colors[1:3], cex=1)
+	points(pcgcov30$x[which(pops=="AH"),1], pcgcov30$x[which(pops=="AH"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="AL"),1], pcgcov30$x[which(pops=="AL"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="BS"),1], pcgcov30$x[which(pops=="BS"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="CG"),1], pcgcov30$x[which(pops=="CG"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="LA"),1], pcgcov30$x[which(pops=="LA"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="LS"),1], pcgcov30$x[which(pops=="LS"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="OC"),1], pcgcov30$x[which(pops=="OC"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="PF"),1], pcgcov30$x[which(pops=="PF"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="SB"),1], pcgcov30$x[which(pops=="SB"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="SH"),1], pcgcov30$x[which(pops=="SH"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="SL"),1], pcgcov30$x[which(pops=="SL"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="ST"),1], pcgcov30$x[which(pops=="ST"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="YA"),1], pcgcov30$x[which(pops=="YA"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="YB"),1], pcgcov30$x[which(pops=="YB"), 2], pch=21, bg=colors[3], cex=1)
 
 
-####### PC 3v4, miss30
+	points(pcgcov30$x[which(pops=="CM"),1], pcgcov30$x[which(pops=="CM"), 2], pch=21, bg=colors[2], cex=1)
+	points(pcgcov30$x[which(pops=="CN"),1], pcgcov30$x[which(pops=="CN"), 2], pch=21, bg=colors[2], cex=1)
+	points(pcgcov30$x[which(pops=="CS"),1], pcgcov30$x[which(pops=="CS"), 2], pch=21, bg=colors[2], cex=1)
+	points(pcgcov30$x[which(pops=="GU"),1], pcgcov30$x[which(pops=="GU"), 2], pch=21, bg=colors[2], cex=1)
+	points(pcgcov30$x[which(pops=="MR"),1], pcgcov30$x[which(pops=="MR"), 2], pch=21, bg=colors[2], cex=1)
+	points(pcgcov30$x[which(pops=="SC"),1], pcgcov30$x[which(pops=="SC"), 2], pch=21, bg=colors[2], cex=1)
 
-# the plot function in the line below sets the axes right off the bat
-# so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
-# must change these for the other PCAs!!!
-plot(pcgcov30$x[,3], pcgcov30$x[,4], type="n", main = "Pines combined, first look miss30", xlab=paste("PC3 (",(imp30$importance[,3][[2]]*100), "% )", sep=""), ylab=paste("PC4 (",(imp30$importance[,4][[2]]*100), "% )", sep=""), cex.lab=1.2)
+	legend("bottomright", legend=c("P. muricata", "P. radiata", "P. attenuata"), pch=c(16,16,16), ncol=1, col=colors[1:3], cex=1)
 
-# the blue 1 and 2 in the points function refer to the PCs
-# must change these to 2 and 3 for PCs 2 v 3, for example!
-#### SC and MR populations containe presumed hybrids!
-points(pcgcov30$x[which(pops=="DC"),3], pcgcov30$x[which(pops=="DC"), 4], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="FR"),3], pcgcov30$x[which(pops=="FR"), 4], pch=21, bg=colors[2], cex=1)
-points(pcgcov30$x[which(pops=="NR"),3], pcgcov30$x[which(pops=="NR"), 4], pch=21, bg=colors[3], cex=1)
-points(pcgcov30$x[which(pops=="PA"),3], pcgcov30$x[which(pops=="PA"), 4], pch=21, bg=colors[5], cex=1)
-points(pcgcov30$x[which(pops=="PP"),3], pcgcov30$x[which(pops=="PP"), 4], pch=21, bg=colors[6], cex=1)
-points(pcgcov30$x[which(pops=="SP"),3], pcgcov30$x[which(pops=="SP"), 4], pch=21, bg=colors[14], cex=1)
-points(pcgcov30$x[which(pops=="SR"),3], pcgcov30$x[which(pops=="SR"), 4], pch=21, bg=colors[14], cex=1)
-points(pcgcov30$x[which(pops=="PR"),3], pcgcov30$x[which(pops=="PR"), 4], pch=21, bg=colors[12], cex=1)
-
-points(pcgcov30$x[which(pops=="CG"),3], pcgcov30$x[which(pops=="CG"), 4], pch=21, bg=colors[4], cex=1)
-
-points(pcgcov30$x[which(pops=="CM"),3], pcgcov30$x[which(pops=="CM"), 4], pch=21, bg=colors[7], cex=1)
-points(pcgcov30$x[which(pops=="CN"),3], pcgcov30$x[which(pops=="CN"), 4], pch=21, bg=colors[8], cex=1)
-points(pcgcov30$x[which(pops=="CS"),3], pcgcov30$x[which(pops=="CS"), 4], pch=21, bg=colors[9], cex=1)
-points(pcgcov30$x[which(pops=="GU"),3], pcgcov30$x[which(pops=="GU"), 4], pch=21, bg=colors[10], cex=1)
-points(pcgcov30$x[which(pops=="MR"),3], pcgcov30$x[which(pops=="MR"), 4], pch=21, bg=colors[11], cex=1)
-points(pcgcov30$x[which(pops=="SC"),3], pcgcov30$x[which(pops=="SC"), 4], pch=21, bg=colors[13], cex=1)
-
-####### PC 3v4, miss30, grouped on species
-
-# the plot function in the line below sets the axes right off the bat
-# so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
-# must change these for the other PCAs!!!
-plot(pcgcov30$x[,3], pcgcov30$x[,4], type="n", main = "Pines combined, first look miss30", xlab=paste("PC3 (",(imp30$importance[,3][[2]]*100), "% )", sep=""), ylab=paste("PC4 (",(imp30$importance[,4][[2]]*100), "% )", sep=""), cex.lab=1.2)
-
-# the blue 1 and 2 in the points function refer to the PCs
-# must change these to 2 and 3 for PCs 2 v 3, for example!
-#### SC and MR populations containe presumed hybrids!
-points(pcgcov30$x[which(pops=="DC"),3], pcgcov30$x[which(pops=="DC"), 4], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="FR"),3], pcgcov30$x[which(pops=="FR"), 4], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="NR"),3], pcgcov30$x[which(pops=="NR"), 4], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="PA"),3], pcgcov30$x[which(pops=="PA"), 4], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="PP"),3], pcgcov30$x[which(pops=="PP"), 4], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="SP"),3], pcgcov30$x[which(pops=="SP"), 4], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="SR"),3], pcgcov30$x[which(pops=="SR"), 4], pch=21, bg=colors[1], cex=1)
-points(pcgcov30$x[which(pops=="PR"),3], pcgcov30$x[which(pops=="PR"), 4], pch=21, bg=colors[1], cex=1)
-
-points(pcgcov30$x[which(pops=="CG"),3], pcgcov30$x[which(pops=="CG"), 4], pch=21, bg=colors[4], cex=1)
-
-points(pcgcov30$x[which(pops=="CM"),3], pcgcov30$x[which(pops=="CM"), 4], pch=21, bg=colors[7], cex=1)
-points(pcgcov30$x[which(pops=="CN"),3], pcgcov30$x[which(pops=="CN"), 4], pch=21, bg=colors[7], cex=1)
-points(pcgcov30$x[which(pops=="CS"),3], pcgcov30$x[which(pops=="CS"), 4], pch=21, bg=colors[7], cex=1)
-points(pcgcov30$x[which(pops=="GU"),3], pcgcov30$x[which(pops=="GU"), 4], pch=21, bg=colors[7], cex=1)
-points(pcgcov30$x[which(pops=="MR"),3], pcgcov30$x[which(pops=="MR"), 4], pch=21, bg=colors[7], cex=1)
-points(pcgcov30$x[which(pops=="SC"),3], pcgcov30$x[which(pops=="SC"), 4], pch=21, bg=colors[7], cex=1)
-
+Save window as pinesCombined_firstLook_miss30_bySpecies.pdf
 
 
 
