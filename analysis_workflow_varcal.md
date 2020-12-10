@@ -684,3 +684,5 @@ bcftools call -v -c -f GQ -p 0.01 -P 0.001 -O v -o tpod.vcf tpod.bcf
 
 TEST
 lanie testing
+
+trying again
