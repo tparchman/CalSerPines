@@ -488,7 +488,8 @@ scp files to laptop for PCA:
 	scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_ids_col.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 
 	scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
-	
+
+##############################################
 #### Initial look at PCAs to make sure data is okay. DONE IN R
 #R code is called verification_PCs_WORKING_radiata.r in the following directory outlined below
 
@@ -581,7 +582,7 @@ scp files to laptop for PCA:
 
 	pcgcov30$x[,1]
 
-###### PC 1v2, miss30, independent colors
+#### PC 1v2, miss30, independent colors
 #The pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
 #Must change these for the other PCAs!!!
 	
@@ -627,7 +628,7 @@ scp files to laptop for PCA:
 
 #Save plot window as pines_combined_firstLook_miss30.pdf
 
-###### PC 1v2, miss30, grouped on species
+#### PC 1v2, miss30, grouped on species
 
 	plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines conbined, FirstLook miss 30, by species", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
 
@@ -666,8 +667,9 @@ scp files to laptop for PCA:
 	legend("bottomright", legend=c("P. muricata", "P. radiata", "P. attenuata"), pch=c(16,16,16), ncol=1, col=colors[1:3], cex=1)
 
 #Save window as pinesCombined_firstLook_miss30_bySpecies.pdf
+#Copy and paste exact R code to notes
 
-
+##############################################
 
 
 
