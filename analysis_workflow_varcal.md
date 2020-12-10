@@ -398,7 +398,7 @@ This takes several (2-4) hours. Run as one large chunk of code:
 
 This step is reheadering variants_rawfiltered_19MAR2020.vcf:
     
-    nohup bcftools reheader -s pine_ids_col.txt variants_rawfiltered_19MAR2020.vcf -o rehead_variants_rawfiltered_19MAR2020.vcf &>/dev/null & 
+    nohup bcftools reheader -s pine_ids_col.txt variants_rawfiltered_9DEC2020.vcf -o rehead_variants_rawfiltered_9DEC2020.vcf &>/dev/null & 
 
 ####################################################################################
 ## 7. filtering
@@ -414,21 +414,21 @@ Filtering the entire vcf files, at least 90% of individuals have at least one re
 	module load vcftools/0.1.14
 	module load bcftools/1.3
 
-	vcftools --vcf rehead_variants_rawfiltered_19MAR2020.vcf --out variants_miss10_common --remove-filtered-all --maf 0.05 --max-		missing 0.9 --recode --thin 90 &
-** After filtering, kept 279 out of 279 individuals
-** After filtering, kept 1584 out of a possible 1743422 Sites 
+	vcftools --vcf rehead_variants_rawfiltered_9DEC2020.vcf --out variants_miss10_common --remove-filtered-all --maf 0.05 --max-missing 0.9 --recode --thin 90 &
+** After filtering, kept 454 out of 454 individuals
+** After filtering, kept 3000 out of a possible 1492756 Sites 
 
-	vcftools --vcf rehead_variants_rawfiltered_19MAR2020.vcf --out variants_miss20_common --remove-filtered-all --maf 0.05 --max-		missing 0.8 --recode --thin 90 &
-** After filtering, kept 279 out of 279 Individuals
-** After filtering, kept 5553 out of a possible 1743422 Sites 
+	vcftools --vcf rehead_variants_rawfiltered_9DEC2020.vcf --out variants_miss20_common --remove-filtered-all --maf 0.05 --max-missing 0.8 --recode --thin 90 &
+** After filtering, kept 454 out of 454 individuals
+** After filtering, kept 9103 out of a possible 1492756 Sites 
 
-	vcftools --vcf rehead_variants_rawfiltered_19MAR2020.vcf --out variants_miss30_common --remove-filtered-all --maf 0.05 --max-		missing 0.7 --recode --thin 90 &
-** After filtering, kept 279 out of 279 Individuals
-** After filtering, kept 5553 out of a possible 1743422 Sites
+	vcftools --vcf rehead_variants_rawfiltered_9DEC2020.vcf --out variants_miss30_common --remove-filtered-all --maf 0.05 --max-missing 0.7 --recode --thin 90 &
+** After filtering, kept 454 out of 454 individuals
+** After filtering, kept 13466 out of a possible 1492756 Sites
 
-	vcftools --vcf rehead_variants_rawfiltered_19MAR2020.vcf --out variants_miss40_common --remove-filtered-all --maf 0.05 --max-		missing 0.6 --recode --thin 90 &
-** After filtering, kept 279 out of 279 Individuals
-** After filtering, kept 5553 out of a possible 1743422 Sites
+	vcftools --vcf rehead_variants_rawfiltered_9DEC2020.vcf --out variants_miss40_common --remove-filtered-all --maf 0.05 --max-missing 0.6 --recode --thin 90 &
+** After filtering, kept 454 out of 454 individuals
+** After filtering, kept 17333 out of a possible 1492756 Sites
 
 #### generate depth of coverage files
 
@@ -467,13 +467,232 @@ Give it your  mpgl file, your ids file a header (hence "good_head"), and the loc
 	
 	perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_common.recode.mpgl pine_ids_good_head.txt 			/working/lgalland/pines_combined/bwa/sam_sai/ &
 	
+Make files ID and pop files. The following tells awk that the delimiter is a comma, and to grab and print the first column, and then print it into pine_ids_col.txt (instead of just printing to screen)
+
+	cp pine_ids_col.txt pine_ids_col_original.txt
+	awk -F "," '{print $1}' pine_ids_col_original.txt > pine_ids_col.txt
+
+Then, sed out the parts you don't want for your pops file (removing the "first term" in your ID file, in this case). (The following worked here, which was in format XX(species)_XX(population)_XXXX(individual ID) - see contorta notes file for other naming schemes, but it's intuitive. 
 	
+	sed -s "s/[A-Z][A-Z]_//" pine_ids_col.txt > pine_pops3.txt
+	sed -s "s/_[0-9]*//" pine_pops3.txt > pine_pops.txt
 	
+THESE ARE THE TWO FILES YOU NEED FOR INITIAL VERIFICATION PCA (species_ids_col.txt and species_pops.txt)
+File species_ids_col.txt is a single column format, no header, with individuals listed as HT_MR_0692, etc etc etc
+File species_pops.txt is a single column format, no header, with lines (in order) as CN, CN, CN, CN, CN, AB, AB, AB, AB	
+
+### check initial PCAs in R
+Notes for issues with PCA:
 	
+	pcgcov30$x[,1]
+This will print out the PC scores, which will be in the same order as the ids file. Identify the scores that are out of range based on where your cloud of dots is in PC space. So, If your cloud is way over on the left, below zero, yet a couple dots from that population are on the right (above zero), look for positive scores and then line them up with the correct individual ID in the ids file.
+
+####
+
+	scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pntest_mean_variants_miss30_common.recode.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+
+	scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_ids_col.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+
+	scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 	
-	
-	
-	
+#### Initial look at PCAs to make sure data is okay. DONE IN R
+#### R code is called verification_PCs_WORKING_radiata.r in the following directory outlined below
+#########################
+
+setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA")
+
+Make sure you run all the miss40 stuff before all the miss50 stuff. Otherwise, you're just writing over the files as you go.
+
+######miss 30 
+
+read.table("pntest_mean_variants_miss30_common.recode.txt", header=F)->gl
+read.table("pine_ids_col.txt", header=F)->ids
+read.table("pine_pops.txt", header=F)->pops
+t(gl)->tgl
+cbind(ids, pops, tgl)->tidsgl
+write.table(tidsgl, file="pine_gl_matrix_miss30.txt", sep=" ", row.names=F, col.names=F , quote=F)
+
+###########
+### Now, the files are ready for PCA
+###########
+
+######miss 30
+
+miss30 <- read.delim("pine_gl_matrix_miss30.txt", header=FALSE, sep=" ")
+miss30[1:10,1:10]
+dim(miss30) #454 * 13468 ####two more than loci because first column is whole ID identifier, second column is population identifier
+
+(Notes on deleting rows can be found in contorta working PCs verification file)
+
+g30 <- t(miss30[,3:13468])
+dim(g30) # 13466 * 454
+g30[1:10,1:10]
+
+gmn30 <- apply(g30, 1, mean, na.rm=TRUE)
+gmnmat30 <- matrix(gmn30, nrow=13466, ncol=454)
+gprime30 <- g30 - gmnmat30
+gcovarmat30 <- matrix(NA, nrow=454, ncol=454)
+
+for (i in 1:454)
+{
+  for (j in 1:454)
+  {
+    if (i==j)
+    {
+      gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+    }
+    else
+    {
+      gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+      gcovarmat30[j,i] <- gcovarmat30[i,j]
+    }
+  }
+}
+
+pcgcov30<-prcomp(x=gcovarmat30,center=TRUE,scale=FALSE)
+imp30 <- summary(pcgcov30)
+summary(pcgcov30)
+
+
+############## Plotting PCs, miss30
+
+colors <-c(
+  "#1795ea",
+  "#f7b84f",
+  "#198c49",
+  "#62a754",
+  "#57c39b",
+  "#d7453d",
+  "#945fcd",
+  "#dc9447",
+  "#6c80cc",
+  "#b9b049",
+  "#b86fad",
+  "#388054",
+  "#c45f6f",
+  "#74772e",
+  "#b06337")
+
+# using 6 colors to correspond to 8 "populations." Keep in mind that some individuals were marked as "PX" because they were presumed hybrids!!!!
+
+
+pcgcov30$x[,1]
+####### PC 1v2, miss30, independent colors
+
+# the plot function in the line below sets the axes right off the bat
+# so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
+# must change these for the other PCAs!!!
+plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines combined, first look miss30", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+
+# the blue 1 and 2 in the points function refer to the PCs
+# must change these to 2 and 3 for PCs 2 v 3, for example!
+#### SC and MR populations containe presumed hybrids!
+points(pcgcov30$x[which(pops=="DC"),1], pcgcov30$x[which(pops=="DC"), 2], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="FR"),1], pcgcov30$x[which(pops=="FR"), 2], pch=21, bg=colors[2], cex=1)
+points(pcgcov30$x[which(pops=="NR"),1], pcgcov30$x[which(pops=="NR"), 2], pch=21, bg=colors[3], cex=1)
+points(pcgcov30$x[which(pops=="PA"),1], pcgcov30$x[which(pops=="PA"), 2], pch=21, bg=colors[5], cex=1)
+points(pcgcov30$x[which(pops=="PP"),1], pcgcov30$x[which(pops=="PP"), 2], pch=21, bg=colors[6], cex=1)
+points(pcgcov30$x[which(pops=="SP"),1], pcgcov30$x[which(pops=="SP"), 2], pch=21, bg=colors[14], cex=1)
+points(pcgcov30$x[which(pops=="SR"),1], pcgcov30$x[which(pops=="SR"), 2], pch=21, bg=colors[15], cex=1)
+points(pcgcov30$x[which(pops=="PR"),1], pcgcov30$x[which(pops=="PR"), 2], pch=21, bg=colors[12], cex=1)
+
+points(pcgcov30$x[which(pops=="CG"),1], pcgcov30$x[which(pops=="CG"), 2], pch=21, bg=colors[4], cex=1)
+
+points(pcgcov30$x[which(pops=="CM"),1], pcgcov30$x[which(pops=="CM"), 2], pch=21, bg=colors[7], cex=1)
+points(pcgcov30$x[which(pops=="CN"),1], pcgcov30$x[which(pops=="CN"), 2], pch=21, bg=colors[8], cex=1)
+points(pcgcov30$x[which(pops=="CS"),1], pcgcov30$x[which(pops=="CS"), 2], pch=21, bg=colors[9], cex=1)
+points(pcgcov30$x[which(pops=="GU"),1], pcgcov30$x[which(pops=="GU"), 2], pch=21, bg=colors[10], cex=1)
+points(pcgcov30$x[which(pops=="MR"),1], pcgcov30$x[which(pops=="MR"), 2], pch=21, bg=colors[11], cex=1)
+points(pcgcov30$x[which(pops=="SC"),1], pcgcov30$x[which(pops=="SC"), 2], pch=21, bg=colors[13], cex=1)
+
+####### PC 1v2, miss30, grouped on species
+
+# the plot function in the line below sets the axes right off the bat
+# so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
+# must change these for the other PCAs!!!
+plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "PC1 vs. PC2", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+
+# the blue 1 and 2 in the points function refer to the PCs
+# must change these to 2 and 3 for PCs 2 v 3, for example!
+#### SC and MR populations containe presumed hybrids!
+points(pcgcov30$x[which(pops=="DC"),1], pcgcov30$x[which(pops=="DC"), 2], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="FR"),1], pcgcov30$x[which(pops=="FR"), 2], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="NR"),1], pcgcov30$x[which(pops=="NR"), 2], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="PA"),1], pcgcov30$x[which(pops=="PA"), 2], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="PP"),1], pcgcov30$x[which(pops=="PP"), 2], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="SP"),1], pcgcov30$x[which(pops=="SP"), 2], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="SR"),1], pcgcov30$x[which(pops=="SR"), 2], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="PR"),1], pcgcov30$x[which(pops=="PR"), 2], pch=21, bg=colors[1], cex=1)
+
+points(pcgcov30$x[which(pops=="CG"),1], pcgcov30$x[which(pops=="CG"), 2], pch=21, bg=colors[3], cex=1)
+
+points(pcgcov30$x[which(pops=="CM"),1], pcgcov30$x[which(pops=="CM"), 2], pch=21, bg=colors[2], cex=1)
+points(pcgcov30$x[which(pops=="CN"),1], pcgcov30$x[which(pops=="CN"), 2], pch=21, bg=colors[2], cex=1)
+points(pcgcov30$x[which(pops=="CS"),1], pcgcov30$x[which(pops=="CS"), 2], pch=21, bg=colors[2], cex=1)
+points(pcgcov30$x[which(pops=="GU"),1], pcgcov30$x[which(pops=="GU"), 2], pch=21, bg=colors[2], cex=1)
+points(pcgcov30$x[which(pops=="MR"),1], pcgcov30$x[which(pops=="MR"), 2], pch=21, bg=colors[2], cex=1)
+points(pcgcov30$x[which(pops=="SC"),1], pcgcov30$x[which(pops=="SC"), 2], pch=21, bg=colors[2], cex=1)
+
+#legend("bottomleft", legend=c("P. muricata", "P. radiata", "P. attenuata"), pch=c(16,16,16), ncol=1, col=colors[1:3], cex=1)
+
+
+####### PC 3v4, miss30
+
+# the plot function in the line below sets the axes right off the bat
+# so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
+# must change these for the other PCAs!!!
+plot(pcgcov30$x[,3], pcgcov30$x[,4], type="n", main = "Pines combined, first look miss30", xlab=paste("PC3 (",(imp30$importance[,3][[2]]*100), "% )", sep=""), ylab=paste("PC4 (",(imp30$importance[,4][[2]]*100), "% )", sep=""), cex.lab=1.2)
+
+# the blue 1 and 2 in the points function refer to the PCs
+# must change these to 2 and 3 for PCs 2 v 3, for example!
+#### SC and MR populations containe presumed hybrids!
+points(pcgcov30$x[which(pops=="DC"),3], pcgcov30$x[which(pops=="DC"), 4], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="FR"),3], pcgcov30$x[which(pops=="FR"), 4], pch=21, bg=colors[2], cex=1)
+points(pcgcov30$x[which(pops=="NR"),3], pcgcov30$x[which(pops=="NR"), 4], pch=21, bg=colors[3], cex=1)
+points(pcgcov30$x[which(pops=="PA"),3], pcgcov30$x[which(pops=="PA"), 4], pch=21, bg=colors[5], cex=1)
+points(pcgcov30$x[which(pops=="PP"),3], pcgcov30$x[which(pops=="PP"), 4], pch=21, bg=colors[6], cex=1)
+points(pcgcov30$x[which(pops=="SP"),3], pcgcov30$x[which(pops=="SP"), 4], pch=21, bg=colors[14], cex=1)
+points(pcgcov30$x[which(pops=="SR"),3], pcgcov30$x[which(pops=="SR"), 4], pch=21, bg=colors[14], cex=1)
+points(pcgcov30$x[which(pops=="PR"),3], pcgcov30$x[which(pops=="PR"), 4], pch=21, bg=colors[12], cex=1)
+
+points(pcgcov30$x[which(pops=="CG"),3], pcgcov30$x[which(pops=="CG"), 4], pch=21, bg=colors[4], cex=1)
+
+points(pcgcov30$x[which(pops=="CM"),3], pcgcov30$x[which(pops=="CM"), 4], pch=21, bg=colors[7], cex=1)
+points(pcgcov30$x[which(pops=="CN"),3], pcgcov30$x[which(pops=="CN"), 4], pch=21, bg=colors[8], cex=1)
+points(pcgcov30$x[which(pops=="CS"),3], pcgcov30$x[which(pops=="CS"), 4], pch=21, bg=colors[9], cex=1)
+points(pcgcov30$x[which(pops=="GU"),3], pcgcov30$x[which(pops=="GU"), 4], pch=21, bg=colors[10], cex=1)
+points(pcgcov30$x[which(pops=="MR"),3], pcgcov30$x[which(pops=="MR"), 4], pch=21, bg=colors[11], cex=1)
+points(pcgcov30$x[which(pops=="SC"),3], pcgcov30$x[which(pops=="SC"), 4], pch=21, bg=colors[13], cex=1)
+
+####### PC 3v4, miss30, grouped on species
+
+# the plot function in the line below sets the axes right off the bat
+# so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
+# must change these for the other PCAs!!!
+plot(pcgcov30$x[,3], pcgcov30$x[,4], type="n", main = "Pines combined, first look miss30", xlab=paste("PC3 (",(imp30$importance[,3][[2]]*100), "% )", sep=""), ylab=paste("PC4 (",(imp30$importance[,4][[2]]*100), "% )", sep=""), cex.lab=1.2)
+
+# the blue 1 and 2 in the points function refer to the PCs
+# must change these to 2 and 3 for PCs 2 v 3, for example!
+#### SC and MR populations containe presumed hybrids!
+points(pcgcov30$x[which(pops=="DC"),3], pcgcov30$x[which(pops=="DC"), 4], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="FR"),3], pcgcov30$x[which(pops=="FR"), 4], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="NR"),3], pcgcov30$x[which(pops=="NR"), 4], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="PA"),3], pcgcov30$x[which(pops=="PA"), 4], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="PP"),3], pcgcov30$x[which(pops=="PP"), 4], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="SP"),3], pcgcov30$x[which(pops=="SP"), 4], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="SR"),3], pcgcov30$x[which(pops=="SR"), 4], pch=21, bg=colors[1], cex=1)
+points(pcgcov30$x[which(pops=="PR"),3], pcgcov30$x[which(pops=="PR"), 4], pch=21, bg=colors[1], cex=1)
+
+points(pcgcov30$x[which(pops=="CG"),3], pcgcov30$x[which(pops=="CG"), 4], pch=21, bg=colors[4], cex=1)
+
+points(pcgcov30$x[which(pops=="CM"),3], pcgcov30$x[which(pops=="CM"), 4], pch=21, bg=colors[7], cex=1)
+points(pcgcov30$x[which(pops=="CN"),3], pcgcov30$x[which(pops=="CN"), 4], pch=21, bg=colors[7], cex=1)
+points(pcgcov30$x[which(pops=="CS"),3], pcgcov30$x[which(pops=="CS"), 4], pch=21, bg=colors[7], cex=1)
+points(pcgcov30$x[which(pops=="GU"),3], pcgcov30$x[which(pops=="GU"), 4], pch=21, bg=colors[7], cex=1)
+points(pcgcov30$x[which(pops=="MR"),3], pcgcov30$x[which(pops=="MR"), 4], pch=21, bg=colors[7], cex=1)
+points(pcgcov30$x[which(pops=="SC"),3], pcgcov30$x[which(pops=="SC"), 4], pch=21, bg=colors[7], cex=1)
+
+
 
 
 
