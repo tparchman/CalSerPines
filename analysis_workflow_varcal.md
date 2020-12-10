@@ -138,7 +138,7 @@ For LIB2:
 ####################################################################################
 ### Lanie started here: begin with attenuata
 ####################################################################################
-
+ 
     /working/lgalland/attenuata/
 
 ####################################################################################
@@ -680,3 +680,6 @@ bcftools mpileup -C 50 -d 250 -f genome.fasta -q 30 -Q 20 -I -b bams -O b -o tpo
 ## sometimes I use the -c option, sometimes not, I have mixed feelings, probably would use it
 ## for podura
 bcftools call -v -c -f GQ -p 0.01 -P 0.001 -O v -o tpod.vcf tpod.bcf
+
+
+TEST
