@@ -481,13 +481,7 @@ THESE ARE THE TWO FILES YOU NEED FOR INITIAL VERIFICATION PCA (species_ids_col.t
 File species_ids_col.txt is a single column format, no header, with individuals listed as HT_MR_0692, etc etc etc
 File species_pops.txt is a single column format, no header, with lines (in order) as CN, CN, CN, CN, CN, AB, AB, AB, AB	
 
-### check initial PCAs in R
-Notes for issues with PCA:
-	
-	pcgcov30$x[,1]
-This will print out the PC scores, which will be in the same order as the ids file. Identify the scores that are out of range based on where your cloud of dots is in PC space. So, If your cloud is way over on the left, below zero, yet a couple dots from that population are on the right (above zero), look for positive scores and then line them up with the correct individual ID in the ids file.
-
-####
+scp files to laptop for PCA:
 
 	scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pntest_mean_variants_miss30_common.recode.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 
@@ -496,14 +490,13 @@ This will print out the PC scores, which will be in the same order as the ids fi
 	scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 	
 #### Initial look at PCAs to make sure data is okay. DONE IN R
-#### R code is called verification_PCs_WORKING_radiata.r in the following directory outlined below
-#########################
+#R code is called verification_PCs_WORKING_radiata.r in the following directory outlined below
 
 	setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA")
 
-Make sure you run all the miss40 stuff before all the miss50 stuff. Otherwise, you are just writing over the files as you go.
+#Make sure you run all the miss40 stuff before all the miss50 stuff. Otherwise, you are just writing over the files as you go.
 
-######miss 30 
+#miss 30 
 	
 	read.table("pntest_mean_variants_miss30_common.recode.txt", header=F)->gl
 	read.table("pine_ids_col.txt", header=F)->ids
@@ -512,17 +505,15 @@ Make sure you run all the miss40 stuff before all the miss50 stuff. Otherwise, y
 	cbind(ids, pops, tgl)->tidsgl
 	write.table(tidsgl, file="pine_gl_matrix_miss30.txt", sep=" ", row.names=F, col.names=F , quote=F)
 
-###########
 ### Now, the files are ready for PCA
-###########
 
-######miss 30
+#miss 30
 
 	miss30 <- read.delim("pine_gl_matrix_miss30.txt", header=FALSE, sep=" ")
 	miss30[1:10,1:10]
 	dim(miss30) #454 * 13468 ####two more than loci because first column is whole ID identifier, second column is population identifier
 
-(Notes on deleting rows can be found in contorta working PCs verification file)
+#(Notes on deleting rows can be found in contorta working PCs verification file)
 
 	g30 <- t(miss30[,3:13468])
 	dim(g30) # 13466 * 454
@@ -554,7 +545,7 @@ Make sure you run all the miss40 stuff before all the miss50 stuff. Otherwise, y
 	summary(pcgcov30)
 
 
-########Plotting PCs, miss30
+#Plotting PCs, miss30
 
 	colors <-c(
   		"#1795ea",
@@ -589,14 +580,14 @@ Make sure you run all the miss40 stuff before all the miss50 stuff. Otherwise, y
 
 
 	pcgcov30$x[,1]
-####### PC 1v2, miss30, independent colors
 
-The pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
-Must change these for the other PCAs!!!
+###### PC 1v2, miss30, independent colors
+#The pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
+#Must change these for the other PCAs!!!
 	
 	plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines combined, first look miss30", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
 
-The blue 1 and 2 in the points function refer to the PCs. Must change these to 2 and 3 for PCs 2 v 3, for example!
+#the blue 1 and 2 in the points function refer to the PCs. Must change these to 2 and 3 for PCs 2 v 3, for example!
 
 	points(pcgcov30$x[which(pops=="DC"),1], pcgcov30$x[which(pops=="DC"), 2], pch=21, bg=colors[1], cex=1)
 	points(pcgcov30$x[which(pops=="FR"),1], pcgcov30$x[which(pops=="FR"), 2], pch=21, bg=colors[2], cex=1)
@@ -634,9 +625,9 @@ The blue 1 and 2 in the points function refer to the PCs. Must change these to 2
       "PIAT, Santa Cruz High", "PIAT, Santa Cruz Low", "PIAT, Santa Cruz Top", "PIAT, Yosemite A", "PIAT, Yosemite B",
       "PIRA, Cambria (SLO)", "PIRA, Cedros North", "PIRA, Cedros South", "PIRA, Guadalupe", "PIRA, Monterey", "PIRA, Santa Cruz"), pch=c(16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16), ncol=2, col=colors[1:28], cex=.8)
 
-Save plot window as pines_combined_firstLook_miss30.pdf
+#Save plot window as pines_combined_firstLook_miss30.pdf
 
-####### PC 1v2, miss30, grouped on species
+###### PC 1v2, miss30, grouped on species
 
 	plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines conbined, FirstLook miss 30, by species", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
 
@@ -674,7 +665,7 @@ Save plot window as pines_combined_firstLook_miss30.pdf
 
 	legend("bottomright", legend=c("P. muricata", "P. radiata", "P. attenuata"), pch=c(16,16,16), ncol=1, col=colors[1:3], cex=1)
 
-Save window as pinesCombined_firstLook_miss30_bySpecies.pdf
+#Save window as pinesCombined_firstLook_miss30_bySpecies.pdf
 
 
 
