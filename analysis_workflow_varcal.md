@@ -682,9 +682,4 @@ bcftools mpileup -C 50 -d 250 -f genome.fasta -q 30 -Q 20 -I -b bams -O b -o tpo
 bcftools call -v -c -f GQ -p 0.01 -P 0.001 -O v -o tpod.vcf tpod.bcf
 
 
-TEST
-lanie testing
-
-trying again
-
-Tom pushing
+new
