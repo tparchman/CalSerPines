@@ -19,13 +19,19 @@
 ## 1. Cleaning contaminants
 ####################################################################################
 
-Being executed on ponderosa using tapioca pipeline. Commands in bash script, executed as below (11/17/20).
+Being executed on ponderosa using tapioca pipeline. Commands in bash script, executed as below (11/17/20). This was for two NovaSeq lanes generated in November.
 
     $ module load fqutils/0.4.1
     $ module load bowtie2/2.2.5
     
     $ bash cleaning_bash.sh &
 
+A second pair of NovaSeq lanes from UTGSAF was processed starting 12/26/20, as below
+
+    $ module load fqutils/0.4.1
+    $ module load bowtie2/2.2.5
+    
+    $ bash cleaning_bash_12_20.sh &
 
 After .clean.fastq has been produced, recompress raw data:
 

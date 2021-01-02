@@ -23,7 +23,7 @@ cat /archive/parchman_lab/rawdata_to_backup/GSAF_12_20/BH-sheep-ddRADseq_S1_L001
 echo "Clean copy of lane 1 done"
 
 ##########################################################################################
-## UTGSAF 11_20 cleaning 2 (POSE, Quadrus, PIAT)
+## UTGSAF 12_20 cleaning 2 (TICR and PIMU)
 ##########################################################################################
 
 /working/jahner/tapioca/src/tap_contam_analysis --db  /archive/parchman_lab/rawdata_to_backup/contaminants/illumina_oligos --pct 20 /archive/parchman_lab/rawdata_to_backup/GSAF_12_20/Tcristinae-ddRADseq_S2_L002_R1_001.fastq > TICR_PIMU.readstofilter.ill.txt 
