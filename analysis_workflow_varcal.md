@@ -95,6 +95,41 @@ Cleaning up the LIB2 directory:
     $ rm miderrors_S2_11_20.clean.fastq
     $ rm parsereport_S2_11_20.clean.fastq
     
+
+Parsing BHS_PIMU library :
+
+ 	$ perl parse_barcodes768.pl barcodeKey_lib6_bighorns_pines.csv BHS_PIMU.clean.fastq A00 &
+
+Parsing TICR_PIMU library:
+
+	$ perl parse_barcodes768.pl barcodeKey_lib4_timema_pines.csv TICR_PIMU.clean.fastq A00 &
+
+`NOTE`: the A00 object is the code that identifies the sequencer (first three characters after the @ in the fastq identifier).
+
+    $ less parsereport_S1_11_20.clean.fastq
+    Good mids count: 1484409965
+    Bad mids count: 36536312
+    Number of seqs with potential MSE adapter in seq: 337486
+    Seqs that were too short after removing MSE and beyond: 184
+
+    $ less parsereport_S1_11_20.clean.fastq
+    Good mids count: 1475831187
+    Bad mids count: 45622449
+    Number of seqs with potential MSE adapter in seq: 332950
+    Seqs that were too short after removing MSE and beyond: 213
+
+
+Cleaning up the LIB1 directory:
+
+    $ rm S1_11_20.clean.fastq
+    $ rm miderrors_S1_11_20.clean.fastq
+    $ rm parsereport_S1_11_20.clean.fastq
+
+Cleaning up the LIB2 directory:
+
+    $ rm S2_11_20.clean.fastq
+    $ rm miderrors_S2_11_20.clean.fastq
+    $ rm parsereport_S2_11_20.clean.fastq
 ####################################################################################
 ## 3. splitting fastqs
 ####################################################################################
