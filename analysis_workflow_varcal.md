@@ -1,8 +1,6 @@
 example of inserting picutre, pdf, etc:
 ![PCA](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/pinesCombined_firstLook_miss30_bySpecies.pdf)
 
-testing again
-
 ### Notes on cleaning NovaSeq flow cell from 11/20, barcode parsing for multiple projects, and analyses of pine data 
 
 
