@@ -220,13 +220,31 @@ kept data threshold low to retain Mexican island populations
     rm -rf PR_GU_0821.fastq.gz
     rm -rf PR_MR_0780.fastq.gz
     rm -rf PX_SC_0810.fastq.gz
+    rm -rf PM_DM_0241.fastq
+    rm -rf PR_MP_0823.fastq
 
-removed 19 individuals. new total = 454 individuals
+removed 19 individuals. new total = 570 individuals
 
 ### Combined pines, de novo assembly
 
 #### 1. gzip files (already done, takes time)
     nohup gzip *fastq &>/dev/null &
+
+
+
+
+
+
+
+# DONE TO HERE
+
+
+
+
+
+
+
+
 
 #### 2. make list of fastqs
     ls *.fastq.gz > namelist
