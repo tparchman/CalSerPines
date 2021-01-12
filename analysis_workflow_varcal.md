@@ -230,22 +230,6 @@ removed 19 individuals. new total = 570 individuals
 #### 1. gzip files (already done, takes time)
     nohup gzip *fastq &>/dev/null &
 
-
-
-
-
-
-
-# DONE TO HERE
-
-
-
-
-
-
-
-
-
 #### 2. make list of fastqs
     ls *.fastq.gz > namelist
 
@@ -260,7 +244,7 @@ removed 19 individuals. new total = 570 individuals
     
 #### 5. create list of sequences and counts for each individual (few minutes)
     cat namelist | parallel --no-notice -j 8 "zcat {}.fastq | mawk '$AWK1' | mawk '$AWK2' | perl -e '$PERLT' > {}.uniq.seqs" &
-    
+
 #### 6. combine files for all individuals (about 15 seconds)
     cat *.uniq.seqs > uniq.seqs
 
@@ -268,7 +252,7 @@ removed 19 individuals. new total = 570 individuals
     parallel --no-notice -j 8 mawk -v x=4 \''$1 >= x'\' ::: *.uniq.seqs | cut -f2 | perl -e 'while (<>) {chomp;    $z{$_}++;} while(($k,$v) = each(%z))     {print "$v\t$k\n";}' > uniqCperindv
     
     wc -l uniqCperindv
-12696842 uniq sequences per individual
+16759980 uniq sequences per individual
 
 #### 8. restrict the data by how many individuals have that read
     for ((i = 2; i <= 10; i++));
@@ -282,22 +266,22 @@ NOTE: the above bash loop just makes a list from 2 to 10
     
     more uniqseq.peri.data
 
-2	3719956
-3	2020056
-4	1347546
-5	996134
-6	780431
-7	635769
-8	532158
-9	453801
-10	392907
+2	5937752
+3	3674369
+4	2709744
+5	2167809
+6	1810265
+7	1550095
+8	1353227
+9	1196393
+10	1068049
 
     rm -rf ufile
     
 #### 9. restrict sequences to those that are found in at least 4 inds (few seconds per ind)
     mawk -v x=4 '$1 >= x' uniqCperindv > uniq.k.4.c.4.seqs
     wc -l uniq.k.4.c.4.seqs
-1347546 uniq.k.4.c.4.seqs
+2709744 uniq.k.4.c.4.seqs
 
 #### 10. Convert these sequences to fasta format (both pretty instant)
     cut -f2 uniq.k.4.c.4.seqs > totaluniqseq
@@ -312,6 +296,7 @@ NOTE: the above bash loop just makes a list from 2 to 10
 the -c 0.8 in the line below means that you're aligning sequences that have 0.8 similarity and above (sequence similarity threshold - the default is 0.9, so increase it from 0.8 to 0.9)
 #do 90, 93, and 95 and see how many contigs we have - run each of these and then record number of contigs
 #in the lines below, cdhit is using uniq.F.fasta to create/write (or overwrite) the file called reference.fasta.original. First line listed below takes about 5 mins.
+##DID NOT RUN 0.8 WHEN I ADDED MURICATA ON 1/10!!!
 
     nohup cd-hit-est -i uniq.F.fasta -o reference.fasta.original -M 0 -T 0 -c 0.8 &>/dev/null &
     grep "^>" reference.fasta.original -c
@@ -320,8 +305,8 @@ the -c 0.8 in the line below means that you're aligning sequences that have 0.8 
 
     nohup cd-hit-est -i uniq.F.fasta -o reference.fasta.original -M 0 -T 0 -c 0.9 &>/dev/null &
     grep "^>" reference.fasta.original -c
-    
-349768 contigs
+
+615977 contigs
 
 MOVING FORWARD WITH 0.9 MATCH THRESHOLD
 
@@ -338,7 +323,7 @@ MOVING FORWARD WITH 0.9 MATCH THRESHOLD
 Artificial reference is: reference.fasta.original
     
     grep "^>" reference.fasta.original -c
-349768 contigs for -c 0.9
+615977 contigs for -c 0.9
 
 #### renaming id lines from contig to scaffold:
     
@@ -347,7 +332,7 @@ pine_ref.fasta is the reference to use below
 
     rm reference.fasta.original
     grep ">" pine_ref.fasta -c
-349768 contigs in the reference
+615977 contigs in the reference
 
 #### index reference genome:
 about 1 minute. makes other ref files (.amb, etc.)
@@ -373,7 +358,7 @@ Unzipping fastqs. Originally did about 5 per minute:
     R
     meanReads <- read.delim("meanReads_perInd.txt", header=FALSE, sep=":")
     mean(meanReads[,2])
-2016325 (this is the mean!)
+2590771 (this is the mean!)
 
     quit()
 
@@ -395,6 +380,23 @@ Edit distance of 4. This step takes several hours (e.g., 6 hours for 279 pines).
     nohup bwa index -p pine_ref -a is pine_ref.fasta &>/dev/null &
     nohup perl runbwa.pl *fastq &>/dev/null &
 
+
+
+
+
+
+
+
+# DONE TO HERE
+
+
+
+
+
+
+
+
+ 
 #### convert sam to bam
 Takes some time. About 10 minutes per 70 individuals.
 
