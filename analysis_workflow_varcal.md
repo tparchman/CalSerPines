@@ -46,7 +46,7 @@ Number of reads **before** cleaning:
 
     $ grep -c "^@" sample-1_S1_L001_R1_001.fastq > S1_number_of_rawreads.txt
     $ grep -c "^@" sample-2_S2_L002_R1_001.fastq > S2_number_of_rawreads.txt
-    
+
 Number of reads **after** cleaning:
 
     $ grep "^@" S1_11_20.clean.fastq -c > S1_No_ofcleanreads.txt &
@@ -98,7 +98,6 @@ Cleaning up the LIB2 directory:
     $ rm miderrors_S2_11_20.clean.fastq
     $ rm parsereport_S2_11_20.clean.fastq
     
-
 Parsing BHS_PIMU library :
 
  	$ perl parse_barcodes768.pl barcodeKey_lib6_bighorns_pines.csv BHS_PIMU.clean.fastq A00 &
@@ -143,7 +142,6 @@ Make ids file
 
     $ cut -f 3 -d "," 11_20_GSAF_lane2BCODEKEY.csv | grep "_" > L2_ids_noheader.txt
 
-
     $ cut -f 3 -d "," barcodeKey_lib4_timema_pines.csv | grep "_" > TICR_PIMU_ids_noheader.txt
 
     $ cut -f 3 -d "," barcodeKey_lib6_bighorns_pines.csv | grep "_" > BHS_PIMU_ids_noheader.txt
@@ -163,7 +161,7 @@ Zip the parsed*fastq files for now, but delete once patterns and qc are verified
     $ gzip parsed_S1_11_20.clean.fastq
     $ gzip parsed_S2_11_20.clean.fastq
 
-Total reads for muricata, radiata, and attenuata (473 individuals)
+Total reads for muricata, radiata, and attenuata
 
     $ grep -c "^@" *fastq > seqs_per_ind.txt
 
@@ -187,18 +185,19 @@ For LIB2:
 
 ### Moved the parsed files for all of the above project to /archive/parchman_lab/rawdata_to_backup
 
-####################################################################################
-### Lanie started here: begin with attenuata
-####################################################################################
+## STOP!!!
+
+All individuals fastqs need to be backed up on a lab hard drive before continuing. THIS IS VERY IMPORTANT
+
+## Lanie started here: all species
  
-    /working/lgalland/attenuata/
+    $ cd /working/lgalland/pines_combined/
 
 ####################################################################################
 ## 4. de novo assembly
 ####################################################################################
 
-
-### removed individuals with <35M of sequence data
+### removed individuals with <35M (zipped) of sequence data
 kept data threshold low to retain Mexican island populations
 
     rm -rf PA_LA_0074.fastq.gz
@@ -227,130 +226,138 @@ removed 19 individuals. new total = 570 individuals
 
 ### Combined pines, de novo assembly
 
-#### 1. gzip files (already done, takes time)
-    nohup gzip *fastq &>/dev/null &
+#### 1. gzip files (takes time)
+    
+    $ nohup gzip *fastq &>/dev/null &
 
 #### 2. make list of fastqs
-    ls *.fastq.gz > namelist
+    
+    $ ls *.fastq.gz > namelist
 
 #### 3. one-liner to remove '.fastq.gz' from namelist (instant)
-    sed -i'' -e 's/.fastq.gz//g' namelist
+    
+    $ sed -i'' -e 's/.fastq.gz//g' namelist
     
 #### 4. set variables (run as one chunk command, instant)
-    AWK1='BEGIN{P=1}{if(P==1||P==2){gsub(/^[@]/,">");print}; if(P==4)P=0; P++}'
+
+    $  AWK1='BEGIN{P=1}{if(P==1||P==2){gsub(/^[@]/,">");print}; if(P==4)P=0; P++}'
     AWK2='!/>/'
     AWK3='!/NNN/'
     PERLT='while (<>) {chomp; $z{$_}++;} while(($k,$v) = each(%z)) {print "$v\t$k\n";}'
     
 #### 5. create list of sequences and counts for each individual (few minutes)
-    cat namelist | parallel --no-notice -j 8 "zcat {}.fastq | mawk '$AWK1' | mawk '$AWK2' | perl -e '$PERLT' > {}.uniq.seqs" &
-
+    
+    $ cat namelist | parallel --no-notice -j 8 "zcat {}.fastq | mawk '$AWK1' | mawk '$AWK2' | perl -e '$PERLT' > {}.uniq.seqs" &
+    
 #### 6. combine files for all individuals (about 15 seconds)
-    cat *.uniq.seqs > uniq.seqs
+    
+    $ cat *.uniq.seqs > uniq.seqs
 
 #### 7. select those sequences that have 4 reads (or however you want to choose - pretty instant, about 1 minute)
-    parallel --no-notice -j 8 mawk -v x=4 \''$1 >= x'\' ::: *.uniq.seqs | cut -f2 | perl -e 'while (<>) {chomp;    $z{$_}++;} while(($k,$v) = each(%z))     {print "$v\t$k\n";}' > uniqCperindv
     
-    wc -l uniqCperindv
-16759980 uniq sequences per individual
+    $ parallel --no-notice -j 8 mawk -v x=4 \''$1 >= x'\' ::: *.uniq.seqs | cut -f2 | perl -e 'while (<>) {chomp; $z{$_}++;} while(($k,$v) = each(%z)) {print "$v\t$k\n";}' > uniqCperindv
+    
+    $ wc -l uniqCperindv
+        16759980 uniq sequences per individual
 
 #### 8. restrict the data by how many individuals have that read
-    for ((i = 2; i <= 10; i++));
+    `NOTE`: the bash below loop just makes a list from 2 to 10
+
+    $ for ((i = 2; i <= 10; i++));
     do
     echo $i >> ufile
     done
 
-NOTE: the above bash loop just makes a list from 2 to 10
+    $ cat ufile | parallel --no-notice "echo -n {}xxx && mawk -v x={} '\$1 >= x' uniqCperindv | wc -l" | mawk  '{gsub("xxx","\t",$0); print;}'| sort -g > uniqseq.peri.data
     
-    cat ufile | parallel --no-notice "echo -n {}xxx && mawk -v x={} '\$1 >= x' uniqCperindv | wc -l" | mawk  '{gsub("xxx","\t",$0); print;}'| sort -g > uniqseq.peri.data
-    
-    more uniqseq.peri.data
+    $ more uniqseq.peri.data
 
-2	5937752
-3	3674369
-4	2709744
-5	2167809
-6	1810265
-7	1550095
-8	1353227
-9	1196393
-10	1068049
+        2	5937752
+        3	3674369
+        4	2709744
+        5	2167809
+        6	1810265
+        7	1550095
+        8	1353227
+        9	1196393
+        10	1068049
 
-    rm -rf ufile
+    $ rm -rf ufile
     
 #### 9. restrict sequences to those that are found in at least 4 inds (few seconds per ind)
-    mawk -v x=4 '$1 >= x' uniqCperindv > uniq.k.4.c.4.seqs
-    wc -l uniq.k.4.c.4.seqs
-2709744 uniq.k.4.c.4.seqs
+
+    $ mawk -v x=4 '$1 >= x' uniqCperindv > uniq.k.4.c.4.seqs
+    $ wc -l uniq.k.4.c.4.seqs
+        2709744 uniq.k.4.c.4.seqs
 
 #### 10. Convert these sequences to fasta format (both pretty instant)
-    cut -f2 uniq.k.4.c.4.seqs > totaluniqseq
-    mawk '{c= c + 1; print ">Contig_" c "\n" $1}' totaluniqseq > uniq.fasta
+ 
+    $ cut -f2 uniq.k.4.c.4.seqs > totaluniqseq
+    $ mawk '{c= c + 1; print ">Contig_" c "\n" $1}' totaluniqseq > uniq.fasta
 
 #### 11. Extract the forward reads
-    sed -e 's/NNNNNNNNNN/\t/g' uniq.fasta | cut -f1 > uniq.F.fasta
+    
+    $ sed -e 's/NNNNNNNNNN/\t/g' uniq.fasta | cut -f1 > uniq.F.fasta
 
 #### 12. cdhit assembly. takes some time.
-    module load cd-hit/4.6
+   
+    $ module load cd-hit/4.6
     
-the -c 0.8 in the line below means that you're aligning sequences that have 0.8 similarity and above (sequence similarity threshold - the default is 0.9, so increase it from 0.8 to 0.9)
-#do 90, 93, and 95 and see how many contigs we have - run each of these and then record number of contigs
-#in the lines below, cdhit is using uniq.F.fasta to create/write (or overwrite) the file called reference.fasta.original. First line listed below takes about 5 mins.
-##DID NOT RUN 0.8 WHEN I ADDED MURICATA ON 1/10!!!
+`NOTE`: the -c 0.8 in the line below means that you're aligning sequences that have 0.8 similarity and above (sequence similarity threshold - the default is 0.9, so increase it from 0.8 to 0.9). Do 90, 93, and 95 and see how many contigs we have - run each of these and then record number of contigs.
 
-    nohup cd-hit-est -i uniq.F.fasta -o reference.fasta.original -M 0 -T 0 -c 0.8 &>/dev/null &
-    grep "^>" reference.fasta.original -c
+`NOTE`: in the lines below, `cdhit` is using uniq.F.fasta to create/write (or overwrite) the file called reference.fasta.original. First line listed below takes about 5 mins.
 
-206818 contigs (grepped below)
+    $ nohup cd-hit-est -i uniq.F.fasta -o reference.fasta.original -M 0 -T 0 -c 0.9 &>/dev/null &
 
-    nohup cd-hit-est -i uniq.F.fasta -o reference.fasta.original -M 0 -T 0 -c 0.9 &>/dev/null &
-    grep "^>" reference.fasta.original -c
-
-615977 contigs
+    $ grep "^>" reference.fasta.original -c
+        615977 contigs
 
 MOVING FORWARD WITH 0.9 MATCH THRESHOLD
 
 ### GET RID OF .UNIQ.SEQS FILES!!!
 
-    /working/lgalland/pines_combined
+    $ cd /working/lgalland/pines_combined
 
-    mkdir bwa
-    mv /working/lgalland/pines_combined/reference.fasta.original bwa/
-    rm reference.fasta.original.clstr
+    $ mkdir bwa
+    $ mv /working/lgalland/pines_combined/reference.fasta.original bwa/
+    $ rm reference.fasta.original.clstr
     
-    /working/lgalland/pines_combined/bwa/
+    $ cd /working/lgalland/pines_combined/bwa/
 
 Artificial reference is: reference.fasta.original
     
-    grep "^>" reference.fasta.original -c
-615977 contigs for -c 0.9
+    $ grep "^>" reference.fasta.original -c
+        615977 contigs for -c 0.9
 
-#### renaming id lines from contig to scaffold:
+Rename id lines from contig to scaffold:
     
-    sed "s/Contig/scaffold/" reference.fasta.original > pine_ref.fasta
-pine_ref.fasta is the reference to use below
+    $ sed "s/Contig/scaffold/" reference.fasta.original >pine_ref.fasta
 
-    rm reference.fasta.original
-    grep ">" pine_ref.fasta -c
-615977 contigs in the reference
+`NOTE`: pine_ref.fasta is the reference to use below
 
-#### index reference genome:
-about 1 minute. makes other ref files (.amb, etc.)
-    
-    module load bwa/0.7.8
-    nohup bwa index -p pine_ref -a is pine_ref.fasta &>/dev/null &
-    cd /working/lgalland/pines_combined/
-    mv *.gz /working/lgalland/pines_combined/bwa/
-    cd /working/lgalland/pines_combined/bwa
-    
-Unzipping fastqs. Originally did about 5 per minute:
-    
-    nohup gunzip *fastq.gz &>/dev/null &
+    $ rm reference.fasta.original
+    $ grep ">" pine_ref.fasta -c
+        615977 contigs in the reference
 
-## ALREADY REMOVED LOW COVERAGE INDIVIDUALS
-
-    /working/lgalland/pines_combined/bwa
+Index reference genome (about 1 minute. makes other ref files (.amb, etc.))
     
+    $ module load bwa/0.7.8
+    $ nohup bwa index -p PA_ref -a is pine_ref.fasta &>/dev/null &
+
+    $ cd /working/lgalland/pines_combined/
+    $ mv *.gz /working/lgalland/pines_combined/bwa/
+    $ cd /working/lgalland/pines_combined/bwa
+    
+Unzip fastqs. Originally did about 5 per minute:
+    
+    $ nohup gunzip *fastq.gz &>/dev/null &
+
+    $ cd /working/lgalland/pines_combined/bwa
+
+##########################################
+##########################################
+##########################################
+ # THE FOLLOWING IS NOT IN JAHNER'S FILE YET!!!   
 #### Calculate the mean number of reads per individual, from your individual fastqs
 
     grep "^@" -c *.fastq > meanReads_perInd.txt &
@@ -361,24 +368,82 @@ Unzipping fastqs. Originally did about 5 per minute:
 2590771 (this is the mean!)
 
     quit()
+##########################################
+##########################################
+##########################################
 
 ####################################################################################
 ## 5. reference based assembly using bwa/0.7.5a
 ####################################################################################
 
-map sequneces to the reference genome using bwa via a perl wrapper to iterate over individuals = multiple fastq files. This perl script runs bwa aln and bwa samse (single end reads). This will produce alignments of the reads for each individual, mapped onto the artificial reference genome.
+`NOTE`:  Map sequneces to the reference genome using `bwa` via a perl wrapper to iterate over individuals = multiple fastq files. This perl script runs bwa aln and bwa samse (single end reads). This will produce alignments of the reads for each individual, mapped onto the artificial reference genome.
 
-Running BWA. Note that the script must be modified with the correct reference name (which must be changed in TWO places in the script). Example: the runbwa.pl script references sheep_ref in two places. Change to accurate species. NOTE: We do not have this "sheep_ref" as a file. Rather, it represents the conglomeration of the sheep_ref.amb, .ann, .bwt, .fasta, .pac, and .sa files
-
-Edit distance of 4. This step takes several hours (e.g., 6 hours for 279 pines).
+Running `bwa`. Note that the script must be modified with the correct reference name (which must be changed in TWO places in the script). Example: the `runbwa.pl` script references `sheep_ref` in two places. Change to accurate species. `NOTE`: We do not have this "sheep_ref" as a file. Rather, it represents the conglomeration of the sheep_ref.amb, .ann, .bwt, .fasta, .pac, and .sa files. Edit distance of 4. This step takes several hours (e.g., 6 hours for 279 pines).
 **Working with old bwa 7.5 and samtools 1.3 and bcftools 1.3; following monia and alex's notes. 
 
-    cp /working/lgalland/perl_scripts/runbwa.pl /working/lgalland/pines_combined/bwa/
-    nano runbwa.pl
+`NOTE`: `runbwa.pl` needs to be modified for every project (index name, output directory, number of cpus). 
+
+    $ cp /working/lgalland/perl_scripts/runbwa.pl /working/lgalland/pines_combined/bwa/
+    $ nano runbwa.pl
+
+ Make index for `bwa` 
+
+    $ module load bwa/0.7.5a
+    $ nohup bwa index -p pine_ref -a is pine_ref.fasta &>/dev/null &
+ 
+ Perl wrapper to run `bwa`.    
     
-    module load bwa/0.7.5a
-    nohup bwa index -p pine_ref -a is pine_ref.fasta &>/dev/null &
-    nohup perl runbwa.pl *fastq &>/dev/null &
+    $ nohup perl runbwa.pl *fastq &>/dev/null &
+
+Convert `sam` to `bam` files. `NOTE`: change number of threads based on current server usage. (Takes some time. About 10 minutes per 70 individuals.)
+
+    $ cd /working/lgalland/pines_combined/bwa/sam_sai
+    $ module load samtools/1.3
+    $ nohup perl /working/lgalland/perl_scripts/sam2bamV1.3.pl *.sam &>/dev/null &
+
+Clean up a bit
+
+    $ rm -rf *.sam
+    $ rm -rf *.sai
+
+Count assembled
+
+    $ module load samtools/1.3
+    $ nohup perl /working/lgalland/perl_scripts/count_assembled.pl *.sorted.bam &>/dev/null &
+    
+Make a plot in R of assembled vs. raw read counts per individual
+
+
+    $ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/assembled_perind.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa
+    
+`NOTE`: completed in `R`:
+
+    setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa")
+
+	pdf(file="number_of_reads.pdf", width=6, height=6)
+
+	reads<-read.csv("assembled_perind.txt", header=F)
+	hist(reads[,2], breaks=15, col="grey", main="")
+
+	dev.off()
+
+####################################################################################
+## 6. calling variants 
+####################################################################################
+
+    $ module load bcftools/1.3
+    $ module load samtools/1.3
+    
+    $ mv /working/lgalland/pines_combined/bwa/pine_ref* /working/lgalland/pines_combined/bwa/sam_sai/
+    
+    $ cd /working/lgalland/pines_combined/bwa/sam_sai/
+
+The following takes several (2-4) hours. `NOTE`: Run the following lines as one large chunk of code. Be sure to change reference name and output file.
+
+    $ samtools mpileup -P ILLUMINA --BCF --max-depth 100 --adjust-MQ 50 --min-BQ 20 --min-MQ 20 --skip-indels --output-tags DP,AD --fasta-ref pine_ref.fasta aln*sorted.bam | \
+    bcftools call -m --variants-only --format-fields GQ --skip-variants indels | \
+    bcftools filter --set-GTs . -i 'QUAL > 19 && FMT/GQ >9' | \
+    bcftools view -m 2 -M 2 -v snps --apply-filter "PASS" --output-type v --output-file variants_rawfiltered_12JAN2021.vcf &
 
 
 
@@ -397,84 +462,188 @@ Edit distance of 4. This step takes several hours (e.g., 6 hours for 279 pines).
 
 
  
-#### convert sam to bam
-Takes some time. About 10 minutes per 70 individuals.
+Number of loci in the vcf
 
-    /working/lgalland/pines_combined/bwa/sam_sai
-    module load samtools/1.3
-    nohup perl /working/lgalland/perl_scripts/sam2bamV1.3.pl *.sam &>/dev/null &
+    $ grep -c "^scaffold" variants_rawfiltered_12JAN2021.vcf
+        544434
 
-Few minutes for the following:
+Make id file for reheadering
 
-    module load samtools/1.3
-    nohup perl /working/lgalland/perl_scripts/count_assembled.pl *.sorted.bam &>/dev/null &
+    $ sed -s "s/aln_//" assembled_perind.txt | sed -s "s/.sorted.bam//" > pine_ids_col.txt
+
+Reheader variants_rawfiltered_dateHERE.vcf:
     
-    rm -rf *.sam
-    rm -rf *.sai
-
-#### make a plot in R of assembled vs. raw read counts per individual
-    scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/assembled_perind.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa
+    $ module load bcftools/1.3
+    $ module load samtools/1.3
+	$ module load vcftools/0.1.14
     
-###### In R:
-    setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa")
-
-	pdf(file="number_of_reads.pdf", width=6, height=6)
-
-	reads<-read.csv("assembled_perind.txt", header=F)
-	hist(reads[,2], breaks=15, col="grey", main="")
-
-	dev.off()
-
-####################################################################################
-## 6. calling variants 
-####################################################################################
-
-    module load bcftools/1.3
-    module load samtools/1.3
-    
-    mv /working/lgalland/pines_combined/bwa/pine_ref* /working/lgalland/pines_combined/bwa/sam_sai/
-    /working/lgalland/pines_combined/bwa/sam_sai/
-
-This takes several (2-4) hours. Run as one large chunk of code:
-
-    samtools mpileup -P ILLUMINA --BCF --max-depth 100 --adjust-MQ 50 --min-BQ 20 --min-MQ 20 --skip-indels --output-tags DP,AD --fasta-ref pine_ref.fasta aln*sorted.bam | \
-    bcftools call -m --variants-only --format-fields GQ --skip-variants indels | \
-    bcftools filter --set-GTs . -i 'QUAL > 19 && FMT/GQ >9' | \
-    bcftools view -m 2 -M 2 -v snps --apply-filter "PASS" --output-type v --output-file variants_rawfiltered_9DEC2020.vcf &
-
-
-
-
-
-
-
-
-
-# DONE TO HERE. LG 12/8 4:40pm
-
-
-
-
-
-
-
-
-
-
-
-#### making id file for reheadering:
-    sed -s "s/aln_//" assembled_perind.txt | sed -s "s/.sorted.bam//" > pine_ids_col.txt
-
-    module load bcftools/1.3
-    module load samtools/1.3
-
-This step is reheadering variants_rawfiltered_19MAR2020.vcf:
-    
-    nohup bcftools reheader -s pine_ids_col.txt variants_rawfiltered_9DEC2020.vcf -o rehead_variants_rawfiltered_9DEC2020.vcf &>/dev/null & 
+    $ nohup bcftools reheader -s pine_ids_col.txt variants_rawfiltered_12JAN2021.vcf -o rehead_variants_rawfiltered_12JAN2021.vcf &>/dev/null & 
 
 ####################################################################################
 ## 7. filtering
 ####################################################################################
+
+Initial round of filtering (just getting a feeling of how filtering parameters might shape the dataset)
+
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.9 --recode --thin 90
+            After filtering, kept 2389 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.8 --recode --thin 90
+	        After filtering, kept 8728 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.7 --recode --thin 90
+	        After filtering, kept 13237 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.6 --recode --thin 90
+	        After filtering, kept 16195 out of a possible 544434 Sites
+
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf04 --remove-filtered-all --maf 0.04 --max-missing 0.9 --recode --thin 90
+	        After filtering, kept 2951 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf04 --remove-filtered-all --maf 0.04 --max-missing 0.8 --recode --thin 90
+	        After filtering, kept 9698 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf04 --remove-filtered-all --maf 0.04 --max-missing 0.7 --recode --thin 90
+	        After filtering, kept 14500 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf04 --remove-filtered-all --maf 0.04 --max-missing 0.6 --recode --thin 90
+	        After filtering, kept 17947 out of a possible 544434 Sites
+
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf03 --remove-filtered-all --maf 0.03 --max-missing 0.9 --recode --thin 90
+	        After filtering, kept 3689 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf03 --remove-filtered-all --maf 0.03 --max-missing 0.8 --recode --thin 90
+	        After filtering, kept 10613 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf03 --remove-filtered-all --maf 0.03 --max-missing 0.7 --recode --thin 90
+	        After filtering, kept 15759 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf03 --remove-filtered-all --maf 0.03 --max-missing 0.6 --recode --thin 90
+	        After filtering, kept 19997 out of a possible 544434 Sites
+
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf025 --remove-filtered-all --maf 0.025 --max-missing 0.9 --recode --thin 90
+	        After filtering, kept 4103 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf025 --remove-filtered-all --maf 0.025 --max-missing 0.8 --recode --thin 90
+	        After filtering, kept 11037 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf025 --remove-filtered-all --maf 0.025 --max-missing 0.7 --recode --thin 90
+	        After filtering, kept 16351 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf025 --remove-filtered-all --maf 0.025 --max-missing 0.6 --recode --thin 90
+	        After filtering, kept 21137 out of a possible 544434 Sites
+
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf02 --remove-filtered-all --maf 0.02 --max-missing 0.9 --recode --thin 90
+	        After filtering, kept 4771 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf02 --remove-filtered-all --maf 0.02 --max-missing 0.8 --recode --thin 90
+	        After filtering, kept 11694 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf02 --remove-filtered-all --maf 0.02 --max-missing 0.7 --recode --thin 90
+	        After filtering, kept 17178 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf02 --remove-filtered-all --maf 0.02 --max-missing 0.6 --recode --thin 90
+	        After filtering, kept 22738 out of a possible 544434 Sites
+
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf01 --remove-filtered-all --maf 0.01 --max-missing 0.9 --recode --thin 90
+	        After filtering, kept 6384 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf01 --remove-filtered-all --maf 0.01 --max-missing 0.8 --recode --thin 90
+	        After filtering, kept 12786 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf01 --remove-filtered-all --maf 0.01 --max-missing 0.7 --recode --thin 90
+	        After filtering, kept 18824 out of a possible 544434 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf01 --remove-filtered-all --maf 0.01 --max-missing 0.6 --recode --thin 90
+	        After filtering, kept 26121 out of a possible 544434 Sites
+
+`NOTE`: moving forward with `miss30_maf04`
+
+Filter out bad individuals, then refilter
+
+	$ vcftools --vcf variants_miss30_maf04.recode.vcf --missing-indv
+
+`OPTIONAL`: look at distribution of missing data in `R`
+
+    R
+    j <- read.delim("out.imiss", header=T)
+        dim(j)
+        head(j)
+    hist(j[,5], breaks=100, col="gray")
+
+`NOTE`: will remove individuals with >50% missing data (N = 9). (As this decimal number decreases, the number of individuals to remove increases. That is, the lower the fraction, the more stringent you are filtering.)
+
+    $ mawk '$5 > 0.5' out.imiss | cut -f1 > lowDP.indv
+    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --remove lowDP.indv --recode --recode-INFO-all --out rehead_variants_rawfiltered_12JAN2021_noBadInds
+        After filtering, kept 192 out of 201 Individuals
+        After filtering, kept 544434 out of a possible 544434 Sites
+
+Clean up the massive mess of files created above.
+
+	$ rm variants_miss*
+    $ gzip variants_rawfiltered_12JAN2021.vcf &
+    $ gzip rehead_variants_rawfiltered_12JAN2021.vcf &
+
+Filter the entire raw, NEW vcf file (the one without the bad Inds), at least 70% of individuals have at least one read, and filtering on maf .04 (filtering on loci)
+
+	$ module load vcftools/0.1.14
+	$ module load bcftools/1.3
+
+	$ vcftools --vcf rehead_variants_rawfiltered_12JAN2021_noBadInds.recode.vcf --out variants_miss30_maf04 --remove-filtered-all --maf 0.04 --max-missing 0.7 --recode --thin 90
+		After filtering, kept 15495 out of a possible 544434 Sites
+
+Rekill bad inds (missing >50%). 4 inds removed
+
+    $ vcftools --vcf variants_miss30_maf04.recode.vcf --missing-indv
+    $ mawk '$5 > 0.5' out.imiss | cut -f1 > lowDP.indv
+    $ vcftools --vcf variants_miss30_maf04.recode.vcf --remove lowDP.indv --recode --recode-INFO-all --out variants_miss30_maf04_noBadInds
+			After filtering, kept 188 out of 192 Individuals
+            After filtering, kept 15495 out of a possible 15495 Sites
+
+Generate mpgl
+	
+	$ perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss30_maf04_noBadInds.recode.vcf
+
+Generate pntest genotype likelihood file (for PCA)
+	
+	$ perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_maf04_noBadInds.recode.mpgl mean
+
+Make a file of IDs. Start with updated vcf file. Cut the first column and puts it into a new file, which is labeled "good head."
+
+    $ vcftools --vcf variants_miss30_maf04_noBadInds.recode.vcf --missing-indv 
+    $ cut -f 1 out.imiss > pine_ids_188.txt
+    $ sed "s/INDV/ind/" pine_ids_188.txt | sed "s/aln_//g" | sed "s/.sorted.bam//g" > pine_ids_188_good_head.txt
+
+Make other ID and pop formats for PCA. 
+	
+	$ cp pine_ids_188_good_head.txt pine_ids_188_good_noHead.txt
+	$ nano pine_ids_188_good_noHead.txt
+		remove the "ind" at the top for proper PCA format. The following tells awk that the delimiter is a comma, and to grab and print the first column, and then print it into pine_ids_col.txt (instead of just printing to screen)
+
+The following tells awk that the delimiter is a comma, and to grab and print the first column, and then print it into pine_ids_col.txt (instead of just printing to screen)
+
+	$ cp pine_ids_188_good_noHead.txt pine_ids_188_good_noHead_original.txt
+	$ awk -F "," '{print $1}' pine_ids_188_good_noHead.txt > pine_188_ids_col.txt
+
+Then, `sed` out the parts you don't want for your pops file (removing the "first term" in your ID file, in this case). (The following worked here, which was in format XX(species)_XX(population)_XXXX(ind).) 
+
+	$ sed -s "s/[A-Z][A-Z]_//" pine_188_ids_col.txt > pine_pops3.txt
+	$ sed -s "s/_[0-9]*//" pine_pops3.txt > pine_188_pops.txt
+
+***These are the two files you need for initial verification PCA (species_ids_col.txt and species_pops.txt). file `species_num_ids_col.txt` is a single column format, no header, with individuals listed as HT_MR_0692, etc. File `species_num_pops.txt` is a single column format, no header, with lines (in order) as CN, CN, CN, CN, CN, AB, AB, AB, AB.	
+
+`scp` files to laptop for initial look at PCAs
+
+	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pntest_mean_variants_miss30_maf04_noBadInds.recode.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+
+	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_188_ids_col.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+
+	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_188_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+
+Initial look at PCAs to make sure data is okay, done in R.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# EVERYTHING BELOW HERE IS KEPT FOR REFERENCE ONLY RIGHT NOW, AS OF 1/12/2021
 
 #### common MAF 0.05
 VCFtools (0.1.14)
