@@ -512,23 +512,6 @@ Filter the entire raw, NEW vcf file (the one without the bad Inds), at least 70%
 	$ vcftools --vcf rehead_variants_rawfiltered_12JAN2021_noBadInds.recode.vcf --out variants_miss30_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.7 --recode --thin 90
 		After filtering, kept 15404 out of a possible 2461844 Sites
 
-
-
-
-
-
-
-
-# DONE TO HERE
-
-
-
-
-
-
-
-
- 
 Rekill bad inds (missing >50%). 0 inds removed
 
     $ vcftools --vcf variants_miss30_maf05.recode.vcf --missing-indv
@@ -577,8 +560,138 @@ Then, `sed` out the parts you don't want for your pops file (removing the "first
 
 	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_553_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 
+
+
+
+
+
+
+
+# DONE TO HERE
+
+
+
+
+
+
+
+
+ 
 Initial look at PCAs to make sure data is okay, done in R.  
 
+`NOTE`: See new_gl_attempt2.R in /Users/lanie/lanie/PhD/genomics/pines/attenuata/bwa/PCA for the highly edited PCAs where populations are plotted in helpful order, and individuals are removed.
+
+	setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA")
+
+	#miss 30 
+	read.table("pntest_mean_variants_miss30_maf05_noBadInds.recode.txt", header=F)->gl
+	read.table("pine_553_ids_col.txt", header=F)->ids
+	read.table("pine_553_pops.txt", header=F)->pops
+	
+    # If you need to remove individuals after seeing the PCA, do the following to remove rows. Just don't forget to change the number of individuals later in the script.
+        # ids <- ids[-c(33, 58:66, 94:97), ]
+        # pops <- pops[-c(33, 58:66, 94:97), ]
+        # gl <- gl[ , -c(35, 60:68, 96:99)]
+
+        # write.table(ids, file="ids_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+        # write.table(pops, file="pops_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+        # write.table(gl, file="gl_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+
+        # read.table("gl_new.txt", header=F) -> gl
+        # read.table("ids_new.txt", header=F) -> ids
+        # read.table("pops_new.txt", header=F) -> pops
+
+
+    t(gl)->tgl
+	cbind(ids, pops, tgl)->tidsgl
+	write.table(tidsgl, file="pine_gl_matrix_miss30_maf05.txt", sep=" ", row.names=F, col.names=F , quote=F)
+
+	# Now, the files are ready for PCA
+	# miss 30
+
+	miss30 <- read.delim("PA_gl_matrix_miss30_maf05.txt", header=FALSE, sep=" ")
+	miss30[1:10,1:10]
+	dim(miss30) #553 * 15406 ####two more than loci because first column is whole ID identifier, second column is population identifier
+
+	g30 <- t(miss30[,3:15406])
+	dim(g30) # 15404 * 553
+	g30[1:10,1:10]
+
+	gmn30 <- apply(g30, 1, mean, na.rm=TRUE)
+	gmnmat30 <- matrix(gmn30, nrow=15406, ncol=553)
+	gprime30 <- g30 - gmnmat30
+	gcovarmat30 <- matrix(NA, nrow=553, ncol=553)
+
+	for (i in 1:553)
+	{
+  		for (j in 1:553)
+  		{
+  		if (i==j)
+  		{
+  		gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+  		}
+  		else
+  		{
+  		gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+  		gcovarmat30[j,i] <- gcovarmat30[i,j]
+  		}
+  		}
+	}
+
+	pcgcov30<-prcomp(x=gcovarmat30,center=TRUE,scale=FALSE)
+	imp30 <- summary(pcgcov30)
+	summary(pcgcov30)
+
+    pcgcov30$x[,1]
+    
+	# Plotting PCs, miss30
+
+	colors <-c(
+  		"#74c8ff",
+		"#ebaf00",
+		"#828cff",
+		"#a0b800",
+		"#ed8dff",
+		"#01b790",
+		"#c4005c",
+		"#f1be66",
+		"#892886",
+		"#c97000",
+		"#ff9caf",
+		"#605218",
+		"#ea462d",
+		"#8f3439")
+
+	# PC 1v2, miss30, independent colors
+
+	# the plot function in the line below sets the axes right off the bat
+	# so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
+
+	plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines attenuata, first look miss30", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+
+	# the blue 1 and 2 in the points function refer to the PCs
+	# must change these to 2 and 3 for PCs 2 v 3, for example!
+
+	points(pcgcov30$x[which(pops=="AH"),1], pcgcov30$x[which(pops=="AH"), 2], pch=21, bg=colors[1], cex=1)
+	points(pcgcov30$x[which(pops=="AL"),1], pcgcov30$x[which(pops=="AL"), 2], pch=21, bg=colors[2], cex=1)
+	points(pcgcov30$x[which(pops=="BS"),1], pcgcov30$x[which(pops=="BS"), 2], pch=21, bg=colors[3], cex=1)
+	points(pcgcov30$x[which(pops=="CG"),1], pcgcov30$x[which(pops=="CG"), 2], pch=21, bg=colors[4], cex=1)
+	points(pcgcov30$x[which(pops=="LA"),1], pcgcov30$x[which(pops=="LA"), 2], pch=21, bg=colors[5], cex=1)
+	points(pcgcov30$x[which(pops=="LS"),1], pcgcov30$x[which(pops=="LS"), 2], pch=21, bg=colors[6], cex=1)
+	points(pcgcov30$x[which(pops=="OC"),1], pcgcov30$x[which(pops=="OC"), 2], pch=21, bg=colors[7], cex=1)
+	points(pcgcov30$x[which(pops=="PF"),1], pcgcov30$x[which(pops=="PF"), 2], pch=21, bg=colors[8], cex=1)
+	points(pcgcov30$x[which(pops=="SB"),1], pcgcov30$x[which(pops=="SB"), 2], pch=21, bg=colors[9], cex=1)
+	points(pcgcov30$x[which(pops=="SH"),1], pcgcov30$x[which(pops=="SH"), 2], pch=21, bg=colors[10], cex=1)
+	points(pcgcov30$x[which(pops=="SL"),1], pcgcov30$x[which(pops=="SL"), 2], pch=21, bg=colors[11], cex=1)
+	points(pcgcov30$x[which(pops=="ST"),1], pcgcov30$x[which(pops=="ST"), 2], pch=21, bg=colors[12], cex=1)
+	points(pcgcov30$x[which(pops=="YA"),1], pcgcov30$x[which(pops=="YA"), 2], pch=21, bg=colors[13], cex=1)
+	points(pcgcov30$x[which(pops=="YB"),1], pcgcov30$x[which(pops=="YB"), 2], pch=21, bg=colors[14], cex=1)
+
+
+	legend("bottomright", legend=c("Auburn High", "Auburn Low", "Big Sur", "Cuesta Grade(SLO)", "Los Angeles", "Lake Shasta", "Orange County", "Panther Flat (OR border)", "San Bernardino", "Santa Cruz High", "Santa Cruz Low", "Santa Cruz Top", "Yosemite A", "Yosemite B"), pch=c(16,16,16,16,16,16,16,16,16,16,16,16,16,16), ncol=2, col=colors[1:14], cex=.8)
+
+	# save plot window as PA_firstLook_miss30.pdf
+	# copy and paste back to notes file
 
 
 
@@ -691,22 +804,22 @@ scp files to laptop for PCA:
 
 	setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA")
 
-#Make sure you run all the miss40 stuff before all the miss50 stuff. Otherwise, you are just writing over the files as you go.
+#Make sure you run all the miss30 stuff before all the miss50 stuff. Otherwise, you are just writing over the files as you go.
 
 #miss 30 
 	
-	read.table("pntest_mean_variants_miss30_common.recode.txt", header=F)->gl
+	read.table("pntest_mean_variants_miss30_maf05.recode.txt", header=F)->gl
 	read.table("pine_ids_col.txt", header=F)->ids
 	read.table("pine_pops.txt", header=F)->pops
 	t(gl)->tgl
 	cbind(ids, pops, tgl)->tidsgl
-	write.table(tidsgl, file="pine_gl_matrix_miss30.txt", sep=" ", row.names=F, col.names=F , quote=F)
+	write.table(tidsgl, file="pine_gl_matrix_miss30_maf05.txt", sep=" ", row.names=F, col.names=F , quote=F)
 
 ### Now, the files are ready for PCA
 
 #miss 30
 
-	miss30 <- read.delim("pine_gl_matrix_miss30.txt", header=FALSE, sep=" ")
+	miss30 <- read.delim("pine_gl_matrix_miss30_maf05.txt", header=FALSE, sep=" ")
 	miss30[1:10,1:10]
 	dim(miss30) #454 * 13468 ####two more than loci because first column is whole ID identifier, second column is population identifier
 
