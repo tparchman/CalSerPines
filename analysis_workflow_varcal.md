@@ -445,27 +445,10 @@ The following takes several (2-4) hours. `NOTE`: Run the following lines as one 
     bcftools filter --set-GTs . -i 'QUAL > 19 && FMT/GQ >9' | \
     bcftools view -m 2 -M 2 -v snps --apply-filter "PASS" --output-type v --output-file variants_rawfiltered_12JAN2021.vcf &
 
-
-
-
-
-
-
-
-# DONE TO HERE
-
-
-
-
-
-
-
-
- 
 Number of loci in the vcf
 
     $ grep -c "^scaffold" variants_rawfiltered_12JAN2021.vcf
-        544434
+        2461844
 
 Make id file for reheadering
 
@@ -483,67 +466,22 @@ Reheader variants_rawfiltered_dateHERE.vcf:
 ## 7. filtering
 ####################################################################################
 
-Initial round of filtering (just getting a feeling of how filtering parameters might shape the dataset)
+Initial round of filtering (just getting a feeling of how filtering parameters might shape the dataset). 570 individuals.
 
     $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.9 --recode --thin 90
-            After filtering, kept 2389 out of a possible 544434 Sites
+            After filtering, kept 3071 out of a possible 2461844 Sites
     $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.8 --recode --thin 90
-	        After filtering, kept 8728 out of a possible 544434 Sites
+	        After filtering, kept 9703 out of a possible 2461844 Sites
     $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.7 --recode --thin 90
-	        After filtering, kept 13237 out of a possible 544434 Sites
+	        After filtering, kept 14627 out of a possible 2461844 Sites
     $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.6 --recode --thin 90
-	        After filtering, kept 16195 out of a possible 544434 Sites
+	        After filtering, kept 19564 out of a possible 2461844 Sites
 
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf04 --remove-filtered-all --maf 0.04 --max-missing 0.9 --recode --thin 90
-	        After filtering, kept 2951 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf04 --remove-filtered-all --maf 0.04 --max-missing 0.8 --recode --thin 90
-	        After filtering, kept 9698 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf04 --remove-filtered-all --maf 0.04 --max-missing 0.7 --recode --thin 90
-	        After filtering, kept 14500 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf04 --remove-filtered-all --maf 0.04 --max-missing 0.6 --recode --thin 90
-	        After filtering, kept 17947 out of a possible 544434 Sites
-
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf03 --remove-filtered-all --maf 0.03 --max-missing 0.9 --recode --thin 90
-	        After filtering, kept 3689 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf03 --remove-filtered-all --maf 0.03 --max-missing 0.8 --recode --thin 90
-	        After filtering, kept 10613 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf03 --remove-filtered-all --maf 0.03 --max-missing 0.7 --recode --thin 90
-	        After filtering, kept 15759 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf03 --remove-filtered-all --maf 0.03 --max-missing 0.6 --recode --thin 90
-	        After filtering, kept 19997 out of a possible 544434 Sites
-
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf025 --remove-filtered-all --maf 0.025 --max-missing 0.9 --recode --thin 90
-	        After filtering, kept 4103 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf025 --remove-filtered-all --maf 0.025 --max-missing 0.8 --recode --thin 90
-	        After filtering, kept 11037 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf025 --remove-filtered-all --maf 0.025 --max-missing 0.7 --recode --thin 90
-	        After filtering, kept 16351 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf025 --remove-filtered-all --maf 0.025 --max-missing 0.6 --recode --thin 90
-	        After filtering, kept 21137 out of a possible 544434 Sites
-
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf02 --remove-filtered-all --maf 0.02 --max-missing 0.9 --recode --thin 90
-	        After filtering, kept 4771 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf02 --remove-filtered-all --maf 0.02 --max-missing 0.8 --recode --thin 90
-	        After filtering, kept 11694 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf02 --remove-filtered-all --maf 0.02 --max-missing 0.7 --recode --thin 90
-	        After filtering, kept 17178 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf02 --remove-filtered-all --maf 0.02 --max-missing 0.6 --recode --thin 90
-	        After filtering, kept 22738 out of a possible 544434 Sites
-
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf01 --remove-filtered-all --maf 0.01 --max-missing 0.9 --recode --thin 90
-	        After filtering, kept 6384 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf01 --remove-filtered-all --maf 0.01 --max-missing 0.8 --recode --thin 90
-	        After filtering, kept 12786 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf01 --remove-filtered-all --maf 0.01 --max-missing 0.7 --recode --thin 90
-	        After filtering, kept 18824 out of a possible 544434 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf01 --remove-filtered-all --maf 0.01 --max-missing 0.6 --recode --thin 90
-	        After filtering, kept 26121 out of a possible 544434 Sites
-
-`NOTE`: moving forward with `miss30_maf04`
+`NOTE`: moving forward with `miss30_maf05`
 
 Filter out bad individuals, then refilter
 
-	$ vcftools --vcf variants_miss30_maf04.recode.vcf --missing-indv
+	$ vcftools --vcf variants_miss30_maf05.recode.vcf --missing-indv
 
 `OPTIONAL`: look at distribution of missing data in `R`
 
@@ -553,12 +491,12 @@ Filter out bad individuals, then refilter
         head(j)
     hist(j[,5], breaks=100, col="gray")
 
-`NOTE`: will remove individuals with >50% missing data (N = 9). (As this decimal number decreases, the number of individuals to remove increases. That is, the lower the fraction, the more stringent you are filtering.)
+`NOTE`: will remove individuals with >50% missing data (N = 17). (As this decimal number decreases, the number of individuals to remove increases. That is, the lower the fraction, the more stringent you are filtering.)
 
     $ mawk '$5 > 0.5' out.imiss | cut -f1 > lowDP.indv
     $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --remove lowDP.indv --recode --recode-INFO-all --out rehead_variants_rawfiltered_12JAN2021_noBadInds
-        After filtering, kept 192 out of 201 Individuals
-        After filtering, kept 544434 out of a possible 544434 Sites
+        After filtering, kept 553 out of 570 Individuals
+        After filtering, kept 2461844 out of a possible 2461844 Sites
 
 Clean up the massive mess of files created above.
 
@@ -566,61 +504,78 @@ Clean up the massive mess of files created above.
     $ gzip variants_rawfiltered_12JAN2021.vcf &
     $ gzip rehead_variants_rawfiltered_12JAN2021.vcf &
 
-Filter the entire raw, NEW vcf file (the one without the bad Inds), at least 70% of individuals have at least one read, and filtering on maf .04 (filtering on loci)
+Filter the entire raw, NEW vcf file (the one without the bad Inds), at least 70% of individuals have at least one read, and filtering on maf .05 (filtering on loci)
 
 	$ module load vcftools/0.1.14
 	$ module load bcftools/1.3
 
-	$ vcftools --vcf rehead_variants_rawfiltered_12JAN2021_noBadInds.recode.vcf --out variants_miss30_maf04 --remove-filtered-all --maf 0.04 --max-missing 0.7 --recode --thin 90
-		After filtering, kept 15495 out of a possible 544434 Sites
+	$ vcftools --vcf rehead_variants_rawfiltered_12JAN2021_noBadInds.recode.vcf --out variants_miss30_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.7 --recode --thin 90
+		After filtering, kept 15404 out of a possible 2461844 Sites
 
-Rekill bad inds (missing >50%). 4 inds removed
 
-    $ vcftools --vcf variants_miss30_maf04.recode.vcf --missing-indv
+
+
+
+
+
+
+# DONE TO HERE
+
+
+
+
+
+
+
+
+ 
+Rekill bad inds (missing >50%). 0 inds removed
+
+    $ vcftools --vcf variants_miss30_maf05.recode.vcf --missing-indv
     $ mawk '$5 > 0.5' out.imiss | cut -f1 > lowDP.indv
-    $ vcftools --vcf variants_miss30_maf04.recode.vcf --remove lowDP.indv --recode --recode-INFO-all --out variants_miss30_maf04_noBadInds
-			After filtering, kept 188 out of 192 Individuals
-            After filtering, kept 15495 out of a possible 15495 Sites
+    $ vcftools --vcf variants_miss30_maf05.recode.vcf --remove lowDP.indv --recode --recode-INFO-all --out variants_miss30_maf05_noBadInds
+			After filtering, kept 553 out of 553 Individuals
+            After filtering, kept 15404 out of a possible 15404 Sites
 
 Generate mpgl
 	
-	$ perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss30_maf04_noBadInds.recode.vcf
+	$ perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss30_maf05_noBadInds.recode.vcf
 
 Generate pntest genotype likelihood file (for PCA)
 	
-	$ perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_maf04_noBadInds.recode.mpgl mean
+	$ perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_maf05_noBadInds.recode.mpgl mean
 
 Make a file of IDs. Start with updated vcf file. Cut the first column and puts it into a new file, which is labeled "good head."
 
-    $ vcftools --vcf variants_miss30_maf04_noBadInds.recode.vcf --missing-indv 
-    $ cut -f 1 out.imiss > pine_ids_188.txt
-    $ sed "s/INDV/ind/" pine_ids_188.txt | sed "s/aln_//g" | sed "s/.sorted.bam//g" > pine_ids_188_good_head.txt
+    $ vcftools --vcf variants_miss30_maf05_noBadInds.recode.vcf --missing-indv 
+    $ cut -f 1 out.imiss > pine_ids_553.txt
+    $ sed "s/INDV/ind/" pine_ids_553.txt | sed "s/aln_//g" | sed "s/.sorted.bam//g" > pine_ids_553_good_head.txt
 
 Make other ID and pop formats for PCA. 
 	
-	$ cp pine_ids_188_good_head.txt pine_ids_188_good_noHead.txt
-	$ nano pine_ids_188_good_noHead.txt
+	$ cp pine_ids_553_good_head.txt pine_ids_553_good_noHead.txt
+	$ nano pine_ids_553_good_noHead.txt
 		remove the "ind" at the top for proper PCA format. The following tells awk that the delimiter is a comma, and to grab and print the first column, and then print it into pine_ids_col.txt (instead of just printing to screen)
 
 The following tells awk that the delimiter is a comma, and to grab and print the first column, and then print it into pine_ids_col.txt (instead of just printing to screen)
 
-	$ cp pine_ids_188_good_noHead.txt pine_ids_188_good_noHead_original.txt
-	$ awk -F "," '{print $1}' pine_ids_188_good_noHead.txt > pine_188_ids_col.txt
+	$ cp pine_ids_553_good_noHead.txt pine_ids_553_good_noHead_original.txt
+	$ awk -F "," '{print $1}' pine_ids_553_good_noHead.txt > pine_553_ids_col.txt
 
 Then, `sed` out the parts you don't want for your pops file (removing the "first term" in your ID file, in this case). (The following worked here, which was in format XX(species)_XX(population)_XXXX(ind).) 
 
-	$ sed -s "s/[A-Z][A-Z]_//" pine_188_ids_col.txt > pine_pops3.txt
-	$ sed -s "s/_[0-9]*//" pine_pops3.txt > pine_188_pops.txt
+	$ sed -s "s/[A-Z][A-Z]_//" pine_553_ids_col.txt > pine_pops3.txt
+	$ sed -s "s/_[0-9]*//" pine_pops3.txt > pine_553_pops.txt
 
 ***These are the two files you need for initial verification PCA (species_ids_col.txt and species_pops.txt). file `species_num_ids_col.txt` is a single column format, no header, with individuals listed as HT_MR_0692, etc. File `species_num_pops.txt` is a single column format, no header, with lines (in order) as CN, CN, CN, CN, CN, AB, AB, AB, AB.	
 
 `scp` files to laptop for initial look at PCAs
 
-	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pntest_mean_variants_miss30_maf04_noBadInds.recode.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pntest_mean_variants_miss30_maf05_noBadInds.recode.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 
-	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_188_ids_col.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_553_ids_col.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 
-	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_188_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_553_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 
 Initial look at PCAs to make sure data is okay, done in R.  
 
