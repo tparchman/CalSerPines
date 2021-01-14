@@ -795,8 +795,8 @@ Initial look at PCAs to make sure data is okay, done in R.
     # save window as pinesCombined_firstLook_miss30_bySpecies.pdf
 	# copy and paste back to notes file
 
-![PCA](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/pinesCombined_firstLook_miss30_maf05.pdf) 
-![PCA](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/pinesCombined_firstLook_miss30_bySpecies.pdf) 
+![PCA_pinesCombined](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/pinesCombined_firstLook_miss30_maf05.pdf) 
+![PCA_pinesCombined_groupedBySpecies](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/pinesCombined_firstLook_miss30_bySpecies.pdf) 
 
     ############### quick and dirty to plot only muricata:
     
@@ -913,7 +913,7 @@ Initial look at PCAs to make sure data is okay, done in R.
                                
     # save plot window as muricata_quickAndDirty_miss30_maf05.pdf
 
-![PCA](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/muricata_quickAndDirty_miss30_maf05.pdf) 
+![PCA_muricata_quickAndDirty](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/muricata_quickAndDirty_miss30_maf05.pdf) 
 
     ###### finally, quick and dirty to look at island populations only
 
@@ -1009,7 +1009,7 @@ Initial look at PCAs to make sure data is okay, done in R.
                                
     # save plot window as muricata_quickAndDirty_islandOnly.pdf
 
-![PCA](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/muricata_quickAndDirty_islandOnly.pdf) 
+![PCA_muricata_quickAndDirty_islandOnly](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/muricata_quickAndDirty_islandOnly.pdf) 
 
 
 
