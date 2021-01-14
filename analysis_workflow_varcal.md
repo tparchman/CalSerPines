@@ -795,6 +795,214 @@ Initial look at PCAs to make sure data is okay, done in R.
     # save window as pinesCombined_firstLook_miss30_bySpecies.pdf
 	# copy and paste back to notes file
 
+    ############### quick and dirty to plot only muricata:
+    
+    #miss 30 
+    read.table("pntest_mean_variants_miss30_maf05_noBadInds.recode.txt", header=F)->gl
+    read.table("pine_553_ids_col.txt", header=F)->ids
+    read.table("pine_553_pops.txt", header=F)->pops
+
+    # If you need to remove individuals after seeing the PCA, do the following to remove rows. Just don't forget to change the number of individuals later in the script.
+    ids <- ids[-c(1:189, 233, 335, 354, 426:553), ]
+    pops <- pops[-c(1:189, 233, 335, 354, 426:553), ]
+    gl <- gl[ , -c(1:189, 233, 335, 354, 426:553)]
+
+    write.table(ids, file="ids_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+    write.table(pops, file="pops_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+    write.table(gl, file="gl_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+
+    read.table("gl_new.txt", header=F) -> gl
+    read.table("ids_new.txt", header=F) -> ids
+        read.table("pops_new.txt", header=F) -> pops
+    dim(gl)
+    dim(ids)
+    dim(pops)
+
+    t(gl)->tgl
+    cbind(ids, pops, tgl)->tidsgl
+    write.table(tidsgl, file="pine_gl_matrix_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+
+    # Now, the files are ready for PCA
+    # miss 30
+
+    miss30 <- read.delim("pine_gl_matrix_new.txt", header=FALSE, sep=" ")
+    miss30[1:10,1:10]
+    dim(miss30) #233 * 15406 ####two more than loci because first column is whole ID identifier, second column  is population identifier
+
+    g30 <- t(miss30[,3:15406])
+    dim(g30) # 15404 * 233
+    g30[1:10,1:10]
+
+    gmn30 <- apply(g30, 1, mean, na.rm=TRUE)
+    gmnmat30 <- matrix(gmn30, nrow=15404, ncol=233)
+    gprime30 <- g30 - gmnmat30
+    gcovarmat30 <- matrix(NA, nrow=233, ncol=233)
+
+    for (i in 1:233)
+        {
+        for (j in 1:233)
+        {
+        if (i==j)
+        {
+        gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+         }
+        else
+         {
+          gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+          gcovarmat30[j,i] <- gcovarmat30[i,j]
+        }
+        }
+    }
+
+    pcgcov30<-prcomp(x=gcovarmat30,center=TRUE,scale=FALSE)
+    imp30 <- summary(pcgcov30)
+    summary(pcgcov30)
+
+    pcgcov30$x[,1]
+
+    # Plotting PCs, miss30
+
+    colors <-c(
+        "#b34469",
+        "#4fb848",
+        "#9557cf",
+        "#8fb63d",
+        "#5a72e0",
+        "#c2b43a",
+        "#cf5dc8",
+        "#52c47c",
+        "#d84491",
+        "#5b872a",
+        "#6e51a3",
+        "#dc9130",
+        "#5a74b9",
+        "#e46332")
+
+    # PC 1v2, miss30, independent colors
+
+    # the plot function in the line below sets the axes right off the bat
+    # so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
+
+    plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "QuickAndDirty muricata, first look miss30", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+
+    # the blue 1 and 2 in the points function refer to the PCs
+    # must change these to 2 and 3 for PCs 2 v 3, for example!
+
+    # P. muricata
+    points(pcgcov30$x[which(pops=="DC"),1], pcgcov30$x[which(pops=="DC"), 2], pch=21, bg=colors[1], cex=1)
+    points(pcgcov30$x[which(pops=="FR"),1], pcgcov30$x[which(pops=="FR"), 2], pch=21, bg=colors[2], cex=1)
+    points(pcgcov30$x[which(pops=="NR"),1], pcgcov30$x[which(pops=="NR"), 2], pch=21, bg=colors[3], cex=1)
+    points(pcgcov30$x[which(pops=="PA"),1], pcgcov30$x[which(pops=="PA"), 2], pch=21, bg=colors[4], cex=1)
+    points(pcgcov30$x[which(pops=="PP"),1], pcgcov30$x[which(pops=="PP"), 2], pch=21, bg=colors[5], cex=1)
+    points(pcgcov30$x[which(pops=="SP"),1], pcgcov30$x[which(pops=="SP"), 2], pch=21, bg=colors[6], cex=1)
+    points(pcgcov30$x[which(pops=="SR"),1], pcgcov30$x[which(pops=="SR"), 2], pch=21, bg=colors[7], cex=1)
+    points(pcgcov30$x[which(pops=="PR"),1], pcgcov30$x[which(pops=="PR"), 2], pch=21, bg=colors[8], cex=1)
+    points(pcgcov30$x[which(pops=="CH"),1], pcgcov30$x[which(pops=="CH"), 2], pch=21, bg=colors[9], cex=1)
+    points(pcgcov30$x[which(pops=="CP"),1], pcgcov30$x[which(pops=="CP"), 2], pch=21, bg=colors[10], cex=1)
+    points(pcgcov30$x[which(pops=="DM"),1], pcgcov30$x[which(pops=="DM"), 2], pch=21, bg=colors[11], cex=1)
+    points(pcgcov30$x[which(pops=="LO"),1], pcgcov30$x[which(pops=="LO"), 2], pch=21, bg=colors[12], cex=1)
+    points(pcgcov30$x[which(pops=="PB"),1], pcgcov30$x[which(pops=="PB"), 2], pch=21, bg=colors[13], cex=1)
+    points(pcgcov30$x[which(pops=="RR"),1], pcgcov30$x[which(pops=="RR"), 2], pch=21, bg=colors[14], cex=1)
+
+    legend("bottomleft", legend=c("Diablo Canyon PIMU", "Fort Ross PIMU", "Navarro River PIMU", "Point Arena PIMU", "Patrick Point PIMU", "Salt Point PIMU", 
+    "Sea Ranch PIMU", "Point Reyes PIMU", "China Pines SCI PIMU", "Christy Pines SCI PIMU", "Monterey Peninsula (DM) PIMU", "Lompoc PIMU", "Pelican Bay SCI PIMU", 
+    "Ridge Road SCI PIMU"), pch=c(16,16,16,16,16,16,16,16,16,16,16,16,16,16), ncol=2, col=colors[1:14], cex=.8)
+                               
+    # save plot window as muricata_quickAndDirty_miss30_maf05.pdf
+
+    ###### finally, quick and dirty to look at island populations only
+
+    #miss 30 
+    read.table("gl_new.txt", header=F)->gl
+    read.table("ids_new.txt", header=F)->ids
+    read.table("pops_new.txt", header=F)->pops
+
+    # If you need to remove individuals after seeing the PCA, do the following to remove rows. Just don't forget to change the number of individuals later in the script.
+    ids <- ids[-c(36, 39:125, 145:176, 196:233), ]
+    pops <- pops[-c(36, 39:125, 145:176, 196:233), ]
+    gl <- gl[ , -c(36, 39:125, 145:176, 196:233)]
+
+    write.table(ids, file="ids_islandOnly.txt", sep=" ", row.names=F, col.names=F , quote=F)
+    write.table(pops, file="pops_islandOnly.txt", sep=" ", row.names=F, col.names=F , quote=F)
+    write.table(gl, file="gl_islandOnly.txt", sep=" ", row.names=F, col.names=F , quote=F)
+
+    read.table("gl_islandOnly.txt", header=F) -> gl
+    read.table("ids_islandOnly.txt", header=F) -> ids
+        read.table("pops_islandOnly.txt", header=F) -> pops
+    dim(gl)
+    dim(ids)
+    dim(pops)
+
+    t(gl)->tgl
+    cbind(ids, pops, tgl)->tidsgl
+    write.table(tidsgl, file="pine_gl_matrix_islandOnly.txt", sep=" ", row.names=F, col.names=F , quote=F)
+
+    # Now, the files are ready for PCA
+    # miss 30
+
+    miss30 <- read.delim("pine_gl_matrix_islandOnly.txt", header=FALSE, sep=" ")
+    miss30[1:10,1:10]
+    dim(miss30) #75 * 15406 ####two more than loci because first column is whole ID identifier, second column  is population identifier
+
+    g30 <- t(miss30[,3:15406])
+    dim(g30) # 15404 * 75
+    g30[1:10,1:10]
+
+    gmn30 <- apply(g30, 1, mean, na.rm=TRUE)
+    gmnmat30 <- matrix(gmn30, nrow=15404, ncol=75)
+    gprime30 <- g30 - gmnmat30
+    gcovarmat30 <- matrix(NA, nrow=75, ncol=75)
+
+    for (i in 1:75)
+        {
+        for (j in 1:75)
+        {
+        if (i==j)
+        {
+        gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+         }
+        else
+         {
+          gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+          gcovarmat30[j,i] <- gcovarmat30[i,j]
+        }
+        }
+    }
+
+    pcgcov30<-prcomp(x=gcovarmat30,center=TRUE,scale=FALSE)
+    imp30 <- summary(pcgcov30)
+    summary(pcgcov30)
+
+    pcgcov30$x[,1]
+
+    # Plotting PCs, miss30
+
+    colors <-c(
+        "#d84491",
+        "#5b872a",
+        "#5a74b9",
+        "#e46332")
+
+    # PC 1v2, miss30, independent colors
+
+    # the plot function in the line below sets the axes right off the bat
+    # so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
+
+    plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "QuickAndDirty muricata, SCI only", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+
+    # the blue 1 and 2 in the points function refer to the PCs
+    # must change these to 2 and 3 for PCs 2 v 3, for example!
+
+    # P. muricata, Santa Cruz Island only
+    points(pcgcov30$x[which(pops=="CH"),1], pcgcov30$x[which(pops=="CH"), 2], pch=21, bg=colors[9], cex=1)
+    points(pcgcov30$x[which(pops=="CP"),1], pcgcov30$x[which(pops=="CP"), 2], pch=21, bg=colors[10], cex=1)
+    points(pcgcov30$x[which(pops=="PB"),1], pcgcov30$x[which(pops=="PB"), 2], pch=21, bg=colors[13], cex=1)
+    points(pcgcov30$x[which(pops=="RR"),1], pcgcov30$x[which(pops=="RR"), 2], pch=21, bg=colors[14], cex=1)
+
+    legend("bottomleft", legend=c("China Pines SCI PIMU", "Christy Pines SCI PIMU", "Pelican Bay SCI PIMU", 
+    "Ridge Road SCI PIMU"), pch=c(16,16,16,16), ncol=2, col=colors[1:4], cex=.8)
+                               
+    # save plot window as muricata_quickAndDirty_islandOnly.pdf
 
 
 
