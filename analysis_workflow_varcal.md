@@ -560,23 +560,6 @@ Then, `sed` out the parts you don't want for your pops file (removing the "first
 
 	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_553_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 
-
-
-
-
-
-
-
-# DONE TO HERE
-
-
-
-
-
-
-
-
- 
 Initial look at PCAs to make sure data is okay, done in R.  
 
 `NOTE`: See new_gl_attempt2.R in /Users/lanie/lanie/PhD/genomics/pines/attenuata/bwa/PCA for the highly edited PCAs where populations are plotted in helpful order, and individuals are removed.
@@ -1019,6 +1002,7 @@ Initial look at PCAs to make sure data is okay, done in R.
 
 
 
+# DONE TO HERE
 
 
 
@@ -1027,284 +1011,155 @@ Initial look at PCAs to make sure data is okay, done in R.
 
 
 
-# EVERYTHING BELOW HERE IS KEPT FOR REFERENCE ONLY RIGHT NOW, AS OF 1/12/2021
-
-#### common MAF 0.05
-VCFtools (0.1.14)
-
-Adam Auton and Anthony Marcketta 2009
-
-Filtering the entire vcf files, at least 90% of individuals have at least one read, and filtering on maf (filtering on loci)
+ 
+Make coverage file. Give it your  mpgl file, your ids file, and the location of your `bam` files. The output file is *.recode.mpgl_coverage.csv. You can go in another terminal window and verify this file is increasing in size.
 	
-	module load vcftools/0.1.14
-	module load bcftools/1.3
-
-	vcftools --vcf rehead_variants_rawfiltered_9DEC2020.vcf --out variants_miss10_common --remove-filtered-all --maf 0.05 --max-missing 0.9 --recode --thin 90 &
-** After filtering, kept 454 out of 454 individuals
-** After filtering, kept 3000 out of a possible 1492756 Sites 
-
-	vcftools --vcf rehead_variants_rawfiltered_9DEC2020.vcf --out variants_miss20_common --remove-filtered-all --maf 0.05 --max-missing 0.8 --recode --thin 90 &
-** After filtering, kept 454 out of 454 individuals
-** After filtering, kept 9103 out of a possible 1492756 Sites 
-
-	vcftools --vcf rehead_variants_rawfiltered_9DEC2020.vcf --out variants_miss30_common --remove-filtered-all --maf 0.05 --max-missing 0.7 --recode --thin 90 &
-** After filtering, kept 454 out of 454 individuals
-** After filtering, kept 13466 out of a possible 1492756 Sites
-
-	vcftools --vcf rehead_variants_rawfiltered_9DEC2020.vcf --out variants_miss40_common --remove-filtered-all --maf 0.05 --max-missing 0.6 --recode --thin 90 &
-** After filtering, kept 454 out of 454 individuals
-** After filtering, kept 17333 out of a possible 1492756 Sites
-
-#### generate depth of coverage files
-
-	vcftools --vcf variants_miss10_common.recode.vcf --depth -c > variants_miss10_common.txt &
-	vcftools --vcf variants_miss20_common.recode.vcf --depth -c > variants_miss20_common.txt &
-	vcftools --vcf variants_miss30_common.recode.vcf --depth -c > variants_miss30_common.txt &
-	vcftools --vcf variants_miss40_common.recode.vcf --depth -c > variants_miss40_common.txt &
-
-#### generate .mpgl and pntest for each (pntest is genotype likelihood file - use for PCA)
-
-	perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss10_common.recode.vcf
-	perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss20_common.recode.vcf
-	perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss30_common.recode.vcf
-	perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss40_common.recode.vcf
-
-The following writes variants_miss40_common.recode.mpgl, variants_miss30_common.recode.mpgl, etc.
-
-	perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss10_common.recode.mpgl mean
-	perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss20_common.recode.mpgl mean
-	perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_common.recode.mpgl mean
-	perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss40_common.recode.mpgl mean
-
-	module load bcftools/1.3
-	module load samtools/1.3
-
-The following cuts the first column and puts it into a new file, which is labeled "good head," but it really isn't. 
+	perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf04_noBadInds.recode.mpgl PA_ids_188_good_head.txt /working/lgalland/attenuata/bwa/sam_sai/ &
 	
-	cut -d "," -f 1 pine_ids_col.txt > pine_ids_good_head.txt
-	
-Need to nano the file and add "ind" to the top of the column so it's in proper format:
-	
-	nano pine_ids_good_head.txt
+Need to filter out over-assembled loci. Start by cutting the scaffold names column from the original file into the new file, for use in R.    
 
-#### make coverage file
-Give it your  mpgl file, your ids file a header (hence "good_head"), and the location of your bam files - RUNNING FOR MISS10, MISS20, MISS30, AND MISS40. (We typically choose one with which we will move forward (e.g., only progressing with miss50), but for radiata, we wanted to see all of the PCAs) (Each takes 5-10 minutes, but is based  on number of individuals. The output file is variants_miss10_common.recode.mpgl_coverage.csv, for example. You can go in another terminal window and verify this file is increasing in size.) Here, for combined pines, we will move forward with miss30.
-	
-	perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_common.recode.mpgl pine_ids_good_head.txt 			/working/lgalland/pines_combined/bwa/sam_sai/ &
-	
-Make files ID and pop files. The following tells awk that the delimiter is a comma, and to grab and print the first column, and then print it into pine_ids_col.txt (instead of just printing to screen)
+    $ cut -d " " -f 1 variants_miss30_maf04_noBadInds.recode.mpgl > loc_names_15495.txt
 
-	cp pine_ids_col.txt pine_ids_col_original.txt
-	awk -F "," '{print $1}' pine_ids_col_original.txt > pine_ids_col.txt
+Move files for use in R.
 
-Then, sed out the parts you don't want for your pops file (removing the "first term" in your ID file, in this case). (The following worked here, which was in format XX(species)_XX(population)_XXXX(individual ID) - see contorta notes file for other naming schemes, but it's intuitive. 
-	
-	sed -s "s/[A-Z][A-Z]_//" pine_ids_col.txt > pine_pops3.txt
-	sed -s "s/_[0-9]*//" pine_pops3.txt > pine_pops.txt
-	
-THESE ARE THE TWO FILES YOU NEED FOR INITIAL VERIFICATION PCA (species_ids_col.txt and species_pops.txt)
-File species_ids_col.txt is a single column format, no header, with individuals listed as HT_MR_0692, etc etc etc
-File species_pops.txt is a single column format, no header, with lines (in order) as CN, CN, CN, CN, CN, AB, AB, AB, AB	
+    $ scp lgalland@134.197.63.151:/working/lgalland/attenuata/bwa/sam_sai/variants_miss30_maf04_noBadInds.recode.mpgl_coverage.csv /Users/lanie/lanie/PhD/genomics/pines/attenuata
 
-scp files to laptop for PCA:
+    $ scp lgalland@134.197.63.151:/working/lgalland/attenuata/bwa/sam_sai/loc_names_15495.txt /Users/lanie/lanie/PhD/genomics/pines/attenuata
 
-	scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pntest_mean_variants_miss30_common.recode.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+Identify over-assembled loci in R
 
-	scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_ids_col.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+    R
+    
+    setwd("/Users/lanie/lanie/PhD/genomics/pines/attenuata")
 
-	scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+    dat <- read.csv("variants_miss30_maf04_noBadInds.recode.mpgl_coverage.csv", header=F)
+        dim(dat) #188 * 15496 - yes, because first column is ID
+        dat[1:10,1:10]
 
-##############################################
-#### Initial look at PCAs to make sure data is okay. DONE IN R
-#R code is called verification_PCs_WORKING_radiata.r in the following directory outlined below
+    loc_names <- read.delim("loc_names_15495.txt", header=F)
+        head(loc_names)
+        dim(loc_names) #15495 * 1
 
-	setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA")
+    dat_noname <- dat[,-1] # rip off the first column, which is ID
+        dim(dat_noname) #188 * 15495
+        dat_noname[1:10,1:10]
 
-#Make sure you run all the miss30 stuff before all the miss50 stuff. Otherwise, you are just writing over the files as you go.
+    #RERUN THIS FOLLOWING VECTOR EVERY TIME YOU CHANGE PARAMETERS, BECAUSE THE FOR LOOP BELOW APPENDS AND AMMENDS IT
+    #start with 10, 12, 15, 20, 25. If no tail is visible, increase to 25, 30, 35, 40, 45
 
-#miss 30 
-	
-	read.table("pntest_mean_variants_miss30_maf05.recode.txt", header=F)->gl
-	read.table("pine_ids_col.txt", header=F)->ids
-	read.table("pine_pops.txt", header=F)->pops
-	t(gl)->tgl
-	cbind(ids, pops, tgl)->tidsgl
-	write.table(tidsgl, file="pine_gl_matrix_miss30_maf05.txt", sep=" ", row.names=F, col.names=F , quote=F)
+    avg_15495 <- vector()
+    in_out_15495_20 <- vector()
+    in_out_15495_25 <- vector()
+    in_out_15495_30 <- vector()
+    in_out_15495_35 <- vector()
+    in_out_15495_40 <- vector()
 
-### Now, the files are ready for PCA
+    for (i in 1:15495)
+        {
+        avg <- mean(dat_noname[,i])
+        avg_15495 <- append(avg_15495, avg)
+  
+        if (avg <= 20)	{ in_out_15495_20 <- append(in_out_15495_20, 1) }
+        else			{ in_out_15495_20 <- append(in_out_15495_20, 0) }
+  
+        if (avg <= 25)	{ in_out_15495_25 <- append(in_out_15495_25, 1) }
+        else			{ in_out_15495_25 <- append(in_out_15495_25, 0) }
+  
+        if (avg <= 30)	{ in_out_15495_30 <- append(in_out_15495_30, 1) }
+        else			{ in_out_15495_30 <- append(in_out_15495_30, 0) }
+  
+        if (avg <= 35)	{ in_out_15495_35 <- append(in_out_15495_35, 1) }
+        else			{ in_out_15495_35 <- append(in_out_15495_35, 0) }
+  
+        if (avg <= 40)	{ in_out_15495_40 <- append(in_out_15495_40, 1) }
+        else			{ in_out_15495_40 <- append(in_out_15495_40, 0) }
+        }
 
-#miss 30
+    hist(avg_15495)
+    hist(avg_15495, xlim=c(0,80), breaks=2000) # can change the scale here
+    
+    # if you look at this histogram and don't see a tail, change the numbers above (10, 12, 15, 20) to other values in the for loop
 
-	miss30 <- read.delim("pine_gl_matrix_miss30_maf05.txt", header=FALSE, sep=" ")
-	miss30[1:10,1:10]
-	dim(miss30) #454 * 13468 ####two more than loci because first column is whole ID identifier, second column is population identifier
+    ##choose the value at which the numbers STOP declining.
 
-#(Notes on deleting rows can be found in contorta working PCs verification file)
-
-	g30 <- t(miss30[,3:13468])
-	dim(g30) # 13466 * 454
-	g30[1:10,1:10]
-
-	gmn30 <- apply(g30, 1, mean, na.rm=TRUE)
-	gmnmat30 <- matrix(gmn30, nrow=13466, ncol=454)
-	gprime30 <- g30 - gmnmat30
-	gcovarmat30 <- matrix(NA, nrow=454, ncol=454)
-
-	for (i in 1:454)
-	{
-  		for (j in 1:454)
-  		{
-  		if (i==j)
-  		{
-  		gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
-  		}
-  		else
-  		{
-  		gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
-  		gcovarmat30[j,i] <- gcovarmat30[i,j]
-  		}
-  		}
-	}
-
-	pcgcov30<-prcomp(x=gcovarmat30,center=TRUE,scale=FALSE)
-	imp30 <- summary(pcgcov30)
-	summary(pcgcov30)
+    sum(in_out_15495_20) 
+        ## 12612
+    sum(in_out_15495_25) 
+        ## 13172
+    sum(in_out_15495_30) 
+        ## 13544
+    sum(in_out_15495_35) 	
+        ## 13815
+    sum(in_out_15495_40)  ## choosing to kill all locs with mean cov/ind >= 40
+        ## 14040
 
 
-#Plotting PCs, miss30
+    sub_40 <- dat_noname[,in_out_15495_40==1]
+        dim(sub_40)
+        # 188 x 14040    
+    sub_40_avg <- subset(avg_15495, in_out_15495_40==1)	
 
-	colors <-c(
-  		"#1795ea",
-  		"#f7b84f",
-  		"#198c49",
-  		"#d69680",
-  		"#864ad1",
-  		"#bfd048",
-  		"#8f13a2",
-  		"#4edf95",
-  		"#ff63d7",
-  		"#12601c",
-  		"#2349b6",
-  		"#a55d00",
-  		"#5c9bff",
-  		"#cf0029",
-  		"#5ad6ef",
-  		"#ff5971",
-  		"#5fc1ff",
-  		"#ff7f50",
-  		"#017499",
-  		"#972d17",
-  		"#cbbcff",
-  		"#695500",
-  		"#862c86",
-  		"#d992a9",
-  		"#3b5189",
-  		"#a30355",
-  		"#ff9ac9",
-  		"#ff8acc")
+    kill_locs <- subset(loc_names, in_out_15495_40==0)
+        dim(kill_locs)
+        # 1455 x 1 (because 15495 - 1455 = 14040, or the number of loci remaining after we remove loci) 
+        head(kill_locs)
 
+    write.table(kill_locs, file="high_cov_loc_list_to_be_removed.txt", quote=F, row.names=F, col.names=F)
 
+    #### copy and paste all of this back to the notes file, to keep record of everything that was done!
 
-	pcgcov30$x[,1]
+Time to filter out these over-assembled loci 
 
-#### PC 1v2, miss30, independent colors
-#The pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
-#Must change these for the other PCAs!!!
-	
-	plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines combined, first look miss30", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/attenuata/high_cov_loc_list_to_be_removed.txt lgalland@134.197.63.151:/working/lgalland/attenuata/bwa/sam_sai
 
-#the blue 1 and 2 in the points function refer to the PCs. Must change these to 2 and 3 for PCs 2 v 3, for example!
+    $ sed "s/:/\t/" high_cov_loc_list_to_be_removed.txt > high_cov_loc_list_to_be_removed_tabdelim.txt
 
-	points(pcgcov30$x[which(pops=="DC"),1], pcgcov30$x[which(pops=="DC"), 2], pch=21, bg=colors[1], cex=1)
-	points(pcgcov30$x[which(pops=="FR"),1], pcgcov30$x[which(pops=="FR"), 2], pch=21, bg=colors[2], cex=1)
-	points(pcgcov30$x[which(pops=="NR"),1], pcgcov30$x[which(pops=="NR"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="PA"),1], pcgcov30$x[which(pops=="PA"), 2], pch=21, bg=colors[4], cex=1)
-	points(pcgcov30$x[which(pops=="PP"),1], pcgcov30$x[which(pops=="PP"), 2], pch=21, bg=colors[5], cex=1)
-	points(pcgcov30$x[which(pops=="SP"),1], pcgcov30$x[which(pops=="SP"), 2], pch=21, bg=colors[6], cex=1)
-	points(pcgcov30$x[which(pops=="SR"),1], pcgcov30$x[which(pops=="SR"), 2], pch=21, bg=colors[7], cex=1)
-	points(pcgcov30$x[which(pops=="PR"),1], pcgcov30$x[which(pops=="PR"), 2], pch=21, bg=colors[8], cex=1)
+    $ module load vcftools/0.1.14 
 
-	points(pcgcov30$x[which(pops=="AH"),1], pcgcov30$x[which(pops=="AH"), 2], pch=21, bg=colors[9], cex=1)
-	points(pcgcov30$x[which(pops=="AL"),1], pcgcov30$x[which(pops=="AL"), 2], pch=21, bg=colors[10], cex=1)
-	points(pcgcov30$x[which(pops=="BS"),1], pcgcov30$x[which(pops=="BS"), 2], pch=21, bg=colors[11], cex=1)
-	points(pcgcov30$x[which(pops=="CG"),1], pcgcov30$x[which(pops=="CG"), 2], pch=21, bg=colors[12], cex=1)
-	points(pcgcov30$x[which(pops=="LA"),1], pcgcov30$x[which(pops=="LA"), 2], pch=21, bg=colors[13], cex=1)
-	points(pcgcov30$x[which(pops=="LS"),1], pcgcov30$x[which(pops=="LS"), 2], pch=21, bg=colors[14], cex=1)
-	points(pcgcov30$x[which(pops=="OC"),1], pcgcov30$x[which(pops=="OC"), 2], pch=21, bg=colors[15], cex=1)
-	points(pcgcov30$x[which(pops=="PF"),1], pcgcov30$x[which(pops=="PF"), 2], pch=21, bg=colors[16], cex=1)
-	points(pcgcov30$x[which(pops=="SB"),1], pcgcov30$x[which(pops=="SB"), 2], pch=21, bg=colors[17], cex=1)
-	points(pcgcov30$x[which(pops=="SH"),1], pcgcov30$x[which(pops=="SH"), 2], pch=21, bg=colors[18], cex=1)
-	points(pcgcov30$x[which(pops=="SL"),1], pcgcov30$x[which(pops=="SL"), 2], pch=21, bg=colors[19], cex=1)
-	points(pcgcov30$x[which(pops=="ST"),1], pcgcov30$x[which(pops=="ST"), 2], pch=21, bg=colors[20], cex=1)
-	points(pcgcov30$x[which(pops=="YA"),1], pcgcov30$x[which(pops=="YA"), 2], pch=21, bg=colors[21], cex=1)
-	points(pcgcov30$x[which(pops=="YB"),1], pcgcov30$x[which(pops=="YB"), 2], pch=21, bg=colors[22], cex=1)
+    $ vcftools --vcf variants_miss30_maf04_noBadInds.recode.vcf --exclude-positions high_cov_loc_list_to_be_removed_tabdelim.txt --recode --recode-INFO-all --out variants_miss30_maf04_noBadInds_noHighCov
+	    ## After filtering, kept 14040 out of a possible 15495 Sites
 
-	points(pcgcov30$x[which(pops=="CM"),1], pcgcov30$x[which(pops=="CM"), 2], pch=21, bg=colors[23], cex=1)
-	points(pcgcov30$x[which(pops=="CN"),1], pcgcov30$x[which(pops=="CN"), 2], pch=21, bg=colors[24], cex=1)
-	points(pcgcov30$x[which(pops=="CS"),1], pcgcov30$x[which(pops=="CS"), 2], pch=21, bg=colors[25], cex=1)
-	points(pcgcov30$x[which(pops=="GU"),1], pcgcov30$x[which(pops=="GU"), 2], pch=21, bg=colors[26], cex=1)
-	points(pcgcov30$x[which(pops=="MR"),1], pcgcov30$x[which(pops=="MR"), 2], pch=21, bg=colors[27], cex=1)
-	points(pcgcov30$x[which(pops=="SC"),1], pcgcov30$x[which(pops=="SC"), 2], pch=21, bg=colors[28], cex=1)
+Generate NEW depth of coverage files, with no bad inds, no over-assembled loci
+    $ vcftools --vcf variants_miss30_maf04_noBadInds_noHighCov.recode.vcf --depth -c > variants_miss30_maf04_noBadInds_noHighCov.txt
 
-	legend("bottomright", legend=c("PIMU, Diablo Canyon (SLO)", "PIMU, Fort Ross", "PIMU, Navarro River", "PIMU, Point Arena", "PIMU, Patrick's Point", "PIMU, Salt Point", "PIMU, Sea Ranch", "PIMU, Point Reyes",
-      "PIAT, Auburn High", "PIAT, Auburn Low", "PIAT, Big Sur", "PIAT, Cuesta Grade (SLO)", "PIAT, Los Angeles", "PIAT, Lake Shasta", "PIAT, Orange County", "PIAT, Panther Flat (OR border)", "PIAT, San Bernardino", 
-      "PIAT, Santa Cruz High", "PIAT, Santa Cruz Low", "PIAT, Santa Cruz Top", "PIAT, Yosemite A", "PIAT, Yosemite B",
-      "PIRA, Cambria (SLO)", "PIRA, Cedros North", "PIRA, Cedros South", "PIRA, Guadalupe", "PIRA, Monterey", "PIRA, Santa Cruz"), pch=c(16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16), ncol=2, col=colors[1:28], cex=.8)
+Create mpgl file NEW .mpgl file (no bad inds, no over-assembled loci)
 
-#Save plot window as pines_combined_firstLook_miss30.pdf
+    $ perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss30_maf04_noBadInds_noHighCov.recode.vcf
+        ##this writes variants_miss30_maf04_noBadInds_noHighCov.recode.mpgl
 
-#### PC 1v2, miss30, grouped on species
+Calculate coverage
 
-	plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines conbined, FirstLook miss 30, by species", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+    $ perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf04_noBadInds_noHighCov.recode.mpgl PA_ids_188_good_head.txt /working/lgalland/attenuata/bwa/sam_sai/ &
+            # this writes out the variants_miss40_noBadInds_noHighCov.recode.mpgl_coverage.csv
 
-	points(pcgcov30$x[which(pops=="DC"),1], pcgcov30$x[which(pops=="DC"), 2], pch=21, bg=colors[1], cex=1)
-	points(pcgcov30$x[which(pops=="FR"),1], pcgcov30$x[which(pops=="FR"), 2], pch=21, bg=colors[1], cex=1)
-	points(pcgcov30$x[which(pops=="NR"),1], pcgcov30$x[which(pops=="NR"), 2], pch=21, bg=colors[1], cex=1)
-	points(pcgcov30$x[which(pops=="PA"),1], pcgcov30$x[which(pops=="PA"), 2], pch=21, bg=colors[1], cex=1)
-	points(pcgcov30$x[which(pops=="PP"),1], pcgcov30$x[which(pops=="PP"), 2], pch=21, bg=colors[1], cex=1)
-	points(pcgcov30$x[which(pops=="SP"),1], pcgcov30$x[which(pops=="SP"), 2], pch=21, bg=colors[1], cex=1)
-	points(pcgcov30$x[which(pops=="SR"),1], pcgcov30$x[which(pops=="SR"), 2], pch=21, bg=colors[1], cex=1)
-	points(pcgcov30$x[which(pops=="PR"),1], pcgcov30$x[which(pops=="PR"), 2], pch=21, bg=colors[1], cex=1)
+Create pntest file
 
-	points(pcgcov30$x[which(pops=="AH"),1], pcgcov30$x[which(pops=="AH"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="AL"),1], pcgcov30$x[which(pops=="AL"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="BS"),1], pcgcov30$x[which(pops=="BS"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="CG"),1], pcgcov30$x[which(pops=="CG"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="LA"),1], pcgcov30$x[which(pops=="LA"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="LS"),1], pcgcov30$x[which(pops=="LS"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="OC"),1], pcgcov30$x[which(pops=="OC"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="PF"),1], pcgcov30$x[which(pops=="PF"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="SB"),1], pcgcov30$x[which(pops=="SB"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="SH"),1], pcgcov30$x[which(pops=="SH"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="SL"),1], pcgcov30$x[which(pops=="SL"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="ST"),1], pcgcov30$x[which(pops=="ST"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="YA"),1], pcgcov30$x[which(pops=="YA"), 2], pch=21, bg=colors[3], cex=1)
-	points(pcgcov30$x[which(pops=="YB"),1], pcgcov30$x[which(pops=="YB"), 2], pch=21, bg=colors[3], cex=1)
+    $ perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_maf04_noBadInds_noHighCov.recode.mpgl mean
 
+## Filter out paralogs
 
-	points(pcgcov30$x[which(pops=="CM"),1], pcgcov30$x[which(pops=="CM"), 2], pch=21, bg=colors[2], cex=1)
-	points(pcgcov30$x[which(pops=="CN"),1], pcgcov30$x[which(pops=="CN"), 2], pch=21, bg=colors[2], cex=1)
-	points(pcgcov30$x[which(pops=="CS"),1], pcgcov30$x[which(pops=="CS"), 2], pch=21, bg=colors[2], cex=1)
-	points(pcgcov30$x[which(pops=="GU"),1], pcgcov30$x[which(pops=="GU"), 2], pch=21, bg=colors[2], cex=1)
-	points(pcgcov30$x[which(pops=="MR"),1], pcgcov30$x[which(pops=="MR"), 2], pch=21, bg=colors[2], cex=1)
-	points(pcgcov30$x[which(pops=="SC"),1], pcgcov30$x[which(pops=="SC"), 2], pch=21, bg=colors[2], cex=1)
+    /working/lgalland/attenuata/bwa/sam_sai/
 
-	legend("bottomright", legend=c("P. muricata", "P. radiata", "P. attenuata"), pch=c(16,16,16), ncol=1, col=colors[1:3], cex=1)
-
-#Save window as pinesCombined_firstLook_miss30_bySpecies.pdf
-#Copy and paste exact R code to notes
-
-##############################################
+    $ mkdir HDplot
 
 
 
-## variant calling with bcftools 1.9
-## bams is a text file with all of the sorted bam files listed, one per line
-bcftools mpileup -C 50 -d 250 -f genome.fasta -q 30 -Q 20 -I -b bams -O b -o tpod.bcf
-
-## sometimes I use the -c option, sometimes not, I have mixed feelings, probably would use it
-## for podura
-bcftools call -v -c -f GQ -p 0.01 -P 0.001 -O v -o tpod.vcf tpod.bcf
 
 
-new
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
