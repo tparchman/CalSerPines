@@ -572,42 +572,42 @@ Initial look at PCAs to make sure data is okay, done in R.
 	read.table("pine_553_pops.txt", header=F)->pops
 	
     # If you need to remove individuals after seeing the PCA, do the following to remove rows. Just don't forget to change the number of individuals later in the script.
-        # ids <- ids[-c(33, 58:66, 94:97), ]
-        # pops <- pops[-c(33, 58:66, 94:97), ]
-        # gl <- gl[ , -c(35, 60:68, 96:99)]
+        ids <- ids[-c(354, 143:144, 480), ]
+        pops <- pops[-c(354, 143:144, 480), ]
+        gl <- gl[ , -c(354, 143:144, 480)]
 
-        # write.table(ids, file="ids_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
-        # write.table(pops, file="pops_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
-        # write.table(gl, file="gl_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+        write.table(ids, file="ids_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+        write.table(pops, file="pops_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+        write.table(gl, file="gl_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
 
-        # read.table("gl_new.txt", header=F) -> gl
-        # read.table("ids_new.txt", header=F) -> ids
-        # read.table("pops_new.txt", header=F) -> pops
+        read.table("gl_new.txt", header=F) -> gl
+        read.table("ids_new.txt", header=F) -> ids
+        read.table("pops_new.txt", header=F) -> pops
 
 
     t(gl)->tgl
 	cbind(ids, pops, tgl)->tidsgl
-	write.table(tidsgl, file="pine_gl_matrix_miss30_maf05.txt", sep=" ", row.names=F, col.names=F , quote=F)
+	write.table(tidsgl, file="new_pine_gl_matrix_miss30_maf05.txt", sep=" ", row.names=F, col.names=F , quote=F)
 
 	# Now, the files are ready for PCA
 	# miss 30
 
-	miss30 <- read.delim("pine_gl_matrix_miss30_maf05.txt", header=FALSE, sep=" ")
+	miss30 <- read.delim("new_pine_gl_matrix_miss30_maf05.txt", header=FALSE, sep=" ")
 	miss30[1:10,1:10]
-	dim(miss30) #553 * 15406 ####two more than loci because first column is whole ID identifier, second column is population identifier
+	dim(miss30) #549 * 15406 ####two more than loci because first column is whole ID identifier, second column is population identifier
 
 	g30 <- t(miss30[,3:15406])
-	dim(g30) # 15404 * 553
+	dim(g30) # 15404 * 549
 	g30[1:10,1:10]
 
 	gmn30 <- apply(g30, 1, mean, na.rm=TRUE)
-	gmnmat30 <- matrix(gmn30, nrow=15404, ncol=553)
+	gmnmat30 <- matrix(gmn30, nrow=15404, ncol=549)
 	gprime30 <- g30 - gmnmat30
-	gcovarmat30 <- matrix(NA, nrow=553, ncol=553)
+	gcovarmat30 <- matrix(NA, nrow=549, ncol=549)
 
-	for (i in 1:553)
+	for (i in 1:549)
 	{
-  		for (j in 1:553)
+  		for (j in 1:549)
   		{
   		if (i==j)
   		{
@@ -671,7 +671,7 @@ Initial look at PCAs to make sure data is okay, done in R.
 	# the plot function in the line below sets the axes right off the bat
 	# so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
 
-	plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines attenuata, first look miss30", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+	plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines combined, first look miss30", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
 
 	# the blue 1 and 2 in the points function refer to the PCs
 	# must change these to 2 and 3 for PCs 2 v 3, for example!
@@ -719,18 +719,18 @@ Initial look at PCAs to make sure data is okay, done in R.
 
     # Morphological hybrids are listed along their sites. All are part of Santa Cruz (SC) or MR (Monterey) clusters
 
-    legend("bottomright", legend=c("Diablo Canyon PIMU", "Fort Ross PIMU", "Navarro River PIMU", "Point Arena PIMU", "Patrick Point PIMU", "Salt Point PIMU", "Sea Ranch PIMU", "Point Reyes PIMU", "China Pines SCI PIMU", "Christy Pines SCI PIMU", "Monterey Peninsula (DM) PIMU", "Lompoc PIMU", "Pelican Bay SCI PIMU", "Ridge Road PIMU", Auburn High PIAT", "Auburn Low PIAT", "Big Sur PIAT", "Cuesta Grade(SLO) PIAT", "Los Angeles PIAT", "Lake Shasta PIAT", "Orange County PIAT", "Panther Flat (OR border) PIAT", "San Bernardino PIAT", "Santa Cruz High PIAT", "Santa Cruz Low PIAT", "Santa Cruz Top PIAT", "Yosemite A PIAT", "Yosemite B PIAT", "Cambria PIRA", "Cedros North PIRA", "Cedros South PIRA", "Guadalupe PIRA", "Monterey PIRA", "Santa Cruz PIRA", "Monterey Peninsula PIRA"), pch=c(16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16), ncol=2, col=colors[1:35], cex=.6)
+    legend("bottomright", legend=c("Diablo Canyon PIMU", "Fort Ross PIMU", "Navarro River PIMU", "Point Arena PIMU", "Patrick Point PIMU", "Salt Point PIMU", "Sea Ranch PIMU", "Point Reyes PIMU", "China Pines SCI PIMU", "Christy Pines SCI PIMU", "Monterey Peninsula (DM) PIMU", "Lompoc PIMU", "Pelican Bay SCI PIMU", "Ridge Road PIMU", "Auburn High PIAT", "Auburn Low PIAT", "Big Sur PIAT", "Cuesta Grade(SLO) PIAT", "Los Angeles PIAT", "Lake Shasta PIAT", "Orange County PIAT", "Panther Flat (OR border) PIAT", "San Bernardino PIAT", "Santa Cruz High PIAT", "Santa Cruz Low PIAT", "Santa Cruz Top PIAT", "Yosemite A PIAT", "Yosemite B PIAT", "Cambria PIRA", "Cedros North PIRA", "Cedros South PIRA", "Guadalupe PIRA", "Monterey PIRA", "Santa Cruz PIRA", "Monterey Peninsula PIRA"), pch=c(16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16), ncol=2, col=colors[1:35], cex=.38)
 
-	# save plot window as pines_firstLook_miss30_maf05.pdf
+	# save plot window as pinesCombined_firstLook_miss30_maf05.pdf
 
     ####### PC 1v2, miss30, grouped on species
 
     colors2 <-c(
-  		"#74c8ff",
-		"#ebaf00",
-		"#828cff",
+  		"#1694e8",
+		"#f7b84f",
+		"#198c49")
 
-    plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines conbined, FirstLook miss 30, by species", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+    plot(pcgcov30$x[,1], pcgcov30$x[,2], type="n", main = "Pines combined, FirstLook miss 30, by species", xlab=paste("PC1 (",(imp30$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp30$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
 
     # P. muricata
     points(pcgcov30$x[which(pops=="DC"),1], pcgcov30$x[which(pops=="DC"), 2], pch=21, bg=colors2[1], cex=1)
@@ -775,7 +775,7 @@ Initial look at PCAs to make sure data is okay, done in R.
 
     legend("bottomright", legend=c("P. muricata", "P. radiata", "P. attenuata"), pch=c(16,16,16), ncol=1, col=colors2[1:3], cex=1)
 
-    # save window as pinesCombined_firstLook_miss30_bySpecies.pdf
+    # save window as pinesCombined_firstLook_bySpecies.pdf
 	# copy and paste back to notes file
 
 ![PCA_pinesCombined](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/pinesCombined_firstLook_miss30_maf05.pdf) 
