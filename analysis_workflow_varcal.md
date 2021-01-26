@@ -354,11 +354,8 @@ Unzip fastqs. Originally did about 5 per minute:
 
     $ cd /working/lgalland/pines_combined/bwa
 
-##########################################
-##########################################
-##########################################
- # THE FOLLOWING IS NOT IN JAHNER'S FILE YET!!!   
-#### Calculate the mean number of reads per individual, from your individual fastqs
+
+Calculate the mean number of reads per individual, from your individual fastqs
 
     grep "^@" -c *.fastq > meanReads_perInd.txt &
     
@@ -368,9 +365,6 @@ Unzip fastqs. Originally did about 5 per minute:
 2590771 (this is the mean!)
 
     quit()
-##########################################
-##########################################
-##########################################
 
 ####################################################################################
 ## 5. reference based assembly using bwa/0.7.5a
