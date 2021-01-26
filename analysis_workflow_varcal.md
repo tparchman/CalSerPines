@@ -779,7 +779,7 @@ Initial look at PCAs to make sure data is okay, done in R.
 	# copy and paste back to notes file
 
 ![PCA_pinesCombined](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/pinesCombined_firstLook_miss30_maf05.pdf) 
-![PCA_pinesCombined_groupedBySpecies](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/pinesCombined_firstLook_miss30_bySpecies.pdf) 
+![PCA_pinesCombined_groupedBySpecies](https://github.com/tparchman/CalSerPines/blob/master/preliminary_figures/pinesCombined_firstLook_bySpecies.pdf) 
 
     ############### quick and dirty to plot only muricata:
     
