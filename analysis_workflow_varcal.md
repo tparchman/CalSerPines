@@ -556,7 +556,7 @@ Then, `sed` out the parts you don't want for your pops file (removing the "first
 
 Initial look at PCAs to make sure data is okay, done in R.  
 
-`NOTE`: See new_gl_attempt2.R in /Users/lanie/lanie/PhD/genomics/pines/attenuata/bwa/PCA for the highly edited PCAs where populations are plotted in helpful order, and individuals are removed.
+`NOTE`: See new_gl_attempt2.R in /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA for the highly edited PCAs where populations are plotted in helpful order, and individuals are removed.
 
 	setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA")
 
@@ -776,6 +776,130 @@ Initial look at PCAs to make sure data is okay, done in R.
 
 ![PCA_pinesCombined_groupedBySpecies](https://github.com/tparchman/CalSerPines/blob/master/pinesCombined_firstLook_bySpecies.pdf) 
 
+Make coverage file. Give it your  mpgl file, your ids file, and the location of your `bam` files. The output file is *.recode.mpgl_coverage.csv. You can go in another terminal window and verify this file is increasing in size.
+	
+	perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf05_noBadInds.recode.mpgl pine_ids_553_good_head.txt /working/lgalland/pines_combined/bwa/sam_sai/ &
+	
+Need to filter out over-assembled loci. Start by cutting the scaffold names column from the original file into the new file, for use in R.    
+
+    $ cut -d " " -f 1 variants_miss30_maf05_noBadInds.recode.mpgl > loc_names_15404.txt
+
+Move files for use in R.
+
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/variants_miss30_maf05_noBadInds.recode.mpgl_coverage.csv /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies
+
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/loc_names_15404.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies
+
+Identify over-assembled loci in R
+
+    R
+    
+    setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies")
+
+    dat <- read.csv("variants_miss30_maf05_noBadInds.recode.mpgl_coverage.csv", header=F)
+        dim(dat) #553 * 15405 - yes, because first column is ID
+        dat[1:10,1:10]
+
+    loc_names <- read.delim("loc_names_15404.txt", header=F)
+        head(loc_names)
+        dim(loc_names) #15404 * 1
+
+    dat_noname <- dat[,-1] # rip off the first column, which is ID
+        dim(dat_noname) #553 * 15404
+        dat_noname[1:10,1:10]
+
+    #RERUN THIS FOLLOWING VECTOR EVERY TIME YOU CHANGE PARAMETERS, BECAUSE THE FOR LOOP BELOW APPENDS AND AMMENDS IT
+    #start with 10, 12, 15, 20, 25. If no tail is visible, increase to 25, 30, 35, 40, 45
+
+    avg_15404 <- vector()
+    in_out_15404_20 <- vector()
+    in_out_15404_25 <- vector()
+    in_out_15404_30 <- vector()
+    in_out_15404_35 <- vector()
+    in_out_15404_40 <- vector()
+
+    for (i in 1:15404)
+        {
+        avg <- mean(dat_noname[,i])
+        avg_15404 <- append(avg_15404, avg)
+  
+        if (avg <= 20)	{ in_out_15404_20 <- append(in_out_15404_20, 1) }
+        else			{ in_out_15404_20 <- append(in_out_15404_20, 0) }
+  
+        if (avg <= 25)	{ in_out_15404_25 <- append(in_out_15404_25, 1) }
+        else			{ in_out_15404_25 <- append(in_out_15404_25, 0) }
+  
+        if (avg <= 30)	{ in_out_15404_30 <- append(in_out_15404_30, 1) }
+        else			{ in_out_15404_30 <- append(in_out_15404_30, 0) }
+  
+        if (avg <= 35)	{ in_out_15404_35 <- append(in_out_15404_35, 1) }
+        else			{ in_out_15404_35 <- append(in_out_15404_35, 0) }
+  
+        if (avg <= 40)	{ in_out_15404_40 <- append(in_out_15404_40, 1) }
+        else			{ in_out_15404_40 <- append(in_out_15404_40, 0) }
+        }
+
+    hist(avg_15404)
+    hist(avg_15404, xlim=c(0,80), breaks=2000) # can change the scale here
+    
+    # if you look at this histogram and don't see a tail, change the numbers above (10, 12, 15, 20) to other values in the for loop
+
+    ##choose the value at which the numbers STOP declining.
+
+    sum(in_out_15404_20) 
+        ## 12119
+    sum(in_out_15404_25) 
+        ## 12689
+    sum(in_out_15404_30) 
+        ## 13086
+    sum(in_out_15404_35) 	
+        ## 13411
+    sum(in_out_15404_40)  ## choosing to kill all locs with mean cov/ind >= 40
+        ## 13637
+
+
+    sub_40 <- dat_noname[,in_out_15404_40==1]
+        dim(sub_40)
+        # 553 x 13637    
+    sub_40_avg <- subset(avg_15404, in_out_15404_40==1)	
+
+    kill_locs <- subset(loc_names, in_out_15404_40==0)
+        dim(kill_locs)
+        # 1767 x 1 (because 15404 - 1767 = 13637, or the number of loci remaining after we remove loci) 
+        head(kill_locs)
+
+    write.table(kill_locs, file="high_cov_loc_list_to_be_removed.txt", quote=F, row.names=F, col.names=F)
+
+    #### copy and paste all of this back to the notes file, to keep record of everything that was done!
+
+Time to filter out these over-assembled loci 
+
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/high_cov_loc_list_to_be_removed.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai
+
+    $ sed "s/:/\t/" high_cov_loc_list_to_be_removed.txt > high_cov_loc_list_to_be_removed_tabdelim.txt
+
+    $ module load vcftools/0.1.14 
+
+    $ vcftools --vcf variants_miss30_maf05_noBadInds.recode.vcf --exclude-positions high_cov_loc_list_to_be_removed_tabdelim.txt --recode --recode-INFO-all --out variants_miss30_maf05_noBadInds_noHighCov
+	    ## After filtering, kept 13637 out of a possible 15404 Sites
+
+Generate NEW depth of coverage files, with no bad inds, no over-assembled loci
+    $ vcftools --vcf variants_miss30_maf05_noBadInds_noHighCov.recode.vcf --depth -c > variants_miss30_maf05_noBadInds_noHighCov.txt
+
+Create mpgl file NEW .mpgl file (no bad inds, no over-assembled loci)
+
+    $ perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss30_maf05_noBadInds_noHighCov.recode.vcf
+        ##this writes variants_miss30_maf05_noBadInds_noHighCov.recode.mpgl
+
+Calculate coverage
+
+    $ perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf05_noBadInds_noHighCov.recode.mpgl pine_ids_553_good_head.txt /working/lgalland/pines_combined/bwa/sam_sai/ &
+            # this writes out the variants_miss40_noBadInds_noHighCov.recode.mpgl_coverage.csv
+ 
+Create pntest file
+
+    $ perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_maf05_noBadInds_noHighCov.recode.mpgl mean
+
     
 
 
@@ -792,136 +916,44 @@ Initial look at PCAs to make sure data is okay, done in R.
 
 
 
- 
-Make coverage file. Give it your  mpgl file, your ids file, and the location of your `bam` files. The output file is *.recode.mpgl_coverage.csv. You can go in another terminal window and verify this file is increasing in size.
-	
-	perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf04_noBadInds.recode.mpgl PA_ids_188_good_head.txt /working/lgalland/attenuata/bwa/sam_sai/ &
-	
-Need to filter out over-assembled loci. Start by cutting the scaffold names column from the original file into the new file, for use in R.    
-
-    $ cut -d " " -f 1 variants_miss30_maf04_noBadInds.recode.mpgl > loc_names_15495.txt
-
-Move files for use in R.
-
-    $ scp lgalland@134.197.63.151:/working/lgalland/attenuata/bwa/sam_sai/variants_miss30_maf04_noBadInds.recode.mpgl_coverage.csv /Users/lanie/lanie/PhD/genomics/pines/attenuata
-
-    $ scp lgalland@134.197.63.151:/working/lgalland/attenuata/bwa/sam_sai/loc_names_15495.txt /Users/lanie/lanie/PhD/genomics/pines/attenuata
-
-Identify over-assembled loci in R
-
-    R
-    
-    setwd("/Users/lanie/lanie/PhD/genomics/pines/attenuata")
-
-    dat <- read.csv("variants_miss30_maf04_noBadInds.recode.mpgl_coverage.csv", header=F)
-        dim(dat) #188 * 15496 - yes, because first column is ID
-        dat[1:10,1:10]
-
-    loc_names <- read.delim("loc_names_15495.txt", header=F)
-        head(loc_names)
-        dim(loc_names) #15495 * 1
-
-    dat_noname <- dat[,-1] # rip off the first column, which is ID
-        dim(dat_noname) #188 * 15495
-        dat_noname[1:10,1:10]
-
-    #RERUN THIS FOLLOWING VECTOR EVERY TIME YOU CHANGE PARAMETERS, BECAUSE THE FOR LOOP BELOW APPENDS AND AMMENDS IT
-    #start with 10, 12, 15, 20, 25. If no tail is visible, increase to 25, 30, 35, 40, 45
-
-    avg_15495 <- vector()
-    in_out_15495_20 <- vector()
-    in_out_15495_25 <- vector()
-    in_out_15495_30 <- vector()
-    in_out_15495_35 <- vector()
-    in_out_15495_40 <- vector()
-
-    for (i in 1:15495)
-        {
-        avg <- mean(dat_noname[,i])
-        avg_15495 <- append(avg_15495, avg)
-  
-        if (avg <= 20)	{ in_out_15495_20 <- append(in_out_15495_20, 1) }
-        else			{ in_out_15495_20 <- append(in_out_15495_20, 0) }
-  
-        if (avg <= 25)	{ in_out_15495_25 <- append(in_out_15495_25, 1) }
-        else			{ in_out_15495_25 <- append(in_out_15495_25, 0) }
-  
-        if (avg <= 30)	{ in_out_15495_30 <- append(in_out_15495_30, 1) }
-        else			{ in_out_15495_30 <- append(in_out_15495_30, 0) }
-  
-        if (avg <= 35)	{ in_out_15495_35 <- append(in_out_15495_35, 1) }
-        else			{ in_out_15495_35 <- append(in_out_15495_35, 0) }
-  
-        if (avg <= 40)	{ in_out_15495_40 <- append(in_out_15495_40, 1) }
-        else			{ in_out_15495_40 <- append(in_out_15495_40, 0) }
-        }
-
-    hist(avg_15495)
-    hist(avg_15495, xlim=c(0,80), breaks=2000) # can change the scale here
-    
-    # if you look at this histogram and don't see a tail, change the numbers above (10, 12, 15, 20) to other values in the for loop
-
-    ##choose the value at which the numbers STOP declining.
-
-    sum(in_out_15495_20) 
-        ## 12612
-    sum(in_out_15495_25) 
-        ## 13172
-    sum(in_out_15495_30) 
-        ## 13544
-    sum(in_out_15495_35) 	
-        ## 13815
-    sum(in_out_15495_40)  ## choosing to kill all locs with mean cov/ind >= 40
-        ## 14040
-
-
-    sub_40 <- dat_noname[,in_out_15495_40==1]
-        dim(sub_40)
-        # 188 x 14040    
-    sub_40_avg <- subset(avg_15495, in_out_15495_40==1)	
-
-    kill_locs <- subset(loc_names, in_out_15495_40==0)
-        dim(kill_locs)
-        # 1455 x 1 (because 15495 - 1455 = 14040, or the number of loci remaining after we remove loci) 
-        head(kill_locs)
-
-    write.table(kill_locs, file="high_cov_loc_list_to_be_removed.txt", quote=F, row.names=F, col.names=F)
-
-    #### copy and paste all of this back to the notes file, to keep record of everything that was done!
-
-Time to filter out these over-assembled loci 
-
-    $ scp /Users/lanie/lanie/PhD/genomics/pines/attenuata/high_cov_loc_list_to_be_removed.txt lgalland@134.197.63.151:/working/lgalland/attenuata/bwa/sam_sai
-
-    $ sed "s/:/\t/" high_cov_loc_list_to_be_removed.txt > high_cov_loc_list_to_be_removed_tabdelim.txt
-
-    $ module load vcftools/0.1.14 
-
-    $ vcftools --vcf variants_miss30_maf04_noBadInds.recode.vcf --exclude-positions high_cov_loc_list_to_be_removed_tabdelim.txt --recode --recode-INFO-all --out variants_miss30_maf04_noBadInds_noHighCov
-	    ## After filtering, kept 14040 out of a possible 15495 Sites
-
-Generate NEW depth of coverage files, with no bad inds, no over-assembled loci
-    $ vcftools --vcf variants_miss30_maf04_noBadInds_noHighCov.recode.vcf --depth -c > variants_miss30_maf04_noBadInds_noHighCov.txt
-
-Create mpgl file NEW .mpgl file (no bad inds, no over-assembled loci)
-
-    $ perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss30_maf04_noBadInds_noHighCov.recode.vcf
-        ##this writes variants_miss30_maf04_noBadInds_noHighCov.recode.mpgl
-
-Calculate coverage
-
-    $ perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf04_noBadInds_noHighCov.recode.mpgl PA_ids_188_good_head.txt /working/lgalland/attenuata/bwa/sam_sai/ &
-            # this writes out the variants_miss40_noBadInds_noHighCov.recode.mpgl_coverage.csv
-
-Create pntest file
-
-    $ perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_maf04_noBadInds_noHighCov.recode.mpgl mean
 
 ## Filter out paralogs
 
-    /working/lgalland/attenuata/bwa/sam_sai/
+    /working/lgalland/pines_combined/bwa/sam_sai/
 
     $ mkdir HDplot
+
+Most updated vcf:
+
+    $ cp variants_miss30_maf05_noBadInds_noHighCov.recode.vcf HDplot/
+
+Copy relevant scripts
+
+    $ cp /working/lgalland/python_scripts/HDplot_python.py /working/lgalland/pines_combined/bwa/sam_sai/HDplot
+    $ cp /working/lgalland/python_scripts/vcf_to_depth.py /working/lgalland/pines_combined/bwa/sam_sai/HDplot
+
+    HDplot/
+
+Alter the python script to call the correct [vcf_file =] and [depths_file =]
+    
+    $ nano HDplot_python.py
+
+Run HDplot
+
+    $ source activate py27
+    $ python HDplot_python.py
+            ### this will begin rapidly printing numbers to the screen. Finishes quickly. Spits out HDplot_python_exampleInput.depthsBias, HDplot_results.pdf, H_vs_AlleleRatio_results.pdf, variants_miss30_maf04_noBadInds_noHighCov.recode.depths, and vcf_to_depth.pyc. We only really care about H_vs_AlleleRatio_results.pdf and HDplot_results.pdf.
+
+    $ source deactivate
+
+scp these three files to laptop
+
+    $ scp lgalland@134.197.63.151:/working/lgalland/pinesCombined/bwa/sam_sai/HDplot/HDplot_python_exampleInput.depthsBias /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/HDplot/
+
+    $ scp lgalland@134.197.63.151:/working/lgalland/pinesCombined/bwa/sam_sai/HDplot/HDplot_results.pdf /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/HDplot/
+
+    $ scp lgalland@134.197.63.151:/working/lgalland/pinesCombined/bwa/sam_sai/HDplot/H_vs_AlleleRatio_results.pdf /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/HDplot/
+        # Look at the pdfs (especially HDplot_results.pdf), and choose cutoffs. Here, we are going to call 0.6 our cutoff for proportion of heterozygotes and we will retain loci between 25 and -25 (D, or read ratio deviation)
 
 
 
