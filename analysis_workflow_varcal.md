@@ -948,14 +948,114 @@ Run HDplot
 
 scp these three files to laptop
 
-    $ scp lgalland@134.197.63.151:/working/lgalland/pinesCombined/bwa/sam_sai/HDplot/HDplot_python_exampleInput.depthsBias /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/HDplot/
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/HDplot/HDplot_python_exampleInput.depthsBias /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/HDplot/
 
-    $ scp lgalland@134.197.63.151:/working/lgalland/pinesCombined/bwa/sam_sai/HDplot/HDplot_results.pdf /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/HDplot/
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/HDplot/HDplot_results.pdf /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/HDplot/
 
-    $ scp lgalland@134.197.63.151:/working/lgalland/pinesCombined/bwa/sam_sai/HDplot/H_vs_AlleleRatio_results.pdf /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/HDplot/
-        # Look at the pdfs (especially HDplot_results.pdf), and choose cutoffs. Here, we are going to call 0.6 our cutoff for proportion of heterozygotes and we will retain loci between 25 and -25 (D, or read ratio deviation)
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/HDplot/H_vs_AlleleRatio_results.pdf /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/HDplot/
+        # Look at the pdfs (especially HDplot_results.pdf), and choose cutoffs. Here, we are going to call 0.55 our cutoff for proportion of heterozygotes and we will retain loci between 35 and -30 (D, or read ratio deviation)
+
+In the terminal, working in R, to subset singleton loci based on cutoffs outlined above - from Katie
+
+    /working/lgalland/pines_combined/bwa/sam_sai/HDplot/
+    
+    R
+
+    HD <- read.table("HDplot_python_exampleInput.depthsBias", header = TRUE) ## 13636
+    dim(HD) ## 13636
+    #change cutoffs as necessary:
+    made_z_cutoff <- intersect(which(HD$z <= 35), which(HD$z >= -30))
+    made_z_and_h_cutoff <- intersect(which(HD$hetPerc < 0.55), made_z_cutoff) 
+
+    singleton_snps <- data.frame(HD$contig[made_z_and_h_cutoff], HD$pos[made_z_and_h_cutoff])
+
+    write.table(singleton_snps, file = "singleton_snps.txt", sep = "\t", quote = FALSE, row.names = FALSE, col.names = FALSE)
+
+    quit()
+
+Exiting R, to actually remove singletons! (from Katie)
+
+    /working/lgalland/pines_combined/bwa/sam_sai/HDplot/
+
+    $ mv singleton_snps.txt /working/lgalland/pines_combined/bwa/sam_sai/
+    $ cd /working/lgalland/pines_combined/bwa/sam_sai/
+
+    $ less singleton_snps.txt
+    $ wc -l singleton_snps.txt
+        # 12100 snps remaining. Started with 13636, so we removed 1536 snps!!! Yikes, 11.3% of snps to remove 
+
+Filter paralogs with vcftools
+
+    $ module load vcftools/0.1.14
+
+    $ vcftools --vcf variants_miss30_maf05_noBadInds_noHighCov.recode.vcf --positions singleton_snps.txt --recode --out variants_miss30_maf05_noBadInds_noHighCov_noParalogs
+	    ## After filtering, kept 12100 out of a possible 13637 Sites
+
+        ## name of new file: variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.vcf
+
+NEED TO REMOVE WEIRD SAMPLES THAT DON'T MAKE SENSE (mislabeled, slightly contaminated, perhaps?). Then, I'll calculate diversity, coverage, etc. Looked at various PCAs and determined the following samples needed to be removed. 
+
+    $ touch weirdOnes.indv
+    $ nano weirdOnes.indv
+        INDV
 
 
+    $ vcftools --vcf variants_miss30_maf05_noBadInds_noHighCov_noParalogs --remove weirdOnes.indv --recode --recode-INFO-all --out variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird
+			After filtering, kept 542 out of 553 Individuals
+            After filtering, kept 12100 out of a possible 12100 Sites
+
+
+
+
+
+
+
+
+
+
+
+
+
+Create new coverage, mpgl, and pntest files (no bad inds, nor over-assembled loci, no paralogs)
+
+    $ vcftools --vcf variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.vcf --depth -c > variants_miss30_maf05_noBadInds_noHighCov_noParalogs.txt
+
+    $ perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.vcf
+        ##this writes .mpgl file
+
+    $ module load bwa/0.7.5a
+    $ module load samtools/1.3
+
+    $ perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.mpgl pine_ids_553_good_head.txt /working/lgalland/pines_combined/bwa/sam_sai/ &
+        # creates *.recode.mpgl_coverage.csv
+
+    $ perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.mpgl mean
+        # creates pntest file
+
+Calculate mean coverage. Read final filtered coverage file into R - mean coverage per individual
+
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.mpgl_coverage.csv /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/
+
+In R
+
+    R
+
+    setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/")
+
+    coverage <- read.csv("variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.mpgl_coverage.csv", header=F)
+    coverage[1:10,1:10]
+    dim(coverage) # 553 * 8563 (because first column is ID)
+
+    coverage1 <- coverage[,-1]
+    coverage1[1:10, 1:10]
+    mean_vect <- vector()
+    for (i in 1:553) { mean_vect <- append(mean_vect, mean(as.numeric(coverage1[i,]))) }
+    mean(mean_vect)
+        ## 12.28467
+
+################################################################################################
+
+## diversity with angsd (trevor figured all this out initially) 
 
 
 
