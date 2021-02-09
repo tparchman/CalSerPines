@@ -900,23 +900,6 @@ Create pntest file
 
     $ perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_maf05_noBadInds_noHighCov.recode.mpgl mean
 
-    
-
-
-
-
-
-
-# DONE TO HERE
-
-
-
-
-
-
-
-
-
 ## Filter out paralogs
 
     /working/lgalland/pines_combined/bwa/sam_sai/
@@ -997,44 +980,96 @@ NEED TO REMOVE WEIRD SAMPLES THAT DON'T MAKE SENSE (mislabeled, slightly contami
 
     $ touch weirdOnes.indv
     $ nano weirdOnes.indv
+
+Grab the IDs from out.imiss and copy and paste into weirdOnes.indv
+
         INDV
+        PA_BS_0139,553953
+        PA_SL_0119,801470
+        PA_SL_0120,757491
+        PM_PB_0281,2585951
+        PM_PP_0153,502374
+        PM_PR_0172,410688
+        PM_CP_0340,901310
+        PM_DC_0216,793819
+        PR_CN_0749,488616
+        PR_MP_0827,1378882
 
+Remove the weird ones.
 
-    $ vcftools --vcf variants_miss30_maf05_noBadInds_noHighCov_noParalogs --remove weirdOnes.indv --recode --recode-INFO-all --out variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird
-			After filtering, kept 542 out of 553 Individuals
+    $ vcftools --vcf variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.vcf --remove weirdOnes.indv --recode --recode-INFO-all --out variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird
+			After filtering, kept 543 out of 553 Individuals
             After filtering, kept 12100 out of a possible 12100 Sites
 
+Need to make new IDs and pops files that do not include these weird individuals. Easiest to do this manually. Remove the following individuals from EACH of the ID and pop files below.
+    
+    PA_BS_0139,553953
+    PA_SL_0119,801470
+    PA_SL_0120,757491
+    PM_PB_0281,2585951
+    PM_PP_0153,502374
+    PM_PR_0172,410688
+    PM_CP_0340,901310
+    PM_DC_0216,793819
+    PR_CN_0749,488616
+    PR_MP_0827,1378882
+
+    $ cp pine_553_ids_col.txt pine_543_ids_col.txt
+    $ nano pine_543_ids_col.txt
+    
+    $ cp pine_ids_553_good_head.txt pine_ids_543_good_head.txt
+    $ nano pine_ids_543_good_head.txt
+
+    $ cp pine_ids_553_good_noHead_original.txt pine_ids_543_good_noHead_original.txt
+    $ nano pine_ids_543_good_noHead_original.txt
+
+    $ cp pine_ids_553_good_noHead.txt pine_ids_543_good_noHead.txt
+    $ nano pine_ids_543_good_noHead.txt
+
+    $ cp pine_ids_553.txt pine_ids_543.txt
+    $ nano pine_ids_543.txt
+
+Then, `sed` out the parts you don't want for your pops file (removing the "first term" in your ID file, in this case). (The following worked here, which was in format XX(species)_XX(population)_XXXX(ind).) 
+
+	$ sed -s "s/[A-Z][A-Z]_//" pine_543_ids_col.txt > pine_pops3.txt
+	$ sed -s "s/_[0-9]*//" pine_pops3.txt > pine_543_pops.txt
 
 
+Generate NEW depth of coverage, mpgl, and pntest files (no bad inds, no over-assembled loci, no paralogs, no weird ones)
 
+    $ vcftools --vcf variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.recode.vcf --depth -c > variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.txt
 
-
-
-
-
-
-
-
-
-Create new coverage, mpgl, and pntest files (no bad inds, nor over-assembled loci, no paralogs)
-
-    $ vcftools --vcf variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.vcf --depth -c > variants_miss30_maf05_noBadInds_noHighCov_noParalogs.txt
-
-    $ perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.vcf
+    $ perl /working/lgalland/perl_scripts/vcf2mpglV1.3TLP.pl variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.recode.vcf
         ##this writes .mpgl file
 
     $ module load bwa/0.7.5a
     $ module load samtools/1.3
 
-    $ perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.mpgl pine_ids_553_good_head.txt /working/lgalland/pines_combined/bwa/sam_sai/ &
+    $ perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.recode.mpgl pine_ids_543_good_head.txt /working/lgalland/pines_combined/bwa/sam_sai/ &
         # creates *.recode.mpgl_coverage.csv
+    
 
-    $ perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.mpgl mean
+
+
+
+
+
+# DONE TO HERE
+
+
+
+
+
+
+
+
+
+    $ perl /working/lgalland/perl_scripts/gl2genestV1.3.pl variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.recode.mpgl mean
         # creates pntest file
 
 Calculate mean coverage. Read final filtered coverage file into R - mean coverage per individual
 
-    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.mpgl_coverage.csv /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.recode.mpgl_coverage.csv /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/
 
 In R
 
@@ -1042,14 +1077,14 @@ In R
 
     setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/")
 
-    coverage <- read.csv("variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.mpgl_coverage.csv", header=F)
+    coverage <- read.csv("variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.recode.mpgl_coverage.csv", header=F)
     coverage[1:10,1:10]
-    dim(coverage) # 553 * 8563 (because first column is ID)
+    dim(coverage) # 543 * 8563 (because first column is ID)
 
     coverage1 <- coverage[,-1]
     coverage1[1:10, 1:10]
     mean_vect <- vector()
-    for (i in 1:553) { mean_vect <- append(mean_vect, mean(as.numeric(coverage1[i,]))) }
+    for (i in 1:543) { mean_vect <- append(mean_vect, mean(as.numeric(coverage1[i,]))) }
     mean(mean_vect)
         ## 12.28467
 
