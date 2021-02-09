@@ -1244,7 +1244,8 @@ angsd -bam CG_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/s
 angsd -bam LA_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out LA &
 angsd -bam LS_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out LS &
 angsd -bam OC_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out OC &
-
+angsd -bam PF_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PF &
+angsd -bam SB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SB &
 
    
 
@@ -1265,8 +1266,7 @@ angsd -bam OC_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/s
 
 
 
-angsd -bam PF_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PF &
-angsd -bam SB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SB &
+
 angsd -bam SH_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SH &
 angsd -bam ST_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out ST &
 angsd -bam YA_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out YA &
