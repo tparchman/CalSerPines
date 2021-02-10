@@ -1140,91 +1140,91 @@ Populations to be included
 
 Make bam lists per pop
 
-grep "PA_AH" pine_543_ids_col.txt > AH_bams.txt
-grep "PA_AL" pine_543_ids_col.txt > AL_bams.txt
-grep "PA_BS" pine_543_ids_col.txt > BS_bams.txt
-grep "PA_CG" pine_543_ids_col.txt > CG_bams.txt
-grep "PA_LA" pine_543_ids_col.txt > LA_bams.txt
-grep "PA_LS" pine_543_ids_col.txt > LS_bams.txt
-grep "PA_OC" pine_543_ids_col.txt > OC_bams.txt
-grep "PA_PF" pine_543_ids_col.txt > PF_bams.txt
-grep "PA_SB" pine_543_ids_col.txt > SB_bams.txt
-grep "PA_SH" pine_543_ids_col.txt > SH_bams.txt
-grep "PA_ST" pine_543_ids_col.txt > ST_bams.txt
-grep "PA_YA" pine_543_ids_col.txt > YA_bams.txt
-grep "PA_YB" pine_543_ids_col.txt > YB_bams.txt
-grep "PM_CH" pine_543_ids_col.txt > CH_bams.txt
-grep "PM_CP" pine_543_ids_col.txt > CP_bams.txt
-grep "PM_DC" pine_543_ids_col.txt > DC_bams.txt
-grep "PM_DM" pine_543_ids_col.txt > DM_bams.txt
-grep "PM_FR" pine_543_ids_col.txt > FR_bams.txt
-grep "PM_LO" pine_543_ids_col.txt > LO_bams.txt
-grep "PM_NR" pine_543_ids_col.txt > NR_bams.txt
-grep "PM_PA" pine_543_ids_col.txt > PA_bams.txt
-grep "PM_PB" pine_543_ids_col.txt > PB_bams.txt
-grep "PM_PP" pine_543_ids_col.txt > PP_bams.txt
-grep "PM_PR" pine_543_ids_col.txt > PR_bams.txt
-grep "PM_RR" pine_543_ids_col.txt > RR_bams.txt
-grep "PM_SP" pine_543_ids_col.txt > SP_bams.txt
-grep "SPM_R" pine_543_ids_col.txt > SR_bams.txt
-grep "PR_CM" pine_543_ids_col.txt > CM_bams.txt
-grep "PR_CN" pine_543_ids_col.txt > CN_bams.txt
-grep "PR_CS" pine_543_ids_col.txt > CS_bams.txt
-grep "PR_GU" pine_543_ids_col.txt > GU_bams.txt
-grep "PR_MP" pine_543_ids_col.txt > MP_bams.txt
+    grep "PA_AH" pine_543_ids_col.txt > AH_bams.txt
+    grep "PA_AL" pine_543_ids_col.txt > AL_bams.txt
+    grep "PA_BS" pine_543_ids_col.txt > BS_bams.txt
+    grep "PA_CG" pine_543_ids_col.txt > CG_bams.txt
+    grep "PA_LA" pine_543_ids_col.txt > LA_bams.txt
+    grep "PA_LS" pine_543_ids_col.txt > LS_bams.txt
+    grep "PA_OC" pine_543_ids_col.txt > OC_bams.txt
+    grep "PA_PF" pine_543_ids_col.txt > PF_bams.txt
+    grep "PA_SB" pine_543_ids_col.txt > SB_bams.txt
+    grep "PA_SH" pine_543_ids_col.txt > SH_bams.txt
+    grep "PA_ST" pine_543_ids_col.txt > ST_bams.txt
+    grep "PA_YA" pine_543_ids_col.txt > YA_bams.txt
+    grep "PA_YB" pine_543_ids_col.txt > YB_bams.txt
+    grep "PM_CH" pine_543_ids_col.txt > CH_bams.txt
+    grep "PM_CP" pine_543_ids_col.txt > CP_bams.txt
+    grep "PM_DC" pine_543_ids_col.txt > DC_bams.txt
+    grep "PM_DM" pine_543_ids_col.txt > DM_bams.txt
+    grep "PM_FR" pine_543_ids_col.txt > FR_bams.txt
+    grep "PM_LO" pine_543_ids_col.txt > LO_bams.txt
+    grep "PM_NR" pine_543_ids_col.txt > NR_bams.txt
+    grep "PM_PA" pine_543_ids_col.txt > PA_bams.txt
+    grep "PM_PB" pine_543_ids_col.txt > PB_bams.txt
+    grep "PM_PP" pine_543_ids_col.txt > PP_bams.txt
+    grep "PM_PR" pine_543_ids_col.txt > PR_bams.txt
+    grep "PM_RR" pine_543_ids_col.txt > RR_bams.txt
+    grep "PM_SP" pine_543_ids_col.txt > SP_bams.txt
+    grep "PM_SR" pine_543_ids_col.txt > SR_bams.txt
+    grep "PR_CM" pine_543_ids_col.txt > CM_bams.txt
+    grep "PR_CN" pine_543_ids_col.txt > CN_bams.txt
+    grep "PR_CS" pine_543_ids_col.txt > CS_bams.txt
+    grep "PR_GU" pine_543_ids_col.txt > GU_bams.txt
+    grep "PR_MP" pine_543_ids_col.txt > MP_bams.txt
 
-grep "PR_MR" pine_543_ids_col.txt > PR_MR_bams.txt
-grep "PX_MR" pine_543_ids_col.txt > PX_MR_bams.txt
+    grep "PR_MR" pine_543_ids_col.txt > PR_MR_bams.txt
+    grep "PX_MR" pine_543_ids_col.txt > PX_MR_bams.txt
 
-grep "PR_SC" pine_543_ids_col.txt > PR_SC_bams.txt
-grep "PX_SC" pine_543_ids_col.txt > PX_SC_bams.txt
+    grep "PR_SC" pine_543_ids_col.txt > PR_SC_bams.txt
+    grep "PX_SC" pine_543_ids_col.txt > PX_SC_bams.txt
 
 
-sed "s/PA_AH/aln_PA_AH/g" AH_bams.txt | sed "s/\$/\.sorted\.bam/g" > AH_bam_names.txt
-sed "s/PA_AL/aln_PA_AL/g" AL_bams.txt | sed "s/\$/\.sorted\.bam/g" > AL_bam_names.txt
-sed "s/PA_BS/aln_PA_BS/g" BS_bams.txt | sed "s/\$/\.sorted\.bam/g" > BS_bam_names.txt
-sed "s/PA_CG/aln_PA_CG/g" CG_bams.txt | sed "s/\$/\.sorted\.bam/g" > CG_bam_names.txt
-sed "s/PA_LA/aln_PA_LA/g" LA_bams.txt | sed "s/\$/\.sorted\.bam/g" > LA_bam_names.txt
-sed "s/PA_LS/aln_PA_LS/g" LS_bams.txt | sed "s/\$/\.sorted\.bam/g" > LS_bam_names.txt
-sed "s/PA_OC/aln_PA_OC/g" OC_bams.txt | sed "s/\$/\.sorted\.bam/g" > OC_bam_names.txt
-sed "s/PA_PF/aln_PA_PF/g" PF_bams.txt | sed "s/\$/\.sorted\.bam/g" > PF_bam_names.txt
-sed "s/PA_SB/aln_PA_SB/g" SB_bams.txt | sed "s/\$/\.sorted\.bam/g" > SB_bam_names.txt
-sed "s/PA_SH/aln_PA_SH/g" SH_bams.txt | sed "s/\$/\.sorted\.bam/g" > SH_bam_names.txt
-sed "s/PA_ST/aln_PA_ST/g" ST_bams.txt | sed "s/\$/\.sorted\.bam/g" > ST_bam_names.txt
-sed "s/PA_YA/aln_PA_YA/g" YA_bams.txt | sed "s/\$/\.sorted\.bam/g" > YA_bam_names.txt
-sed "s/PA_YB/aln_PA_YB/g" YB_bams.txt | sed "s/\$/\.sorted\.bam/g" > YB_bam_names.txt
-sed "s/PM_CH/aln_PM_CH/g" CH_bams.txt | sed "s/\$/\.sorted\.bam/g" > CH_bam_names.txt
-sed "s/PM_CP/aln_PM_CP/g" CP_bams.txt | sed "s/\$/\.sorted\.bam/g" > CP_bam_names.txt
-sed "s/PM_DC/aln_PM_DC/g" DC_bams.txt | sed "s/\$/\.sorted\.bam/g" > DC_bam_names.txt
-sed "s/PM_DM/aln_PM_DM/g" DM_bams.txt | sed "s/\$/\.sorted\.bam/g" > DM_bam_names.txt
-sed "s/PM_FR/aln_PM_FR/g" FR_bams.txt | sed "s/\$/\.sorted\.bam/g" > FR_bam_names.txt
-sed "s/PM_LO/aln_PM_LO/g" LO_bams.txt | sed "s/\$/\.sorted\.bam/g" > LO_bam_names.txt
-sed "s/PM_NR/aln_PM_NR/g" NR_bams.txt | sed "s/\$/\.sorted\.bam/g" > NR_bam_names.txt
-sed "s/PM_PA/aln_PM_PA/g" PA_bams.txt | sed "s/\$/\.sorted\.bam/g" > PA_bam_names.txt
-sed "s/PM_PB/aln_PM_PB/g" PB_bams.txt | sed "s/\$/\.sorted\.bam/g" > PB_bam_names.txt
-sed "s/PM_PP/aln_PM_PP/g" PP_bams.txt | sed "s/\$/\.sorted\.bam/g" > PP_bam_names.txt
-sed "s/PM_PR/aln_PM_PR/g" PR_bams.txt | sed "s/\$/\.sorted\.bam/g" > PR_bam_names.txt
-sed "s/PM_RR/aln_PM_RR/g" RR_bams.txt | sed "s/\$/\.sorted\.bam/g" > RR_bam_names.txt
-sed "s/PM_SP/aln_PM_SP/g" SP_bams.txt | sed "s/\$/\.sorted\.bam/g" > SP_bam_names.txt
-sed "s/PM_SR/aln_PM_SR/g" SR_bams.txt | sed "s/\$/\.sorted\.bam/g" > SR_bam_names.txt
-sed "s/PR_CM/aln_PR_CM/g" CM_bams.txt | sed "s/\$/\.sorted\.bam/g" > CM_bam_names.txt
-sed "s/PR_CN/aln_PR_CN/g" CN_bams.txt | sed "s/\$/\.sorted\.bam/g" > CN_bam_names.txt
-sed "s/PR_CS/aln_PR_CS/g" CS_bams.txt | sed "s/\$/\.sorted\.bam/g" > CS_bam_names.txt
-sed "s/PR_GU/aln_PR_GU/g" GU_bams.txt | sed "s/\$/\.sorted\.bam/g" > GU_bam_names.txt
-sed "s/PR_MP/aln_PR_MP/g" MP_bams.txt | sed "s/\$/\.sorted\.bam/g" > MP_bam_names.txt
+    sed "s/PA_AH/aln_PA_AH/g" AH_bams.txt | sed "s/\$/\.sorted\.bam/g" > AH_bam_names.txt
+    sed "s/PA_AL/aln_PA_AL/g" AL_bams.txt | sed "s/\$/\.sorted\.bam/g" > AL_bam_names.txt
+    sed "s/PA_BS/aln_PA_BS/g" BS_bams.txt | sed "s/\$/\.sorted\.bam/g" > BS_bam_names.txt
+    sed "s/PA_CG/aln_PA_CG/g" CG_bams.txt | sed "s/\$/\.sorted\.bam/g" > CG_bam_names.txt
+    sed "s/PA_LA/aln_PA_LA/g" LA_bams.txt | sed "s/\$/\.sorted\.bam/g" > LA_bam_names.txt
+    sed "s/PA_LS/aln_PA_LS/g" LS_bams.txt | sed "s/\$/\.sorted\.bam/g" > LS_bam_names.txt
+    sed "s/PA_OC/aln_PA_OC/g" OC_bams.txt | sed "s/\$/\.sorted\.bam/g" > OC_bam_names.txt
+    sed "s/PA_PF/aln_PA_PF/g" PF_bams.txt | sed "s/\$/\.sorted\.bam/g" > PF_bam_names.txt
+    sed "s/PA_SB/aln_PA_SB/g" SB_bams.txt | sed "s/\$/\.sorted\.bam/g" > SB_bam_names.txt
+    sed "s/PA_SH/aln_PA_SH/g" SH_bams.txt | sed "s/\$/\.sorted\.bam/g" > SH_bam_names.txt
+    sed "s/PA_ST/aln_PA_ST/g" ST_bams.txt | sed "s/\$/\.sorted\.bam/g" > ST_bam_names.txt
+    sed "s/PA_YA/aln_PA_YA/g" YA_bams.txt | sed "s/\$/\.sorted\.bam/g" > YA_bam_names.txt
+    sed "s/PA_YB/aln_PA_YB/g" YB_bams.txt | sed "s/\$/\.sorted\.bam/g" > YB_bam_names.txt
+    sed "s/PM_CH/aln_PM_CH/g" CH_bams.txt | sed "s/\$/\.sorted\.bam/g" > CH_bam_names.txt
+    sed "s/PM_CP/aln_PM_CP/g" CP_bams.txt | sed "s/\$/\.sorted\.bam/g" > CP_bam_names.txt
+    sed "s/PM_DC/aln_PM_DC/g" DC_bams.txt | sed "s/\$/\.sorted\.bam/g" > DC_bam_names.txt
+    sed "s/PM_DM/aln_PM_DM/g" DM_bams.txt | sed "s/\$/\.sorted\.bam/g" > DM_bam_names.txt
+    sed "s/PM_FR/aln_PM_FR/g" FR_bams.txt | sed "s/\$/\.sorted\.bam/g" > FR_bam_names.txt
+    sed "s/PM_LO/aln_PM_LO/g" LO_bams.txt | sed "s/\$/\.sorted\.bam/g" > LO_bam_names.txt
+    sed "s/PM_NR/aln_PM_NR/g" NR_bams.txt | sed "s/\$/\.sorted\.bam/g" > NR_bam_names.txt
+    sed "s/PM_PA/aln_PM_PA/g" PA_bams.txt | sed "s/\$/\.sorted\.bam/g" > PA_bam_names.txt
+    sed "s/PM_PB/aln_PM_PB/g" PB_bams.txt | sed "s/\$/\.sorted\.bam/g" > PB_bam_names.txt
+    sed "s/PM_PP/aln_PM_PP/g" PP_bams.txt | sed "s/\$/\.sorted\.bam/g" > PP_bam_names.txt
+    sed "s/PM_PR/aln_PM_PR/g" PR_bams.txt | sed "s/\$/\.sorted\.bam/g" > PR_bam_names.txt
+    sed "s/PM_RR/aln_PM_RR/g" RR_bams.txt | sed "s/\$/\.sorted\.bam/g" > RR_bam_names.txt
+    sed "s/PM_SP/aln_PM_SP/g" SP_bams.txt | sed "s/\$/\.sorted\.bam/g" > SP_bam_names.txt
+    sed "s/PM_SR/aln_PM_SR/g" SR_bams.txt | sed "s/\$/\.sorted\.bam/g" > SR_bam_names.txt
+    sed "s/PR_CM/aln_PR_CM/g" CM_bams.txt | sed "s/\$/\.sorted\.bam/g" > CM_bam_names.txt
+    sed "s/PR_CN/aln_PR_CN/g" CN_bams.txt | sed "s/\$/\.sorted\.bam/g" > CN_bam_names.txt
+    sed "s/PR_CS/aln_PR_CS/g" CS_bams.txt | sed "s/\$/\.sorted\.bam/g" > CS_bam_names.txt
+    sed "s/PR_GU/aln_PR_GU/g" GU_bams.txt | sed "s/\$/\.sorted\.bam/g" > GU_bam_names.txt
+    sed "s/PR_MP/aln_PR_MP/g" MP_bams.txt | sed "s/\$/\.sorted\.bam/g" > MP_bam_names.txt
 
-sed "s/PR_MR/aln_PR_MR/g" PR_MR_bams.txt | sed "s/\$/\.sorted\.bam/g" > PR_MR_bam_names.txt
-sed "s/PX_MR/aln_PX_MR/g" PX_MR_bams.txt | sed "s/\$/\.sorted\.bam/g" > PX_MR_bam_names.txt
-cat PR_MR_bam_names.txt PX_MR_bam_names.txt > MR_bam_names.txt
+    sed "s/PR_MR/aln_PR_MR/g" PR_MR_bams.txt | sed "s/\$/\.sorted\.bam/g" > PR_MR_bam_names.txt
+    sed "s/PX_MR/aln_PX_MR/g" PX_MR_bams.txt | sed "s/\$/\.sorted\.bam/g" > PX_MR_bam_names.txt
+    cat PR_MR_bam_names.txt PX_MR_bam_names.txt > MR_bam_names.txt
 
-sed "s/PX_SC/aln_PX_SC/g" PX_SC_bams.txt | sed "s/\$/\.sorted\.bam/g" > PX_SC_bam_names.txt
-sed "s/PR_SC/aln_PR_SC/g" PR_SC_bams.txt | sed "s/\$/\.sorted\.bam/g" > PR_SC_bam_names.txt
-cat PR_SC_bam_names.txt PX_SC_bam_names.txt > SC_bam_names.txt
+    sed "s/PX_SC/aln_PX_SC/g" PX_SC_bams.txt | sed "s/\$/\.sorted\.bam/g" > PX_SC_bam_names.txt
+    sed "s/PR_SC/aln_PR_SC/g" PR_SC_bams.txt | sed "s/\$/\.sorted\.bam/g" > PR_SC_bam_names.txt
+    cat PR_SC_bam_names.txt PX_SC_bam_names.txt > SC_bam_names.txt
 
-rm PR_MR_bam_names.txt
-rm PX_MR_bam_names.txt
-rm PX_SC_bam_names.txt
-rm PR_SC_bam_names.txt
+    rm PR_MR_bam_names.txt
+    rm PX_MR_bam_names.txt
+    rm PX_SC_bam_names.txt
+    rm PR_SC_bam_names.txt
 
 
 ## First step (doSaf)
@@ -1237,17 +1237,42 @@ rm PR_SC_bam_names.txt
 	
 #testing -P cores here. NOTE: Stick with -P 2!!!!! If you go higher, everything goes WAY slower.
 
-angsd -bam AH_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out AH &
-angsd -bam AL_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out AL &
-angsd -bam BS_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out BS &
-angsd -bam CG_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CG &
-angsd -bam LA_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out LA &
-angsd -bam LS_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out LS &
-angsd -bam OC_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out OC &
-angsd -bam PF_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PF &
-angsd -bam SB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SB &
+    angsd -bam AH_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out AH &
+    angsd -bam AL_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out AL &
+    angsd -bam BS_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out BS &
+    angsd -bam CG_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CG &
+    angsd -bam LA_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out LA &
+    angsd -bam LS_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out LS &
+    angsd -bam OC_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out OC &
+    angsd -bam PF_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PF &
+    angsd -bam SB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SB &
+    angsd -bam SH_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SH &
+    angsd -bam ST_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out ST &
+    angsd -bam YA_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out YA &
+    angsd -bam YB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out YB &
+    angsd -bam CH_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CH &
+    angsd -bam CP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CP &
+    angsd -bam DC_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out DC &
+    angsd -bam DM_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out DM &
+    angsd -bam FR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out FR &
+    angsd -bam LO_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out LO &   
+    angsd -bam NR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out NR &
+    angsd -bam PA_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PA &
+    angsd -bam PB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PB &
+    angsd -bam PP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PP &
+    angsd -bam PR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PR &
+    angsd -bam RR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out RR &
+    angsd -bam SP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SP &
+    angsd -bam SR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SR &
+    angsd -bam CM_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CM &
+    angsd -bam CS_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CS &
+    angsd -bam GU_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out GU &
+    angsd -bam MP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out MP &
+    angsd -bam MR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out MR &
+    angsd -bam SC_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SC &
 
-   
+
+
 
 
 
@@ -1265,75 +1290,48 @@ angsd -bam SB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/s
 
 
 
-
-
-angsd -bam SH_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SH &
-angsd -bam ST_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out ST &
-angsd -bam YA_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out YA &
-angsd -bam YB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out YB &
-angsd -bam CH_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CH &
-angsd -bam CP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CP &
-angsd -bam DC_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out DC &
-angsd -bam DM_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out DM &
-angsd -bam FR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out FR &
-angsd -bam LO_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out LO &
-angsd -bam NR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out NR &
-angsd -bam PA_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PA &
-angsd -bam PB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PB &
-angsd -bam PP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PP &
-angsd -bam PR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PR &
-angsd -bam RR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out RR &
-angsd -bam SP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SP &
-angsd -bam SR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SR &
-angsd -bam CM_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CM &
-angsd -bam CN_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CN &
-angsd -bam CS_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CS &
-angsd -bam GU_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out GU &
-angsd -bam MP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out MP &
-angsd -bam MR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out MR &
-angsd -bam SC_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SC &
-
-
 ## Second step (realSFS)
+
 	## estimates the (multi) SFS based on a .saf.idx file generated from step 1 (doSaf)
 	## -P <INPUT> = number of cores used
 
-realSFS AH.saf.idx -P 2 > AH.sfs &
-realSFS AL.saf.idx -P 2 > AL.sfs &
-realSFS BS.saf.idx -P 2 > BS.sfs &
-realSFS CG.saf.idx -P 2 > CG.sfs &
-realSFS LA.saf.idx -P 2 > LA.sfs &
-realSFS LS.saf.idx -P 2 > LS.sfs &
-realSFS OC.saf.idx -P 2 > OC.sfs &
-realSFS PF.saf.idx -P 2 > PF.sfs &
-realSFS SB.saf.idx -P 2 > SB.sfs &
-realSFS SH.saf.idx -P 2 > SH.sfs &
-realSFS ST.saf.idx -P 2 > ST.sfs &
-realSFS YA.saf.idx -P 2 > YA.sfs &
-realSFS YB.saf.idx -P 2 > YB.sfs &
-realSFS CH.saf.idx -P 2 > CH.sfs &
-realSFS CP.saf.idx -P 2 > CP.sfs &
-realSFS DC.saf.idx -P 2 > DC.sfs &
-realSFS DM.saf.idx -P 2 > DM.sfs &
-realSFS FR.saf.idx -P 2 > FR.sfs &
-realSFS LO.saf.idx -P 2 > LO.sfs &
-realSFS NR.saf.idx -P 2 > NR.sfs &
-realSFS PA.saf.idx -P 2 > PA.sfs &
-realSFS PB.saf.idx -P 2 > PB.sfs &
-realSFS PP.saf.idx -P 2 > PP.sfs &
-realSFS PR.saf.idx -P 2 > PR.sfs &
-realSFS RR.saf.idx -P 2 > RR.sfs &
-realSFS SP.saf.idx -P 2 > SP.sfs &
-realSFS SR.saf.idx -P 2 > SR.sfs &
-realSFS CM.saf.idx -P 2 > CM.sfs &
-realSFS CN.saf.idx -P 2 > CN.sfs &
-realSFS CS.saf.idx -P 2 > CS.sfs &
-realSFS GU.saf.idx -P 2 > GU.sfs &
-realSFS MP.saf.idx -P 2 > MP.sfs &
-realSFS MR.saf.idx -P 2 > MR.sfs &
-realSFS SC.saf.idx -P 2 > SC.sfs &
+    realSFS AH.saf.idx -P 2 > AH.sfs &
+    realSFS AL.saf.idx -P 2 > AL.sfs &
+    realSFS BS.saf.idx -P 2 > BS.sfs &
+    realSFS CG.saf.idx -P 2 > CG.sfs &
+    realSFS LA.saf.idx -P 2 > LA.sfs &
+    realSFS LS.saf.idx -P 2 > LS.sfs &
+    realSFS OC.saf.idx -P 2 > OC.sfs &
+    realSFS PF.saf.idx -P 2 > PF.sfs &
+    realSFS SB.saf.idx -P 2 > SB.sfs &
+    realSFS SH.saf.idx -P 2 > SH.sfs &
+    realSFS ST.saf.idx -P 2 > ST.sfs &
+    realSFS YA.saf.idx -P 2 > YA.sfs &
+    realSFS YB.saf.idx -P 2 > YB.sfs &
+    realSFS CH.saf.idx -P 2 > CH.sfs &
+    realSFS CP.saf.idx -P 2 > CP.sfs &
+    realSFS DC.saf.idx -P 2 > DC.sfs &
+    realSFS DM.saf.idx -P 2 > DM.sfs &
+    realSFS FR.saf.idx -P 2 > FR.sfs &
+    realSFS LO.saf.idx -P 2 > LO.sfs &
+    realSFS NR.saf.idx -P 2 > NR.sfs &
+    realSFS PA.saf.idx -P 2 > PA.sfs &
+    realSFS PB.saf.idx -P 2 > PB.sfs &
+    realSFS PP.saf.idx -P 2 > PP.sfs &
+    realSFS PR.saf.idx -P 2 > PR.sfs &
+    realSFS RR.saf.idx -P 2 > RR.sfs &
+    realSFS SP.saf.idx -P 2 > SP.sfs &
+    realSFS SR.saf.idx -P 2 > SR.sfs &
+    realSFS CM.saf.idx -P 2 > CM.sfs &
+    realSFS CN.saf.idx -P 2 > CN.sfs &
+    realSFS CS.saf.idx -P 2 > CS.sfs &
+    realSFS GU.saf.idx -P 2 > GU.sfs &
+    realSFS MP.saf.idx -P 2 > MP.sfs &  
+    realSFS MR.saf.idx -P 2 > MR.sfs &
+    realSFS SC.saf.idx -P 2 > SC.sfs &
 
 ## Third step (doThetas)
+
 	## calculate the thetas (population scale mutation rates) for each site
 	## -bam <INPUT> = input of bam names for population
 	## -out <INPUT> = outfile prefix
@@ -1343,41 +1341,43 @@ realSFS SC.saf.idx -P 2 > SC.sfs &
 	## -anc <INPUT> = ancestral fasta file (i.e. the genome)
 	## -GL <INPUT> = genotype likelihood model (1 = SAMtools; 2 = GATK; 3 = SOAPsnp; 4 = SYK)
 
-angsd -bam AH_bam_names.txt -out AH -doThetas 1 -doSaf 1 -pest AH.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
-angsd -bam AL_bam_names.txt -out AL -doThetas 1 -doSaf 1 -pest AL.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
-angsd -bam BS_bam_names.txt -out BS -doThetas 1 -doSaf 1 -pest BS.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
-angsd -bam CG_bam_names.txt -out CG -doThetas 1 -doSaf 1 -pest CG.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
-angsd -bam LA_bam_names.txt -out LA -doThetas 1 -doSaf 1 -pest LS.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
-angsd -bam LS_bam_names.txt -out LS -doThetas 1 -doSaf 1 -pest LS.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
-angsd -bam OC_bam_names.txt -out OC -doThetas 1 -doSaf 1 -pest OC.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
-angsd -bam PF_bam_names.txt -out PF -doThetas 1 -doSaf 1 -pest PF.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam SB_bam_names.txt -out SB -doThetas 1 -doSaf 1 -pest SB.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam SH_bam_names.txt -out SH -doThetas 1 -doSaf 1 -pest SH.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam ST_bam_names.txt -out ST -doThetas 1 -doSaf 1 -pest ST.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam YA_bam_names.txt -out YA -doThetas 1 -doSaf 1 -pest YA.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam YB_bam_names.txt -out YB -doThetas 1 -doSaf 1 -pest YB.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam CH_bam_names.txt -out CH -doThetas 1 -doSaf 1 -pest CH.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam CP_bam_names.txt -out CP -doThetas 1 -doSaf 1 -pest CP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam DC_bam_names.txt -out DC -doThetas 1 -doSaf 1 -pest DC.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam DM_bam_names.txt -out DM -doThetas 1 -doSaf 1 -pest DM.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam FR_bam_names.txt -out FR -doThetas 1 -doSaf 1 -pest FR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam LO_bam_names.txt -out LO -doThetas 1 -doSaf 1 -pest LO.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam NR_bam_names.txt -out NR -doThetas 1 -doSaf 1 -pest NR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam PA_bam_names.txt -out PA -doThetas 1 -doSaf 1 -pest PA.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam PB_bam_names.txt -out PB -doThetas 1 -doSaf 1 -pest PB.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam PP_bam_names.txt -out PP -doThetas 1 -doSaf 1 -pest PP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam PR_bam_names.txt -out PR -doThetas 1 -doSaf 1 -pest PR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam RR_bam_names.txt -out RR -doThetas 1 -doSaf 1 -pest RR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam SP_bam_names.txt -out SP -doThetas 1 -doSaf 1 -pest SP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam SR_bam_names.txt -out SR -doThetas 1 -doSaf 1 -pest SR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam CM_bam_names.txt -out CM -doThetas 1 -doSaf 1 -pest CM.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam CN_bam_names.txt -out CN -doThetas 1 -doSaf 1 -pest CN.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam CS_bam_names.txt -out CS -doThetas 1 -doSaf 1 -pest CS.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam GU_bam_names.txt -out GU -doThetas 1 -doSaf 1 -pest GU.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-angsd -bam MP_bam_names.txt -out MP -doThetas 1 -doSaf 1 -pest MP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
-angsd -bam MR_bam_names.txt -out MR -doThetas 1 -doSaf 1 -pest MR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
-angsd -bam SC_bam_names.txt -out SC -doThetas 1 -doSaf 1 -pest SC.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
+    cd /working/lgalland/pines_combined/bwa/sam_sai/
+    source activate angsd
 
+    angsd -bam AH_bam_names.txt -out AH -doThetas 1 -doSaf 1 -pest AH.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
+    angsd -bam AL_bam_names.txt -out AL -doThetas 1 -doSaf 1 -pest AL.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
+    angsd -bam BS_bam_names.txt -out BS -doThetas 1 -doSaf 1 -pest BS.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
+    angsd -bam CG_bam_names.txt -out CG -doThetas 1 -doSaf 1 -pest CG.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
+    angsd -bam LA_bam_names.txt -out LA -doThetas 1 -doSaf 1 -pest LA.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
+    angsd -bam LS_bam_names.txt -out LS -doThetas 1 -doSaf 1 -pest LS.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
+    angsd -bam OC_bam_names.txt -out OC -doThetas 1 -doSaf 1 -pest OC.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
+    angsd -bam PF_bam_names.txt -out PF -doThetas 1 -doSaf 1 -pest PF.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam SB_bam_names.txt -out SB -doThetas 1 -doSaf 1 -pest SB.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam SH_bam_names.txt -out SH -doThetas 1 -doSaf 1 -pest SH.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam ST_bam_names.txt -out ST -doThetas 1 -doSaf 1 -pest ST.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam YA_bam_names.txt -out YA -doThetas 1 -doSaf 1 -pest YA.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam YB_bam_names.txt -out YB -doThetas 1 -doSaf 1 -pest YB.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam CH_bam_names.txt -out CH -doThetas 1 -doSaf 1 -pest CH.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam CP_bam_names.txt -out CP -doThetas 1 -doSaf 1 -pest CP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam DC_bam_names.txt -out DC -doThetas 1 -doSaf 1 -pest DC.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam DM_bam_names.txt -out DM -doThetas 1 -doSaf 1 -pest DM.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam FR_bam_names.txt -out FR -doThetas 1 -doSaf 1 -pest FR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam LO_bam_names.txt -out LO -doThetas 1 -doSaf 1 -pest LO.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam NR_bam_names.txt -out NR -doThetas 1 -doSaf 1 -pest NR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam PA_bam_names.txt -out PA -doThetas 1 -doSaf 1 -pest PA.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam PB_bam_names.txt -out PB -doThetas 1 -doSaf 1 -pest PB.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam PP_bam_names.txt -out PP -doThetas 1 -doSaf 1 -pest PP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam PR_bam_names.txt -out PR -doThetas 1 -doSaf 1 -pest PR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam RR_bam_names.txt -out RR -doThetas 1 -doSaf 1 -pest RR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam SP_bam_names.txt -out SP -doThetas 1 -doSaf 1 -pest SP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam SR_bam_names.txt -out SR -doThetas 1 -doSaf 1 -pest SR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam CM_bam_names.txt -out CM -doThetas 1 -doSaf 1 -pest CM.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam CN_bam_names.txt -out CN -doThetas 1 -doSaf 1 -pest CN.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam CS_bam_names.txt -out CS -doThetas 1 -doSaf 1 -pest CS.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam GU_bam_names.txt -out GU -doThetas 1 -doSaf 1 -pest GU.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam MP_bam_names.txt -out MP -doThetas 1 -doSaf 1 -pest MP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
+    angsd -bam MR_bam_names.txt -out MR -doThetas 1 -doSaf 1 -pest MR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
+    angsd -bam SC_bam_names.txt -out SC -doThetas 1 -doSaf 1 -pest SC.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
 
 
 ## Fourth step (thetaStat do_stat)
@@ -1385,83 +1385,86 @@ angsd -bam SC_bam_names.txt -out SC -doThetas 1 -doSaf 1 -pest SC.sfs -anc /work
 	## -win = window size
 	## -step = step size (step must be equal or greater than win if you want to avoid overlap)
 	## D stored in *thetaWindow.pestPG
-	## BASED ON YOUR REFERENCE, make a decision about window and step size. If using a reference genome, set to -win 50000 -step 50000. If it's a de novo assembly, use -win 1 -step 1. This is because our contigs are....
+	## IMPORTANT: BASED ON YOUR REFERENCE, make a decision about window and step size. If using a reference genome, set to -win 50000 -step 50000. If it's a de novo assembly, use -win 1 -step 1. This is because our contigs are....
 
-thetaStat do_stat AH.thetas.idx -win 1 -step 1 -outnames AH.thetaWindow
-thetaStat do_stat AL.thetas.idx -win 1 -step 1 -outnames AL.thetaWindow
-thetaStat do_stat BS.thetas.idx -win 1 -step 1 -outnames BS.thetaWindow
-thetaStat do_stat CG.thetas.idx -win 1 -step 1 -outnames CG.thetaWindow
-thetaStat do_stat LA.thetas.idx -win 1 -step 1 -outnames LA.thetaWindow
-thetaStat do_stat LS.thetas.idx -win 1 -step 1 -outnames LS.thetaWindow
-thetaStat do_stat OC.thetas.idx -win 1 -step 1 -outnames OC.thetaWindow
-thetaStat do_stat PF.thetas.idx -win 1 -step 1 -outnames PF.thetaWindow
-thetaStat do_stat SB.thetas.idx -win 1 -step 1 -outnames SB.thetaWindow
-thetaStat do_stat SH.thetas.idx -win 1 -step 1 -outnames SH.thetaWindow
-thetaStat do_stat ST.thetas.idx -win 1 -step 1 -outnames ST.thetaWindow
-thetaStat do_stat YA.thetas.idx -win 1 -step 1 -outnames YA.thetaWindow
-thetaStat do_stat YB.thetas.idx -win 1 -step 1 -outnames YB.thetaWindow
-thetaStat do_stat CH.thetas.idx -win 1 -step 1 -outnames CH.thetaWindow
-thetaStat do_stat CP.thetas.idx -win 1 -step 1 -outnames CP.thetaWindow
-thetaStat do_stat DC.thetas.idx -win 1 -step 1 -outnames DC.thetaWindow
-thetaStat do_stat DM.thetas.idx -win 1 -step 1 -outnames DM.thetaWindow
-thetaStat do_stat FR.thetas.idx -win 1 -step 1 -outnames FR.thetaWindow
-thetaStat do_stat LO.thetas.idx -win 1 -step 1 -outnames LO.thetaWindow
-thetaStat do_stat NR.thetas.idx -win 1 -step 1 -outnames NR.thetaWindow
-thetaStat do_stat PA.thetas.idx -win 1 -step 1 -outnames PA.thetaWindow
-thetaStat do_stat PB.thetas.idx -win 1 -step 1 -outnames PB.thetaWindow
-thetaStat do_stat PP.thetas.idx -win 1 -step 1 -outnames PP.thetaWindow
-thetaStat do_stat PR.thetas.idx -win 1 -step 1 -outnames PR.thetaWindow
-thetaStat do_stat RR.thetas.idx -win 1 -step 1 -outnames RR.thetaWindow
-thetaStat do_stat SP.thetas.idx -win 1 -step 1 -outnames SP.thetaWindow
-thetaStat do_stat SR.thetas.idx -win 1 -step 1 -outnames SR.thetaWindow
-thetaStat do_stat CM.thetas.idx -win 1 -step 1 -outnames CM.thetaWindow
-thetaStat do_stat CN.thetas.idx -win 1 -step 1 -outnames CN.thetaWindow
-thetaStat do_stat CS.thetas.idx -win 1 -step 1 -outnames CS.thetaWindow
-thetaStat do_stat GU.thetas.idx -win 1 -step 1 -outnames GU.thetaWindow
-thetaStat do_stat MP.thetas.idx -win 1 -step 1 -outnames MP.thetaWindow
-thetaStat do_stat MR.thetas.idx -win 1 -step 1 -outnames MR.thetaWindow
-thetaStat do_stat SC.thetas.idx -win 1 -step 1 -outnames SC.thetaWindow
+    thetaStat do_stat AH.thetas.idx -win 1 -step 1 -outnames AH.thetaWindow
+    thetaStat do_stat AL.thetas.idx -win 1 -step 1 -outnames AL.thetaWindow
+    thetaStat do_stat BS.thetas.idx -win 1 -step 1 -outnames BS.thetaWindow
+    thetaStat do_stat CG.thetas.idx -win 1 -step 1 -outnames CG.thetaWindow
+    thetaStat do_stat LA.thetas.idx -win 1 -step 1 -outnames LA.thetaWindow
+    thetaStat do_stat LS.thetas.idx -win 1 -step 1 -outnames LS.thetaWindow
+    thetaStat do_stat OC.thetas.idx -win 1 -step 1 -outnames OC.thetaWindow
+    thetaStat do_stat PF.thetas.idx -win 1 -step 1 -outnames PF.thetaWindow
+    thetaStat do_stat SB.thetas.idx -win 1 -step 1 -outnames SB.thetaWindow
+    thetaStat do_stat SH.thetas.idx -win 1 -step 1 -outnames SH.thetaWindow
+    thetaStat do_stat ST.thetas.idx -win 1 -step 1 -outnames ST.thetaWindow
+    thetaStat do_stat YA.thetas.idx -win 1 -step 1 -outnames YA.thetaWindow
+    thetaStat do_stat YB.thetas.idx -win 1 -step 1 -outnames YB.thetaWindow
+    thetaStat do_stat CH.thetas.idx -win 1 -step 1 -outnames CH.thetaWindow
+    thetaStat do_stat CP.thetas.idx -win 1 -step 1 -outnames CP.thetaWindow
+    thetaStat do_stat DC.thetas.idx -win 1 -step 1 -outnames DC.thetaWindow
+    thetaStat do_stat DM.thetas.idx -win 1 -step 1 -outnames DM.thetaWindow
+    thetaStat do_stat FR.thetas.idx -win 1 -step 1 -outnames FR.thetaWindow
+    thetaStat do_stat LO.thetas.idx -win 1 -step 1 -outnames LO.thetaWindow
+    thetaStat do_stat NR.thetas.idx -win 1 -step 1 -outnames NR.thetaWindow
+    thetaStat do_stat PA.thetas.idx -win 1 -step 1 -outnames PA.thetaWindow
+    thetaStat do_stat PB.thetas.idx -win 1 -step 1 -outnames PB.thetaWindow
+    thetaStat do_stat PP.thetas.idx -win 1 -step 1 -outnames PP.thetaWindow
+    thetaStat do_stat PR.thetas.idx -win 1 -step 1 -outnames PR.thetaWindow
+    thetaStat do_stat RR.thetas.idx -win 1 -step 1 -outnames RR.thetaWindow
+    thetaStat do_stat SP.thetas.idx -win 1 -step 1 -outnames SP.thetaWindow
+    thetaStat do_stat SR.thetas.idx -win 1 -step 1 -outnames SR.thetaWindow
+    thetaStat do_stat CM.thetas.idx -win 1 -step 1 -outnames CM.thetaWindow
+    thetaStat do_stat CN.thetas.idx -win 1 -step 1 -outnames CN.thetaWindow
+    thetaStat do_stat CS.thetas.idx -win 1 -step 1 -outnames CS.thetaWindow
+    thetaStat do_stat GU.thetas.idx -win 1 -step 1 -outnames GU.thetaWindow
+    thetaStat do_stat MP.thetas.idx -win 1 -step 1 -outnames MP.thetaWindow
+    thetaStat do_stat MR.thetas.idx -win 1 -step 1 -outnames MR.thetaWindow
+    thetaStat do_stat SC.thetas.idx -win 1 -step 1 -outnames SC.thetaWindow
 
 
 
 ## Fourth step data extraction (Tajima's D)
-	## Based on script that trevor made
+	
+    ## Based on script that trevor made
 	## Done in R on ponderosa
 
-R
+    R
 
-library(data.table)
+    library(data.table)
 
-CI <- function(data){
-    low <- mean(data) - 1.96*(sd(data)/sqrt(length(data)))
-    high <- mean(data) + 1.96*(sd(data)/sqrt(length(data)))
-    return(c(low,high))
-  }
+    CI <- function(data){
+        low <- mean(data) - 1.96*(sd(data)/sqrt(length(data)))
+        high <- mean(data) + 1.96*(sd(data)/sqrt(length(data)))
+        return(c(low,high))
+    }
 
 # reads in all files in 
-pestPG_files <- list.files(pattern='*Window.pestPG')
+    
+    pestPG_files <- list.files(pattern='*Window.pestPG')
   
 # makes empty data from to fill
-TajD_df <- as.data.frame(matrix(nrow=length(pestPG_files),ncol=4))
-names(TajD_df) <- c('Pop','TajD','TajD_low','TajD_high')
-  
-for (i in 1:length(pestPG_files)){
-    infile <- fread(pestPG_files[i])
-    Pop <- unlist(strsplit(pestPG_files[i],'.',fixed=TRUE))[1]
-    TajD_df$Pop[i] <- Pop
-    
-    #TajD
-    TajD <- infile$Tajima
-    TajD_df$TajD[i] <- mean(TajD)  
-    TajD_ci <- CI(TajD)
-    TajD_df$TajD_low[i] <- TajD_ci[1]
-    TajD_df$TajD_high[i] <- TajD_ci[2]
-    
-}
-rm('infile')
-write.csv(TajD_df,'full_angsd_TajD_out.csv',row.names=FALSE)
 
-quit()
+    TajD_df <- as.data.frame(matrix(nrow=length(pestPG_files),ncol=4))
+    names(TajD_df) <- c('Pop','TajD','TajD_low','TajD_high')
+    
+    for (i in 1:length(pestPG_files)){
+        infile <- fread(pestPG_files[i])
+        Pop <- unlist(strsplit(pestPG_files[i],'.',fixed=TRUE))[1]
+        TajD_df$Pop[i] <- Pop
+        
+        #TajD
+        TajD <- infile$Tajima
+        TajD_df$TajD[i] <- mean(TajD)  
+        TajD_ci <- CI(TajD)
+        TajD_df$TajD_low[i] <- TajD_ci[1]
+        TajD_df$TajD_high[i] <- TajD_ci[2]
+        
+    }
+    rm('infile')
+    write.csv(TajD_df,'full_angsd_TajD_out.csv',row.names=FALSE)
+
+    quit()
 
 
 ## Fifth step (thetaStat print)
@@ -1473,94 +1476,95 @@ quit()
 	## Theta H
 	## Theta L
 
-thetaStat print AH.thetas.idx > AH.theta_out
-thetaStat print AL.thetas.idx > AL.theta_out
-thetaStat print BS.thetas.idx > BS.theta_out
-thetaStat print CG.thetas.idx > CG.theta_out
-thetaStat print LA.thetas.idx > LA.theta_out
-thetaStat print LS.thetas.idx > LS.theta_out
-thetaStat print OC.thetas.idx > OC.theta_out
-thetaStat print PF.thetas.idx > PF.theta_out
-thetaStat print SB.thetas.idx > SB.theta_out
-thetaStat print SH.thetas.idx > SH.theta_out
-thetaStat print ST.thetas.idx > ST.theta_out
-thetaStat print YA.thetas.idx > YA.theta_out
-thetaStat print YB.thetas.idx > YB.theta_out
-thetaStat print CH.thetas.idx > CH.theta_out
-thetaStat print CP.thetas.idx > CP.theta_out
-thetaStat print DC.thetas.idx > DC.theta_out
-thetaStat print DM.thetas.idx > DM.theta_out
-thetaStat print FR.thetas.idx > FR.theta_out
-thetaStat print LO.thetas.idx > LO.theta_out
-thetaStat print NR.thetas.idx > NR.theta_out
-thetaStat print PA.thetas.idx > PA.theta_out
-thetaStat print PB.thetas.idx > PB.theta_out
-thetaStat print PP.thetas.idx > PP.theta_out
-thetaStat print PR.thetas.idx > PR.theta_out
-thetaStat print RR.thetas.idx > RR.theta_out
-thetaStat print SP.thetas.idx > SP.theta_out
-thetaStat print SR.thetas.idx > SR.theta_out
-thetaStat print CM.thetas.idx > CM.theta_out
-thetaStat print CN.thetas.idx > CN.theta_out
-thetaStat print CS.thetas.idx > CS.theta_out
-thetaStat print GU.thetas.idx > GU.theta_out
-thetaStat print MP.thetas.idx > MP.theta_out
-thetaStat print MR.thetas.idx > MR.theta_out
-thetaStat print SC.thetas.idx > SC.theta_out
+    thetaStat print AH.thetas.idx > AH.theta_out
+    thetaStat print AL.thetas.idx > AL.theta_out
+    thetaStat print BS.thetas.idx > BS.theta_out
+    thetaStat print CG.thetas.idx > CG.theta_out
+    thetaStat print LA.thetas.idx > LA.theta_out
+    thetaStat print LS.thetas.idx > LS.theta_out
+    thetaStat print OC.thetas.idx > OC.theta_out
+    thetaStat print PF.thetas.idx > PF.theta_out
+    thetaStat print SB.thetas.idx > SB.theta_out
+    thetaStat print SH.thetas.idx > SH.theta_out
+    thetaStat print ST.thetas.idx > ST.theta_out
+    thetaStat print YA.thetas.idx > YA.theta_out
+    thetaStat print YB.thetas.idx > YB.theta_out
+    thetaStat print CH.thetas.idx > CH.theta_out
+    thetaStat print CP.thetas.idx > CP.theta_out
+    thetaStat print DC.thetas.idx > DC.theta_out
+    thetaStat print DM.thetas.idx > DM.theta_out
+    thetaStat print FR.thetas.idx > FR.theta_out
+    thetaStat print LO.thetas.idx > LO.theta_out
+    thetaStat print NR.thetas.idx > NR.theta_out
+    thetaStat print PA.thetas.idx > PA.theta_out
+    thetaStat print PB.thetas.idx > PB.theta_out
+    thetaStat print PP.thetas.idx > PP.theta_out
+    thetaStat print PR.thetas.idx > PR.theta_out
+    thetaStat print RR.thetas.idx > RR.theta_out
+    thetaStat print SP.thetas.idx > SP.theta_out
+    thetaStat print SR.thetas.idx > SR.theta_out
+    thetaStat print CM.thetas.idx > CM.theta_out
+    thetaStat print CN.thetas.idx > CN.theta_out
+    thetaStat print CS.thetas.idx > CS.theta_out
+    thetaStat print GU.thetas.idx > GU.theta_out
+    thetaStat print MP.thetas.idx > MP.theta_out
+    thetaStat print MR.thetas.idx > MR.theta_out
+    thetaStat print SC.thetas.idx > SC.theta_out
 
 
 
 ## Fifth step data extraction (pi and theta W)
-	## Based on script that trevor made
+	
+    ## Based on script that trevor made
 	## Done in R on ponderosa
 
-R
+    R
 
-library(data.table)
+    library(data.table)
 
-CI <- function(data){
-  low <- mean(data) - 1.96*(sd(data)/sqrt(length(data)))
-  high <- mean(data) + 1.96*(sd(data)/sqrt(length(data)))
-  return(c(low,high))
-}
+    CI <- function(data){
+    low <- mean(data) - 1.96*(sd(data)/sqrt(length(data)))
+    high <- mean(data) + 1.96*(sd(data)/sqrt(length(data)))
+    return(c(low,high))
+    }
 
-subsetTheta_files <- list.files(pattern='*theta_out')
+    subsetTheta_files <- list.files(pattern='*theta_out')
 
-subsetPisum_df <- as.data.frame(matrix(nrow=length(subsetTheta_files),ncol=7))
-names(subsetPisum_df) <- c('Pop','Pi','Pi_low','Pi_high', 'Watt', 'Watt_low', 'Watt_high')
+    subsetPisum_df <- as.data.frame(matrix(nrow=length(subsetTheta_files),ncol=7))
+    names(subsetPisum_df) <- c('Pop','Pi','Pi_low','Pi_high', 'Watt', 'Watt_low', 'Watt_high')
 
 
-subsetPisamp_df <- as.data.frame(matrix(ncol=2))
-names(subsetPisamp_df) <- c('Pop','Pi')
-for (i in 1:length(subsetTheta_files)){
-  infile <- fread(subsetTheta_files[i])
-  Pop <- unlist(strsplit(subsetTheta_files[i],'.',fixed=TRUE))[1]
-  pi <- exp(infile$Pairwise) #in log form so must exp
-  watt <- exp(infile$Watterson)
-  
-  subsetPisum_df$Pop[i] <- Pop
-  subsetPisum_df$Pi[i] <- mean(pi) #in log form 
-  subsetPisum_df$Watt[i] <- mean(watt) #in log form 
-  
-  ci_pi <- CI(pi)
-  subsetPisum_df$Pi_low[i] <- ci_pi[1]
-  subsetPisum_df$Pi_high[i] <- ci_pi[2]
-  
-  ci_watt <- CI(watt)
-  subsetPisum_df$Watt_low[i] <- ci_watt[1]
-  subsetPisum_df$Watt_high[i] <- ci_watt[2]
-}
-rm('infile')
+    subsetPisamp_df <- as.data.frame(matrix(ncol=2))
+    names(subsetPisamp_df) <- c('Pop','Pi')
+    for (i in 1:length(subsetTheta_files)){
+    infile <- fread(subsetTheta_files[i])
+    Pop <- unlist(strsplit(subsetTheta_files[i],'.',fixed=TRUE))[1]
+    pi <- exp(infile$Pairwise) #in log form so must exp
+    watt <- exp(infile$Watterson)
+    
+    subsetPisum_df$Pop[i] <- Pop
+    subsetPisum_df$Pi[i] <- mean(pi) #in log form 
+    subsetPisum_df$Watt[i] <- mean(watt) #in log form 
+    
+    ci_pi <- CI(pi)
+    subsetPisum_df$Pi_low[i] <- ci_pi[1]
+    subsetPisum_df$Pi_high[i] <- ci_pi[2]
+    
+    ci_watt <- CI(watt)
+    subsetPisum_df$Watt_low[i] <- ci_watt[1]
+    subsetPisum_df$Watt_high[i] <- ci_watt[2]
+    }
+    
+    rm('infile')
+    write.csv(subsetPisum_df,'full_angsd_piWatt_out.csv',row.names=FALSE)
 
-write.csv(subsetPisum_df,'full_angsd_piWatt_out.csv',row.names=FALSE)
-
-quit()
+    quit()
 
 ###### scp files to laptop to view more easily:
 
-scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/full_angsd_piWatt_out.csv /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/pi_angsd/
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/full_angsd_piWatt_out.csv /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/pi_angsd/
 
-scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/full_angsd_TajD_out.csv /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/pi_angsd/
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/full_angsd_TajD_out.csv /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/pi_angsd/
 
 
 
