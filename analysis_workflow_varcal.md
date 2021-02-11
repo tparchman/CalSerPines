@@ -1103,6 +1103,7 @@ Get rolling:
     $ source deactivate angsd
 
 Populations to be included
+
 	## AH, Auburn High PIMU			
 	## AL, Aubur Low PIMU
     ## BS, Big Sur PIAT
@@ -1228,6 +1229,7 @@ Make bam lists per pop
 
 
 ## First step (doSaf)
+
 	## -bam <INPUT> = input of bam names for population
 	## -doSaf <INPUT> = option 1: calculate the site allele frequency likelihood based on individual genotype likelihoods assuming HWE
 	## -anc <INPUT> = ancestral fasta file (i.e. the genome)
@@ -1235,7 +1237,7 @@ Make bam lists per pop
 	## -P <INPUT> = number of cores used
 	## -out <INPUT> = outfile prefix
 	
-#testing -P cores here. NOTE: Stick with -P 2!!!!! If you go higher, everything goes WAY slower.
+    #testing -P cores here. NOTE: Stick with -P 2!!!!! If you go higher, everything goes WAY slower.
 
     angsd -bam AH_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out AH &
     angsd -bam AL_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out AL &
@@ -1270,24 +1272,6 @@ Make bam lists per pop
     angsd -bam MP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out MP &
     angsd -bam MR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out MR &
     angsd -bam SC_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SC &
-
-
-
-
-
-
-
-
-
-# DONE TO HERE
-
-
-
-
-
-
-
-
 
 
 ## Second step (realSFS)
@@ -1566,7 +1550,766 @@ Make bam lists per pop
 
     $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/full_angsd_TajD_out.csv /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/pi_angsd/
 
+######################################################################
 
+Make the proper pops file for entropy.
+
+    $ cp pine_543_ids_col.txt  pine_ids_543_col.txt
+    $ sed -s  "s/[A-Z][A-Z]_*//" pine_ids_543_col.txt > pine_pops_543.txt
+        # takes the no-header ID file entries from IDs like PM_DC_0001 to DC_0001
+
+######################################################################	
+# RUNNING ENTROPY 
+######################################################################
+
+    /working/lgalland/pines_combined/bwa/sam_sai/
+    
+    $ mkdir entropy
+        # we will use this directory later, when we scp the ldak6.txt etc. files back to the node
+
+scp files to laptop to prepare infiles for entropy
+
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/pntest_mean_variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.recode.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/pine_ids_543_col.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy
+    $ scp lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/pine_pops_543.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy
+  
+	
+## 1. LDA for starting values
+
+    setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy")
+
+    g <- read.table("pntest_mean_variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.recode.txt", header=F)
+
+    dim(g)
+    # 12100  543
+
+    names <- read.table("pine_ids_543_col.txt", header=F)
+    pops <- read.table("pine_pops_543.txt", header=F)
+
+    nind <- dim(g)[2]
+    nloci <- dim(g)[1]
+
+    gmn<-apply(g,1,mean, na.rm=T)
+    gmnmat<-matrix(gmn,nrow=nloci,ncol=nind)
+    gprime<-g-gmnmat ## remove mean
+    gcovarmat<-matrix(NA,nrow=nind,ncol=nind)
+    for(i in 1:nind){
+    for(j in i:nind){
+        if (i==j){
+        gcovarmat[i,j]<-cov(gprime[,i],gprime[,j], use="pairwise.complete.obs")
+        }
+        else{
+        gcovarmat[i,j]<-cov(gprime[,i],gprime[,j], use="pairwise.complete.obs")
+        gcovarmat[j,i]<-gcovarmat[i,j]
+        }
+    }
+    }
+
+
+    # PCA on the genotype covariance matrix
+    pcgcov<-prcomp(x=gcovarmat,center=TRUE,scale=FALSE)
+    imp <- summary(pcgcov)
+    summary(pcgcov)
+
+
+    # LDA
+
+    pcgcov->pcg
+
+    library(MASS)
+
+    k2<-kmeans(pcg$x[,1:5],2,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+    k3<-kmeans(pcg$x[,1:5],3,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+    k4<-kmeans(pcg$x[,1:5],4,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+    k5<-kmeans(pcg$x[,1:5],5,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+
+    ldak2<-lda(x=pcg$x[,1:5],grouping=k2$cluster,CV=TRUE)
+    ldak3<-lda(x=pcg$x[,1:5],grouping=k3$cluster,CV=TRUE)
+    ldak4<-lda(x=pcg$x[,1:5],grouping=k4$cluster,CV=TRUE)
+    ldak5<-lda(x=pcg$x[,1:5],grouping=k5$cluster,CV=TRUE)
+
+    write.table(round(ldak2$posterior,5),file="ldak2.txt",quote=F,row.names=F,col.names=F)
+    write.table(round(ldak3$posterior,5),file="ldak3.txt",quote=F,row.names=F,col.names=F)
+    write.table(round(ldak4$posterior,5),file="ldak4.txt",quote=F,row.names=F,col.names=F)
+    write.table(round(ldak5$posterior,5),file="ldak5.txt",quote=F,row.names=F,col.names=F)
+
+
+From command line, obviously:
+
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak2.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak3.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak4.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak5.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
+
+
+## 2.  Making .mpgl files for entropy
+
+    /working/lgalland/pines_combined/bwa/sam_sai/
+    # note that this is NOT in entropy/ ....yet
+
+    $ perl /working/lgalland/perl_scripts/create_entropy_top_2rows.pl pine_ids_543_col.txt 
+    $ cat entropy_2rows.txt variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.recode.mpgl > pine_redone_entropy.mpgl
+
+Need to add to the top 543 12100 1 ---- First number is number of individuals, second number is number of loci after ALL filtering, third number is just a 1. Do do this, just press "enter" at top line, and then entered the 3 values above (entered on the top, newly created line), separated by spaces).
+
+    $ nano pine_redone_entropy.mpgl
+
+
+## 3. Running entropy
+
+    /working/lgalland/pines_combined/bwa/sam_sai/
+    mv pine_redone_entropy.mpgl entropy/
+
+    /working/lgalland/pines_combined/bwa/sam_sai/entropy/
+
+Make subdirectories for each chain and copy all the LDA files (e.g., ldak2.txt, ldak3.txt, etc.) and "redone" mpgl (i.e., pine_redone_entropy.mpgl) file into each of (run0, run1, run2, run3, and run4 directories) - need to run each k group 5 times. Thus, you should start each k2 chain (run0 thru run4), and let them all run concurrently. Then, continue extracting parameters and record DICs for each chain. After all this is done, you will move to k3 entropy. We do this, because you may reach reach outrageous orders of magnitude difference in DIC values, meaning there's no point in continuing all the way through k12
+
+    $ module load entropy/1.2
+
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k2.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 2 -q ldak2.txt -m 1 -w 0 &> k2stdout.txt &
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k3.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 3 -q ldak3.txt -m 1 -w 0 &> k3stdout.txt &
+
+
+
+
+
+
+
+
+
+
+
+DONE TO HERE!
+
+
+
+
+
+
+
+
+
+
+
+
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k4.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 4 -q ldak4.txt -m 1 -w 0 &> k4stdout.txt &
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k5.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak5.txt -m 1 -w 0 &> k5stdout.txt &
+
+
+## 4. Extracting parameter estimates
+
+    $ module load entropy/1.2
+
+Extract q estimates
+
+    $ estpost.entropy pine_redone_entropy_k2.hdf5  -p q -s 0 -o q2.txt
+    $ estpost.entropy pine_redone_entropy_k3.hdf5  -p q -s 0 -o q3.txt
+    $ estpost.entropy pine_redone_entropy_k4.hdf5  -p q -s 0 -o q4.txt
+    $ estpost.entropy pine_redone_entropy_k5.hdf5  -p q -s 0 -o q5.txt
+
+Extract gprob estimates from .hdf5 FSmpressed results:
+
+    $ estpost.entropy  pine_redone_entropy_k2.hdf5 -p gprob -s 0 -o gprob2.txt &
+    $ estpost.entropy  pine_redone_entropy_k3.hdf5 -p gprob -s 0 -o gprob3.txt &
+    $ estpost.entropy  pine_redone_entropy_k4.hdf5 -p gprob -s 0 -o gprob4.txt &
+    $ estpost.entropy  pine_redone_entropy_k5.hdf5 -p gprob -s 0 -o gprob5.txt &
+
+Extract DIC estimates from .hdf5 TAmpressed results:
+
+    $ estpost.entropy pine_redone_entropy_k2.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k3.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k4.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k5.hdf5 -s 3 -p deviance
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#######################################
+## making entropy barplots
+#######################################
+
+# First, scp q files (like q2.txt) and an ID file to laptop 
+## IMPORTANT: After seeing the first barplot (I guess?), you need to go through and sort the q file and the IDs file (sort in the same way), so that like-colors (ancestral clusters) are together.
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/OM_ids_150_good_noHead.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run0/q2.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run2/q3.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run4/q4.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run1/q5.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run0/q6.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run0/q7.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run3/q8.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
+
+/working/lgalland/rbt/bwa/sam_sai
+
+############ THIS IS FOR AFTER YOU SEE INITIAL BARPLOTS > the following steps rearrange the populations, based on colors we want next together. Should probably have done this manually to save time, but here's the code since I did it. (My ID file is HT_ids_83_col.txt, indicating that it's the ID file with only 83 individuals, which is the number of individuals after all filtering steps. It's in a column format, with no header, like TA_AM_0024, TA_AM_0094, etc. etc.)
+
+cp OM_ids_150_col.txt entropy/
+
+grep "WR_" OM_ids_150_col.txt > WR_inds.txt
+grep "BK_" OM_ids_150_col.txt > BK_inds.txt
+grep "MD_MD_" OM_ids_150_col.txt > MD_inds.txt
+grep "MC_" OM_ids_150_col.txt > MC_inds.txt
+grep "TA_" OM_ids_150_col.txt > TA_inds.txt
+grep "UT_" OM_ids_150_col.txt > UT_inds.txt
+grep "IN_" OM_ids_150_col.txt > IN_inds.txt
+grep "TH_" OM_ids_150_col.txt > TH_inds.txt
+
+cat WR_inds.txt BK_inds.txt MD_inds.txt MC_inds.txt TA_inds.txt UT_inds.txt IN_inds.txt TH_inds.txt > names_sorted_for_final_bar.txt
+wc -l names_sorted_for_final_bar.txt
+#150
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/names_sorted_for_final_bar.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
+
+########## Changing the order of the lines in the q file to match the resorted IDs file. Done manually by opening the q2.txt file in text reader and copying and pasting chunks of individuals. Order: AM, ON, TU. SUPER IMPORTANT TO REMEMBER THIS STEP!!!
+
+##############################
+# in R to make entropy barplots
+##############################
+
+setwd("/Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy")
+
+##############################
+## 1) Load data
+##############################
+
+names_sort <- read.table("names_sorted_for_final_bar.txt", header=F)
+# names_sort <- read.table("OM_ids_150_good_noHead.txt", header=F)
+
+dim(names_sort) # 150 x 1
+head(names_sort)
+
+##############################
+## 2) Entropy barplots
+##############################
+
+
+######### k2
+
+# run4 had the lowest DIC.
+q_dat_sort_2 <- read.csv("q2_run0_sorted_for_bar.txt", header=T)
+# q_dat_sort_2 <- read.csv("q2.txt", header=T)
+
+dim(q_dat_sort_2) # 300 x 5
+head(q_dat_sort_2)
+
+nind <- 150
+
+cluster21 <- cbind(names_sort, q_dat_sort_2[1:nind,])
+cluster22 <- cbind(names_sort, q_dat_sort_2[(1+nind):(nind*2),])
+
+means2 <- data.frame(cbind(cluster21$mean,cluster22$mean))
+
+t.means2 <- t(means2)
+##writing table for with better organized data for future plots
+ids_means2.txt <- cbind(names_sort, means2)
+##write.table(ids_means2.txt, file = "k2_means_ids.txt
+
+quartz(width=8, height=7.5)
+par(mar=c(5,5,3,1),mfrow=c(3,1))
+
+colors= c("deepskyblue", "grey30", "coral", "chartreuse1")
+barplot(t.means2, col=colors, beside=F, names.arg=names_sort[1:150,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
+
+######### k3
+
+q_dat_sort_3 <- read.csv("q3_run2_sorted_for_bar.txt", header=T)
+dim(q_dat_sort_3) # 450 x 5
+head(q_dat_sort_3)
+
+nind <- 150
+
+cluster31 <- cbind(names_sort, q_dat_sort_3[1:nind,])
+cluster32 <- cbind(names_sort, q_dat_sort_3[(1+nind):(nind*2),])
+cluster33 <- cbind(names_sort, q_dat_sort_3[(1+nind*2):(nind*3),])
+
+means3 <- data.frame(cbind(cluster31$mean,cluster32$mean,cluster33$mean))
+
+t.means3 <- t(means3)
+##writing table for with better organized data for future plots
+ids_means3.txt <- cbind(names_sort, means3)
+##write.table(ids_means3.txt, file = "k3_means_ids.txt", quote=F, row.names=F, col.names=F)
+
+barplot(t.means3, col=colors, beside=F, names.arg=names_sort[1:150,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
+
+######### k4
+
+q_dat_sort_4 <- read.csv("q4_run4_sorted_for_bar.txt", header=T)
+dim(q_dat_sort_4) # 600 x 5
+head(q_dat_sort_4)
+
+nind <- 150
+
+cluster41 <- cbind(names_sort, q_dat_sort_4[1:nind,])
+cluster42 <- cbind(names_sort, q_dat_sort_4[(1+nind):(nind*2),])
+cluster43 <- cbind(names_sort, q_dat_sort_4[(1+nind*2):(nind*3),])
+cluster44 <- cbind(names_sort, q_dat_sort_4[(1+nind*3):(nind*4),])
+
+means4 <- data.frame(cbind(cluster43$mean,cluster42$mean, cluster41$mean, cluster44$mean))
+
+t.means4 <- t(means4)
+##writing table for with better organized data for future plots
+ids_means4.txt <- cbind(names_sort, means4)
+#write.table(ids_means4.txt, file = "k4_means_ids.txt", quote=F, row.names=F, col.names=F)
+
+barplot(t.means4, col=colors, beside=F, names.arg=names_sort[1:150,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
+
+# SAVE QUARTZ WINDOW AS entropy_barplot_3panel.pdf
+
+# copy and paste everything to notes file!
+# Nothing but the k2 plot is informative. Thsi is what I expected, but I went forward with all plots through k6 to be thorough in the event we need the plots for supplementary information.
+
+
+##############################################################
+###### PCA on gprobs from entropy. 
+##############################################################
+
+/working/lgalland/rbt/bwa/sam_sai/
+  
+  # 150 lines, with DL DL DL AM AM AM, etc etc
+
+### OM_pops_150.txt is the ID file we need/want for PCA! 
+
+$ sed -s "s/_[A-Z][A-Z]//" OM_ids_150_col.txt > OM_pops3.txt
+$ sed -s "s/_[0-9]*//" OM_pops3.txt > OM_pops_150.txt
+
+# Using the gprob2.txt from the run with the lowest DIC (which is gprob2.txt from run0).
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/OM_pops_150.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy/PCA
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run0/gprob2.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy/PCA
+
+##############################################################
+## in R, to make entropy gprob PCAs
+##############################################################
+
+setwd("/Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy/PCA")
+
+######################
+# Read in the data
+#####################
+
+# file with ONLY the ID names, in original order matching the gprob file, no header, AM AM AM AM DL DL DL DL etc etc
+popIDs <- read.csv("OM_pops_150.txt", header=FALSE)
+
+# gprob file output from entropy, from the run with the lowest k2 DIC
+gprobs <- read.csv("gprob2.txt", header=TRUE)
+dim(gprobs)
+# 150 x 12808 (one more than the actual 12807 loci). the first column is "ind_0" etc etc (which we don't need)
+gprobs[1:10,1:10]
+
+gprobs_noname <- gprobs[,-1] # taking off the first column, which is ind_0, etc etc etc
+dim(gprobs_noname)
+# 150 x 12807. Even though there is technically a 84th row, it isn't counted because we called it a header=TRUE
+gprobs_noname[1:10,1:10]
+
+# need to cbind the HT_83_pops.txt and gprob2.txt, so we have the gprob file with IDs for plotting points and colors
+gprob <- cbind(popIDs, gprobs_noname)
+dim(gprob) # 150 * 12808
+gprob[1:10,1:10] # perfect
+
+##############
+# run PCA
+##############
+
+pcaout <- prcomp(gprobs_noname, center=TRUE, scale=FALSE)
+imp <- summary(pcaout)
+summary(pcaout)
+
+# Importance of components:
+#   PC1     PC2     PC3     PC4     PC5     PC6     PC7     PC8     PC9    PC10    PC11    PC12    PC13    PC14    PC15    PC16    PC17    PC18
+# Standard deviation     7.71872 5.58128 5.48321 4.93270 4.82110 4.75564 4.70291 4.62249 4.56722 4.53266 4.45125 4.43147 4.42384 4.40187 4.33745 4.28764 4.26906 4.22419
+# Proportion of Variance 0.03059 0.01599 0.01544 0.01249 0.01193 0.01161 0.01136 0.01097 0.01071 0.01055 0.01017 0.01008 0.01005 0.00995 0.00966 0.00944 0.00936 0.00916
+# Cumulative Proportion  0.03059 0.04659 0.06202 0.07452 0.08645 0.09807 0.10942 0.12039 0.13110 0.14165 0.15183 0.16191 0.17196 0.18191 0.19157 0.20101 0.21037 0.21953
+
+### IMPORTANT NOTE: If you want to see the PC scores, or investigate the pcaout, do the following:
+# to investigate the srtructure:
+str(pcaout)
+# to view PC scores, which is the "x" in this case:
+pcaout$x[,1]
+
+######### PLOTTING PCA ###########
+colors <-c(
+  "#7c36bb",
+  "#d4967d",
+  "#c7007f",
+  "#d47000",
+  "#00702e",
+  "#007dd7",
+  "#e0c540",
+  "#873752")
+
+quartz(width=5, height=10)
+par(mar=c(5,5,3,1),mfrow=c(2,1))
+
+#############
+# PC 1v2
+#############
+
+plot(pcaout$x[,1], pcaout $x[,2], type="n", xlab=paste("PC1 (",(imp$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+
+legend("bottomleft", legend=c("Upper Truckee (UT)", "Taylor (TA)", "McKinney (MC)", "Madden (MD)", "Blackwood (BK)", "Ward (WR)", "Incline (IN)", "Third (TH)"), pch=c(16,16,16,16,16,16,16,16), ncol=2, col=colors[1:8], cex=.52)
+
+points(pcaout $x[which(gprob[,1]=="UT"),1], pcaout $x[which(gprob[,1]=="UT"), 2], pch=21, bg=colors[1], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="TA"),1], pcaout $x[which(gprob[,1]=="TA"), 2], pch=21, bg=colors[2], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="MC"),1], pcaout $x[which(gprob[,1]=="MC"), 2], pch=21, bg=colors[3], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="MD"),1], pcaout $x[which(gprob[,1]=="MD"), 2], pch=21, bg=colors[4], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="BK"),1], pcaout $x[which(gprob[,1]=="BK"), 2], pch=21, bg=colors[5], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="WR"),1], pcaout $x[which(gprob[,1]=="WR"), 2], pch=21, bg=colors[6], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="IN"),1], pcaout $x[which(gprob[,1]=="IN"), 2], pch=21, bg=colors[7], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="TH"),1], pcaout $x[which(gprob[,1]=="TH"), 2], pch=21, bg=colors[8], cex=1.2)
+
+#############
+# PC 1v2, grouped by region
+#############
+colors2 <-c(
+  "#7c36bb",
+  "darkgreen",
+  "gold")
+
+plot(pcaout$x[,1], pcaout $x[,2], type="n", xlab=paste("PC1 (",(imp$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+
+legend("bottomleft", legend=c("South Lake", "West Lake", "North Lake"), pch=c(16,16,16), ncol=1, col=colors2[1:3], cex=.7)
+
+points(pcaout $x[which(gprob[,1]=="UT"),1], pcaout $x[which(gprob[,1]=="UT"), 2], pch=21, bg=colors2[1], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="TA"),1], pcaout $x[which(gprob[,1]=="TA"), 2], pch=21, bg=colors2[1], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="MC"),1], pcaout $x[which(gprob[,1]=="MC"), 2], pch=21, bg=colors2[2], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="MD"),1], pcaout $x[which(gprob[,1]=="MD"), 2], pch=21, bg=colors2[2], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="BK"),1], pcaout $x[which(gprob[,1]=="BK"), 2], pch=21, bg=colors2[2], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="WR"),1], pcaout $x[which(gprob[,1]=="WR"), 2], pch=21, bg=colors2[2], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="IN"),1], pcaout $x[which(gprob[,1]=="IN"), 2], pch=21, bg=colors2[3], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="TH"),1], pcaout $x[which(gprob[,1]=="TH"), 2], pch=21, bg=colors2[3], cex=1.2)
+ 
+#save quartz window as PCA_1v2_IndAndGrouped.pdf
+
+#############
+# PC 3v4
+#############
+
+plot(pcaout$x[,3], pcaout $x[,4], type="n", xlab=paste("PC3 (",(imp$importance[,3][[2]]*100), "% )", sep=""), ylab=paste("PC4 (",(imp$importance[,4][[2]]*100), "% )", sep=""), cex.lab=1.2)
+# the 3 and 4 in imp$importance[,3][[2]]*100), "% )", sep=""), ylab=paste("PC4 (",(imp$importance[,4][[2]]*100), refer to the percent of variance that is calculated and printed on the x and y axis. It does not change the placement of the points on the PCA
+# to change the points plotted, you have to change each one of the "points" lines below.
+
+legend("bottomleft", legend=c("Blackwood (BK)", "Incline (IN)", "McKinney (MC)", "Madden (MD)", "Taylor (TA)", "Third (TH)", "Upper Truckee (UT)", "Ward (WR)"), pch=c(16,16,16,16,16,16,16,16), ncol=1, col=colors[1:8], cex=.6)
+
+points(pcaout $x[which(gprob[,1]=="UT"),3], pcaout $x[which(gprob[,1]=="UT"), 4], pch=21, bg=colors[1], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="TA"),3], pcaout $x[which(gprob[,1]=="TA"), 4], pch=21, bg=colors[2], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="MC"),3], pcaout $x[which(gprob[,1]=="MC"), 4], pch=21, bg=colors[3], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="MD"),3], pcaout $x[which(gprob[,1]=="MD"), 4], pch=21, bg=colors[4], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="BK"),3], pcaout $x[which(gprob[,1]=="BK"), 4], pch=21, bg=colors[5], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="WR"),3], pcaout $x[which(gprob[,1]=="WR"), 4], pch=21, bg=colors[6], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="IN"),3], pcaout $x[which(gprob[,1]=="IN"), 4], pch=21, bg=colors[7], cex=1.2)
+points(pcaout $x[which(gprob[,1]=="TH"),3], pcaout $x[which(gprob[,1]=="TH"), 4], pch=21, bg=colors[8], cex=1.2)
+
+
+# save the quartz window as rbt_gprob_all.pdf
+# copy and paste all R code into notes file!
+
+##########################################
+##########################################
+# DIVERSITY METRICS FROM ENTROPY GPROBS
+##########################################
+##########################################
+
+# Calculate expected and observed heterozygosity, and Fis
+##########################################
+
+#In R to calculate He, Ho, Fis
+
+setwd("/Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy/diversity_metrics")
+
+##########################################
+
+# manipulate gprob2 file:
+
+gprob_original <- read.delim("gprob2.txt", header=F, sep=",") # standard gprob file from entropy
+dim(gprob_original) # 151 * 12808 (because we actually have a header and a sillt first column of ind_0, etc.) 
+gprob_original[1:10,1:10]
+
+# rip off the first column and first row (because we do actually have a header):
+gprob_noname <- gprob_original[-c(1),-c(1)]
+dim(gprob_noname) # 150 * 12807 
+gprob_noname[1:10,1:10]
+
+# need gprob file with IDs, so:
+pops <- read.delim("OM_pops_150.txt", header=FALSE) # file with no header, only pop abbreviations in a single column, like this: AM AM Am DL DL DL
+pops[1:10,] 
+
+gprob0 <- cbind(pops, gprob_noname)
+dim(gprob0)
+gprob0[1:10,1:10]
+
+ids <- read.delim("OM_ids_150_good_noHead.txt", header = FALSE) # file with single column, no header, inds listed like this: TA_AM_0013 TA_AM_0034 TA_DL_0044 TA_DL_0055
+dim(ids)
+ids
+
+gprob <- cbind(ids, gprob0)
+dim(gprob) # 150 * 12809 (two more than # SNPs)
+gprob[1:10,1:10]
+
+pop_order <- read.delim("rbt_pop_list_ordered.txt", header=FALSE) # file with no header, single column, listing populations ONLY ONCE in the order that you want the table output!!!! LIterally, it's this many rows: DL EG UR ON AM KO MO AJ TU (and that's it!)
+dim(pop_order)
+head(pop_order)
+
+
+##########################################
+## genetic diversity
+##########################################
+
+## expected het
+
+npops <- length(pop_order[,1])
+
+het_out <- matrix(0, npops, 3) # the 3 remains a 3 regardles of npops
+
+
+for (i in 1:npops)
+{
+  print(pop_order[i,1])
+  pop_subset <- subset(gprob_noname, gprob[,2]==as.character(pop_order[i,1]))
+  dim_pop_subset <- dim(pop_subset)
+  mean_loc <- vector()
+  for (j in 1:12807)
+  {
+    p <- mean(as.numeric(as.character(pop_subset[,j])) / 2 )
+    q <- 1 - p
+    het <- 1 - (p^2 + q^2)
+    mean_loc <- append(mean_loc, het)
+  }
+  het_out[i,1] <- as.character(pop_order[i,1])
+  het_out[i,2] <- dim_pop_subset[1]
+  het_out[i,3] <- mean(mean_loc)
+  print(i)
+}
+
+het_out
+
+
+## observed het from gprobs (0.9 - 1.1 = HET)
+
+obs_het_out <- matrix(0, npops, 2)
+
+for (i in 1:npops)
+{
+  pop_sub <- subset(gprob_noname, gprob[,2]==as.character(pop_order[i,1]))
+  dim_pop_sub <- dim(pop_sub)
+  het_assign <- matrix(0, dim_pop_sub[1], dim_pop_sub[2])
+  mean_het_assign <- vector()
+  for (j in 1:dim_pop_sub[1])
+  {
+    for (k in 1:dim_pop_sub[2])
+    {
+      if (as.numeric(pop_sub[j,k]) > 0.9 && as.numeric(pop_sub[j,k]) < 1.1)	{ het_assign[j,k] <- 1 }
+      else											{ het_assign[j,k] <- 0 }
+    }
+    mean_het_assign <- append(mean_het_assign, mean(het_assign[j,]))
+  }
+  obs_het_out[i,1] <- as.character(pop_order[i,1])
+  obs_het_out[i,2] <- mean(mean_het_assign)
+  print(i)
+}
+
+
+## fis = 1 - (Ho / He)
+
+final_div_mat <- matrix(0, 8, 5) # is the second number in parentheses the number of populations? Yes. 10 pops.
+for (i in 1:8) # the 1:10 here refers to # populations
+{
+  fis <- 1 - (as.numeric(obs_het_out[i,2]) / as.numeric(het_out[i,3]))
+  final_div_mat[i,1] <- het_out[i,1]
+  final_div_mat[i,2] <- het_out[i,2]
+  final_div_mat[i,3] <- het_out[i,3]
+  final_div_mat[i,4] <- obs_het_out[i,2]
+  final_div_mat[i,5] <- fis
+}
+
+final_div_mat
+
+write.table(final_div_mat, file="rbt_diversity_out.txt", quote=F, row.names=F, col.names=F)
+## this writes out the table with metrics listed in this order: He, Ho, and Fis. Positive Fis indicates heterozygote deficiency.
+
+## Copy and paste everything back into notes file!
+
+##########################################
+##########################################
+
+###################### allele frequencies, Fst, Nei's D, NJ tree ####################################
+
+
+setwd("/Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy/diversity_metrics")
+
+# read in gprob file from entropy
+gprob_original <- read.delim("gprob2.txt", header=T, sep=",") # standard gprob file from entropy, with best DIC
+dim(gprob_original) # 150 * 12808 (one more than # of loci, because we actually have a first column of ind_0, etc.) 
+gprob_original[1:10,1:10]
+
+# rip off first column
+gmat <- gprob_original[,-c(1)]
+dim(gmat) # 150 * 12807 ---- yes, because this is number of inds and number of loci
+gmat[1:10,1:10]
+
+nind <- 150
+nloci <- 12807
+gprob <- gmat
+gprob[1:10,1:10]
+
+sg.pops_v<-read.table("OM_pops_150.txt", header=F) 
+# file with only pops listed in single column, in same order as gprob file. (Example: AM AM AM AM TU TU TU TU TU etc etc to 192 lines)
+as.vector(sg.pops_v[,1])->sg.pops
+
+sg.afreq <- matrix(data=NA, ncol=nloci, nrow=length(unique(sg.pops)))
+
+for(i in 1:nloci){
+  for(j in 1:length(unique(sg.pops))){
+    sg.afreq[j,(i)] <- sum(gprob[(sg.pops == unique(sg.pops)[j]),i])/(2*length(sg.pops[sg.pops == unique(sg.pops)[j]]))
+    
+  }
+}
+##afreq matrix below can be used for hudsons fst.
+
+write.table(round(sg.afreq,digits=5), file="rbt_afreq_matrix.txt", quote=F, row.names=F, col.names=F, sep=",")
+
+
+## This script calculates distance matrix, Nei's D
+all.afreq <- read.csv("rbt_afreq_matrix.txt", header=F) # this is the file you'll use to create the nice pairwise table and the histograms of pairwise Fst
+## function Nei's D 1983 from Genetic Distances and Reconstruction of Phylogenetic Trees From Microsatellite DNA, Genetics 1996
+
+neisD<-function(P){ ## rows = pops, cols = loci
+  N<-dim(P)[1]
+  L<-dim(P)[2] 
+  D<-matrix(0,nrow=N,ncol=N)
+  for(i in 1:(N-1)){ for(j in (i+1):N){
+    D[i,j]<-1 - (sum(sqrt((1-P[i,])*(1-P[j,]))) + sum(sqrt(P[i,]*P[j,]))
+    )/L
+    D[j,i]<-D[i,j]
+  }}
+  D<-as.dist(D)
+  return(D)
+}
+
+
+## calculate nei's distance
+neiDcommon<-neisD(all.afreq) # this takes a bit of time. No, it's not frozen!
+
+library("ape")
+read.table("rbt_pop_list_ordered.txt", header=F) -> pop_ids # rbt_pop_list_ordered.txt is a file with each population abbreviation listed ONLY ONCE, in a single column. So, you have 9 populations? You should have only 9 rows indicating unique population identifiers
+mat.neiD <- as.matrix(neiDcommon)
+rownames(mat.neiD) <- pop_ids[,1]
+write.table(mat.neiD, file="neisDmatrix_rbt.txt", col.names=F, quote=F)
+
+intermediate <- read.table("neisDmatrix_rbt.txt", header=F)
+mat.neiD <- intermediate[,-c(1)]
+
+read.table("rbt_pop_list_ordered.txt", header=F) -> pop_ids
+rownames(mat.neiD) <- pop_ids[,1]
+
+library(ape)
+
+tree <- bionj(as.dist(mat.neiD))
+
+pdf("nj_dist_tree.pdf", width=10, height=6)
+par(mfrow=c(1,2))
+
+plot(tree, "unrooted", use.edge.length=T, lab4ut="axial", no.margin=T, cex= 0.75)
+
+dev.off()
+
+#########################################################################################
+# to calculate Hudson's Fst and the pretty Fst/Nei's D on each diagonal table, and Fst pairwise histograms
+#	This code uses a function for hudsons Fst to calculate locus specific Fst   # #estimates for all pairwise combinations of individuals. The input is an allele frequency# #matrix with nrows = the number of individuals and ncols = the number of loci. This code# #will write out a pdf with frequency distribution plots and a file with locus specific # #fst estimates in columns, with a header that is each possible pairwise pop/species     # #combination.	
+#########################################################################################
+
+hudsonFst2<-function(p1=NA,p2=NA,n1=NA,n2=NA){
+  numerator<-p1 * (1 - p1) + p2 * (1 - p2)
+  denominator<-p1 * (1 - p2) + p2 * (1 - p1)
+  fst<-1 - numerator/denominator
+  out<-cbind(numerator,denominator,fst)
+  return(out)
+}
+
+species <- c("BK", "IN", "MC", "MD", "TA", "TH", "UT", "WR") ##taxon labels, or in this case, population labels
+species <-as.matrix(species)
+nloci <- 12807
+
+
+#MUST SPECIFY THE NUMBER DIMENSIONS OF EXPECTED OUTPUT
+pop.fst.mean.med <- matrix(data=NA, nrow=8, ncol=8) #the "10" values here refer to number of populations
+af<- read.table("rbt_afreq_matrix.txt", header=F, sep = ",")
+afreq<-as.matrix(af)
+
+
+
+## Calculate locus-specific Fst, plot histogram, populate matrix of mean/median
+results <- data.frame()
+names <-matrix()
+
+
+pdf("loc_fst_hist.pdf", width = 15, height=20)
+#quartz(width=2, height=10)
+#par(mar=c(5,5,3,1),mfrow=c(8,7))
+
+par(mfrow=c(9,5)) # first number is number of rows
+par(mar=c(5,4,4,2))
+par(oma=c(2,2,2,2))
+for (i in 1:7){ # the 7 listed here is ONE LESS than the number of populations
+  for (j in i:8){ # the 8 here is THE SAME AS the number of populations
+    fst <- hudsonFst2(p1=as.numeric(afreq[i,]), p2=as.numeric(afreq[j,]))
+    if(i != j){
+      hist(fst[,3], col="grey", main=paste(toupper(species[i]), toupper(species[j]), sep=","), breaks=seq(0,1,0.025), cex.lab = 1.2, cex = 1.2, cex.main = 1.2, xlab= "Locus-specific Hudson's Fst", ylab="frequency", xlim=c(0,.8))
+      abline(v=mean(fst[,3], na.rm=T), lty=2, col="darkred")
+      text(0.5, 2500, paste("mean Fst = ", round(mean(fst[,3], na.rm=T), digits=2)))
+      box()
+      id<-as.character(paste(species[i],species[j],sep="_"))
+      
+      # mat.fst[]<-fst[,3]
+      results <- rbind(results, fst[,3])
+      names <- cbind(names, id)
+      
+    }
+    pop.fst.mean.med[i,j] <- mean(fst[,3], na.rm=T)
+    pop.fst.mean.med[j,i] <- quantile(fst[,3], probs=c(0.5), na.rm=T)
+    
+  }
+}
+
+
+names <-t(names)
+
+write.table(results, file = "loc_fst_pairs.csv", row.names = FALSE, 
+            append = FALSE, col.names = FALSE, quote=F, sep = ",")
+write.table(names, file = "loc_fst_pairs_names.csv", row.names = FALSE, 
+            append = FALSE, col.names = FALSE, quote=F, sep = ",")           
+dev.off()
+
+colnames(pop.fst.mean.med) <- species
+write.csv(cbind(species,pop.fst.mean.med), file="pop_fst_mean_med.csv", col.names = F, quote=F, row.names=F)
+# ignore the warning that the previous line yields
+
+# copy and paste all code back to notes file!
+
+####################################################################################
 
 
 
