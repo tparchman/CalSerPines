@@ -1622,16 +1622,27 @@ scp files to laptop to prepare infiles for entropy
     k3<-kmeans(pcg$x[,1:5],3,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
     k4<-kmeans(pcg$x[,1:5],4,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
     k5<-kmeans(pcg$x[,1:5],5,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+    k6<-kmeans(pcg$x[,1:5],6,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+    k7<-kmeans(pcg$x[,1:5],7,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+    k8<-kmeans(pcg$x[,1:5],8,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+
 
     ldak2<-lda(x=pcg$x[,1:5],grouping=k2$cluster,CV=TRUE)
     ldak3<-lda(x=pcg$x[,1:5],grouping=k3$cluster,CV=TRUE)
     ldak4<-lda(x=pcg$x[,1:5],grouping=k4$cluster,CV=TRUE)
     ldak5<-lda(x=pcg$x[,1:5],grouping=k5$cluster,CV=TRUE)
+    ldak6<-lda(x=pcg$x[,1:5],grouping=k6$cluster,CV=TRUE)
+    ldak7<-lda(x=pcg$x[,1:5],grouping=k7$cluster,CV=TRUE)
+    ldak8<-lda(x=pcg$x[,1:5],grouping=k8$cluster,CV=TRUE)
+
 
     write.table(round(ldak2$posterior,5),file="ldak2.txt",quote=F,row.names=F,col.names=F)
     write.table(round(ldak3$posterior,5),file="ldak3.txt",quote=F,row.names=F,col.names=F)
     write.table(round(ldak4$posterior,5),file="ldak4.txt",quote=F,row.names=F,col.names=F)
     write.table(round(ldak5$posterior,5),file="ldak5.txt",quote=F,row.names=F,col.names=F)
+    write.table(round(ldak6$posterior,5),file="ldak6.txt",quote=F,row.names=F,col.names=F)
+    write.table(round(ldak7$posterior,5),file="ldak7.txt",quote=F,row.names=F,col.names=F)
+    write.table(round(ldak8$posterior,5),file="ldak8.txt",quote=F,row.names=F,col.names=F)
 
 
 From command line, obviously:
@@ -1640,6 +1651,9 @@ From command line, obviously:
     $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak3.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
     $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak4.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
     $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak5.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak6.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak7.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak8.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
 
 
 ## 2.  Making .mpgl files for entropy
@@ -1670,6 +1684,7 @@ Make subdirectories for each chain and copy all the LDA files (e.g., ldak2.txt, 
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k3.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 3 -q ldak3.txt -m 1 -w 0 &> k3stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k4.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 4 -q ldak4.txt -m 1 -w 0 &> k4stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k5.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak5.txt -m 1 -w 0 &> k5stdout.txt &
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k6.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak6.txt -m 1 -w 0 &> k6stdout.txt &
 
 
 
@@ -1687,6 +1702,8 @@ DONE TO HERE!
 
 
 
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k7.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak7.txt -m 1 -w 0 &> k7stdout.txt &
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k8.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak8.txt -m 1 -w 0 &> k8stdout.txt &
 
 
 
