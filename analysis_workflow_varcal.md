@@ -1686,6 +1686,7 @@ Make subdirectories for each chain and copy all the LDA files (e.g., ldak2.txt, 
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k5.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak5.txt -m 1 -w 0 &> k5stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k6.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak6.txt -m 1 -w 0 &> k6stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k7.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak7.txt -m 1 -w 0 &> k7stdout.txt &
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k8.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak8.txt -m 1 -w 0 &> k8stdout.txt &
 
 
 
@@ -1703,7 +1704,6 @@ DONE TO HERE!
 
 
     
-    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k8.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak8.txt -m 1 -w 0 &> k8stdout.txt &
 
 
 
