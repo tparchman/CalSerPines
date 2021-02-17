@@ -1625,6 +1625,9 @@ scp files to laptop to prepare infiles for entropy
     k6<-kmeans(pcg$x[,1:5],6,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
     k7<-kmeans(pcg$x[,1:5],7,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
     k8<-kmeans(pcg$x[,1:5],8,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+    k9<-kmeans(pcg$x[,1:5],9,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+    k10<-kmeans(pcg$x[,1:5],10,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+    k11<-kmeans(pcg$x[,1:5],11,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
 
 
     ldak2<-lda(x=pcg$x[,1:5],grouping=k2$cluster,CV=TRUE)
@@ -1634,6 +1637,9 @@ scp files to laptop to prepare infiles for entropy
     ldak6<-lda(x=pcg$x[,1:5],grouping=k6$cluster,CV=TRUE)
     ldak7<-lda(x=pcg$x[,1:5],grouping=k7$cluster,CV=TRUE)
     ldak8<-lda(x=pcg$x[,1:5],grouping=k8$cluster,CV=TRUE)
+    ldak9<-lda(x=pcg$x[,1:5],grouping=k9$cluster,CV=TRUE)
+    ldak10<-lda(x=pcg$x[,1:5],grouping=k10$cluster,CV=TRUE)
+    ldak11<-lda(x=pcg$x[,1:5],grouping=k11$cluster,CV=TRUE)
 
 
     write.table(round(ldak2$posterior,5),file="ldak2.txt",quote=F,row.names=F,col.names=F)
@@ -1643,6 +1649,9 @@ scp files to laptop to prepare infiles for entropy
     write.table(round(ldak6$posterior,5),file="ldak6.txt",quote=F,row.names=F,col.names=F)
     write.table(round(ldak7$posterior,5),file="ldak7.txt",quote=F,row.names=F,col.names=F)
     write.table(round(ldak8$posterior,5),file="ldak8.txt",quote=F,row.names=F,col.names=F)
+    write.table(round(ldak9$posterior,5),file="ldak9.txt",quote=F,row.names=F,col.names=F)
+    write.table(round(ldak10$posterior,5),file="ldak10.txt",quote=F,row.names=F,col.names=F)
+    write.table(round(ldak11$posterior,5),file="ldak11.txt",quote=F,row.names=F,col.names=F)
 
 
 From command line, obviously:
@@ -1654,6 +1663,9 @@ From command line, obviously:
     $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak6.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
     $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak7.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
     $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak8.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak9.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak10.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
+    $ scp /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/ldak11.txt lgalland@134.197.63.151:/working/lgalland/pines_combined/bwa/sam_sai/entropy
 
 
 ## 2.  Making .mpgl files for entropy
@@ -1664,10 +1676,9 @@ From command line, obviously:
     $ perl /working/lgalland/perl_scripts/create_entropy_top_2rows.pl pine_ids_543_col.txt 
     $ cat entropy_2rows.txt variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.recode.mpgl > pine_redone_entropy.mpgl
 
-Need to add to the top 543 12100 1 ---- First number is number of individuals, second number is number of loci after ALL filtering, third number is just a 1. Do do this, just press "enter" at top line, and then entered the 3 values above (entered on the top, newly created line), separated by spaces).
+Need to add to the top 543 12100 1 ---- First number is number of individuals, second number is number of loci after ALL filtering, third number is just a 1. To do this, just press "enter" at top line, and then enter the 3 values above (entered on the top, newly created line), separated by spaces).
 
     $ nano pine_redone_entropy.mpgl
-
 
 ## 3. Running entropy
 
@@ -1684,9 +1695,10 @@ Make subdirectories for each chain and copy all the LDA files (e.g., ldak2.txt, 
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k3.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 3 -q ldak3.txt -m 1 -w 0 &> k3stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k4.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 4 -q ldak4.txt -m 1 -w 0 &> k4stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k5.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak5.txt -m 1 -w 0 &> k5stdout.txt &
-    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k6.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak6.txt -m 1 -w 0 &> k6stdout.txt &
-    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k7.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak7.txt -m 1 -w 0 &> k7stdout.txt &
-    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k8.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 5 -q ldak8.txt -m 1 -w 0 &> k8stdout.txt &
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k6.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 6 -q ldak6.txt -m 1 -w 0 &> k6stdout.txt &
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k7.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 7 -q ldak7.txt -m 1 -w 0 &> k7stdout.txt &
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k8.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 8 -q ldak8.txt -m 1 -w 0 &> k8stdout.txt &
+
 
 
 
@@ -1698,7 +1710,9 @@ Make subdirectories for each chain and copy all the LDA files (e.g., ldak2.txt, 
 
 DONE TO HERE!
 
-
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k9.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 9 -q ldak9.txt -m 1 -w 0 &> k9stdout.txt &
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k10.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 10 -q ldak10.txt -m 1 -w 0 &> k10stdout.txt &
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k11.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 11 -q ldak11.txt -m 1 -w 0 &> k11stdout.txt &
 
 
 
@@ -1724,6 +1738,15 @@ Extract q estimates
     $ estpost.entropy pine_redone_entropy_k4.hdf5  -p q -s 0 -o q4.txt
     $ estpost.entropy pine_redone_entropy_k5.hdf5  -p q -s 0 -o q5.txt
 
+
+
+    $ estpost.entropy pine_redone_entropy_k6.hdf5  -p q -s 0 -o q6.txt
+    $ estpost.entropy pine_redone_entropy_k7.hdf5  -p q -s 0 -o q7.txt
+    $ estpost.entropy pine_redone_entropy_k8.hdf5  -p q -s 0 -o q8.txt
+    $ estpost.entropy pine_redone_entropy_k9.hdf5  -p q -s 0 -o q9.txt
+    $ estpost.entropy pine_redone_entropy_k10.hdf5  -p q -s 0 -o q10.txt
+    $ estpost.entropy pine_redone_entropy_k11.hdf5  -p q -s 0 -o q11.txt
+
 Extract gprob estimates from .hdf5 FSmpressed results:
 
     $ estpost.entropy  pine_redone_entropy_k2.hdf5 -p gprob -s 0 -o gprob2.txt &
@@ -1731,12 +1754,32 @@ Extract gprob estimates from .hdf5 FSmpressed results:
     $ estpost.entropy  pine_redone_entropy_k4.hdf5 -p gprob -s 0 -o gprob4.txt &
     $ estpost.entropy  pine_redone_entropy_k5.hdf5 -p gprob -s 0 -o gprob5.txt &
 
+
+
+
+    $ estpost.entropy  pine_redone_entropy_k6.hdf5 -p gprob -s 0 -o gprob6.txt &
+    $ estpost.entropy  pine_redone_entropy_k7.hdf5 -p gprob -s 0 -o gprob7.txt &
+    $ estpost.entropy  pine_redone_entropy_k8.hdf5 -p gprob -s 0 -o gprob8.txt &
+    $ estpost.entropy  pine_redone_entropy_k9.hdf5 -p gprob -s 0 -o gprob9.txt &
+    $ estpost.entropy  pine_redone_entropy_k10.hdf5 -p gprob -s 0 -o gprob10.txt &
+    $ estpost.entropy  pine_redone_entropy_k11.hdf5 -p gprob -s 0 -o gprob11.txt &
+
 Extract DIC estimates from .hdf5 TAmpressed results:
 
     $ estpost.entropy pine_redone_entropy_k2.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k3.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k4.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k5.hdf5 -s 3 -p deviance
+
+
+
+    
+    $ estpost.entropy pine_redone_entropy_k6.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k7.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k8.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k9.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k10.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k11.hdf5 -s 3 -p deviance
 
 
 
