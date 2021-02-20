@@ -1102,7 +1102,7 @@ Get rolling:
     $ source activate angsd
     $ source deactivate angsd
 
-Populations to be included
+Populations to be included (32 after combinations)
 
 	## AH, Auburn High PIMU			
 	## AL, Aubur Low PIMU
@@ -1115,10 +1115,9 @@ Populations to be included
     ## SB, San Bernardino PIAT
     ## SH, Santa Cruz High PIAT
     ## ST, Santa Cruz Top PIAT
-    ## YA, Yosemite A PIAT
-    ## YB, Yosemite B PIAT
+    ## YA + YB = YO, Yosemite A + Yosemite B = Yosemite PIAT
     ## CH, China Pines SCI PIMU
-    ## CP, Christy Pines SCI PIMU
+    ## CP + RR = CP, Christy Pines + Ridge Road = Christy Pines SCI PIMU
     ## DC, Diablo Canyon PIMU
     ## DM, Del Monte Forest PIMU
     ## FR, Fort Ross PIMU
@@ -1128,7 +1127,6 @@ Populations to be included
     ## PB, Pelican Bay SCI PIMU
     ## PP, Partrick Point PIMU
     ## PR, Point Reyes PIMU
-    ## RR, Ridge Road SCI PIMU
     ## SP, Salt Point PIMU
     ## SR, Sea Ranch PIMU
     ## CM, Cambria PIRA
@@ -1152,10 +1150,7 @@ Make bam lists per pop
     grep "PA_SB" pine_543_ids_col.txt > SB_bams.txt
     grep "PA_SH" pine_543_ids_col.txt > SH_bams.txt
     grep "PA_ST" pine_543_ids_col.txt > ST_bams.txt
-    grep "PA_YA" pine_543_ids_col.txt > YA_bams.txt
-    grep "PA_YB" pine_543_ids_col.txt > YB_bams.txt
     grep "PM_CH" pine_543_ids_col.txt > CH_bams.txt
-    grep "PM_CP" pine_543_ids_col.txt > CP_bams.txt
     grep "PM_DC" pine_543_ids_col.txt > DC_bams.txt
     grep "PM_DM" pine_543_ids_col.txt > DM_bams.txt
     grep "PM_FR" pine_543_ids_col.txt > FR_bams.txt
@@ -1165,7 +1160,6 @@ Make bam lists per pop
     grep "PM_PB" pine_543_ids_col.txt > PB_bams.txt
     grep "PM_PP" pine_543_ids_col.txt > PP_bams.txt
     grep "PM_PR" pine_543_ids_col.txt > PR_bams.txt
-    grep "PM_RR" pine_543_ids_col.txt > RR_bams.txt
     grep "PM_SP" pine_543_ids_col.txt > SP_bams.txt
     grep "PM_SR" pine_543_ids_col.txt > SR_bams.txt
     grep "PR_CM" pine_543_ids_col.txt > CM_bams.txt
@@ -1180,6 +1174,11 @@ Make bam lists per pop
     grep "PR_SC" pine_543_ids_col.txt > PR_SC_bams.txt
     grep "PX_SC" pine_543_ids_col.txt > PX_SC_bams.txt
 
+    grep "PA_YA" pine_543_ids_col.txt > PA_YA_bams.txt
+    grep "PA_YB" pine_543_ids_col.txt > PA_YB_bams.txt
+
+    grep "PM_CP" pine_543_ids_col.txt > PM_CP_bams.txt
+    grep "PM_RR" pine_543_ids_col.txt > PM_RR_bams.txt
 
     sed "s/PA_AH/aln_PA_AH/g" AH_bams.txt | sed "s/\$/\.sorted\.bam/g" > AH_bam_names.txt
     sed "s/PA_AL/aln_PA_AL/g" AL_bams.txt | sed "s/\$/\.sorted\.bam/g" > AL_bam_names.txt
@@ -1192,10 +1191,7 @@ Make bam lists per pop
     sed "s/PA_SB/aln_PA_SB/g" SB_bams.txt | sed "s/\$/\.sorted\.bam/g" > SB_bam_names.txt
     sed "s/PA_SH/aln_PA_SH/g" SH_bams.txt | sed "s/\$/\.sorted\.bam/g" > SH_bam_names.txt
     sed "s/PA_ST/aln_PA_ST/g" ST_bams.txt | sed "s/\$/\.sorted\.bam/g" > ST_bam_names.txt
-    sed "s/PA_YA/aln_PA_YA/g" YA_bams.txt | sed "s/\$/\.sorted\.bam/g" > YA_bam_names.txt
-    sed "s/PA_YB/aln_PA_YB/g" YB_bams.txt | sed "s/\$/\.sorted\.bam/g" > YB_bam_names.txt
     sed "s/PM_CH/aln_PM_CH/g" CH_bams.txt | sed "s/\$/\.sorted\.bam/g" > CH_bam_names.txt
-    sed "s/PM_CP/aln_PM_CP/g" CP_bams.txt | sed "s/\$/\.sorted\.bam/g" > CP_bam_names.txt
     sed "s/PM_DC/aln_PM_DC/g" DC_bams.txt | sed "s/\$/\.sorted\.bam/g" > DC_bam_names.txt
     sed "s/PM_DM/aln_PM_DM/g" DM_bams.txt | sed "s/\$/\.sorted\.bam/g" > DM_bam_names.txt
     sed "s/PM_FR/aln_PM_FR/g" FR_bams.txt | sed "s/\$/\.sorted\.bam/g" > FR_bam_names.txt
@@ -1205,7 +1201,6 @@ Make bam lists per pop
     sed "s/PM_PB/aln_PM_PB/g" PB_bams.txt | sed "s/\$/\.sorted\.bam/g" > PB_bam_names.txt
     sed "s/PM_PP/aln_PM_PP/g" PP_bams.txt | sed "s/\$/\.sorted\.bam/g" > PP_bam_names.txt
     sed "s/PM_PR/aln_PM_PR/g" PR_bams.txt | sed "s/\$/\.sorted\.bam/g" > PR_bam_names.txt
-    sed "s/PM_RR/aln_PM_RR/g" RR_bams.txt | sed "s/\$/\.sorted\.bam/g" > RR_bam_names.txt
     sed "s/PM_SP/aln_PM_SP/g" SP_bams.txt | sed "s/\$/\.sorted\.bam/g" > SP_bam_names.txt
     sed "s/PM_SR/aln_PM_SR/g" SR_bams.txt | sed "s/\$/\.sorted\.bam/g" > SR_bam_names.txt
     sed "s/PR_CM/aln_PR_CM/g" CM_bams.txt | sed "s/\$/\.sorted\.bam/g" > CM_bam_names.txt
@@ -1213,6 +1208,8 @@ Make bam lists per pop
     sed "s/PR_CS/aln_PR_CS/g" CS_bams.txt | sed "s/\$/\.sorted\.bam/g" > CS_bam_names.txt
     sed "s/PR_GU/aln_PR_GU/g" GU_bams.txt | sed "s/\$/\.sorted\.bam/g" > GU_bam_names.txt
     sed "s/PR_MP/aln_PR_MP/g" MP_bams.txt | sed "s/\$/\.sorted\.bam/g" > MP_bam_names.txt
+
+combining the proper inds:
 
     sed "s/PR_MR/aln_PR_MR/g" PR_MR_bams.txt | sed "s/\$/\.sorted\.bam/g" > PR_MR_bam_names.txt
     sed "s/PX_MR/aln_PX_MR/g" PX_MR_bams.txt | sed "s/\$/\.sorted\.bam/g" > PX_MR_bam_names.txt
@@ -1227,6 +1224,21 @@ Make bam lists per pop
     rm PX_SC_bam_names.txt
     rm PR_SC_bam_names.txt
 
+combining different "populations" that are actually overlapping:
+
+    sed "s/PM_CP/aln_PM_CP/g" PM_CP_bams.txt | sed "s/\$/\.sorted\.bam/g" > PM_CP_bam_names.txt
+    sed "s/PM_RR/aln_PM_RR/g" PM_RR_bams.txt | sed "s/\$/\.sorted\.bam/g" > PM_RR_bam_names.txt
+
+    sed "s/PA_YA/aln_PA_YA/g" PA_YA_bams.txt | sed "s/\$/\.sorted\.bam/g" > PA_YA_bam_names.txt
+    sed "s/PA_YB/aln_PA_YB/g" PA_YB_bams.txt | sed "s/\$/\.sorted\.bam/g" > PA_YB_bam_names.txt
+
+    cat PM_CP_bam_names.txt PM_RR_bam_names.txt > CP_bam_names.txt
+    cat PA_YA_bam_names.txt PA_YB_bam_names.txt > YO_bam_names.txt
+
+    rm PM_RR_bam_names.txt
+    rm PM_CP_bam_names.txt
+    rm PA_YA_bam_names.txt
+    rm PA_YB_bam_names.txt
 
 ## First step (doSaf)
 
@@ -1250,8 +1262,7 @@ Make bam lists per pop
     angsd -bam SB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SB &
     angsd -bam SH_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SH &
     angsd -bam ST_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out ST &
-    angsd -bam YA_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out YA &
-    angsd -bam YB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out YB &
+    angsd -bam YO_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out YO &
     angsd -bam CH_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CH &
     angsd -bam CP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CP &
     angsd -bam DC_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out DC &
@@ -1263,7 +1274,6 @@ Make bam lists per pop
     angsd -bam PB_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PB &
     angsd -bam PP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PP &
     angsd -bam PR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out PR &
-    angsd -bam RR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out RR &
     angsd -bam SP_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SP &
     angsd -bam SR_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out SR &
     angsd -bam CM_bam_names.txt -doSaf 1 -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 -P 2 -out CM &
@@ -1290,10 +1300,7 @@ Make bam lists per pop
     realSFS SB.saf.idx -P 2 > SB.sfs &
     realSFS SH.saf.idx -P 2 > SH.sfs &
     realSFS ST.saf.idx -P 2 > ST.sfs &
-    realSFS YA.saf.idx -P 2 > YA.sfs &
-    realSFS YB.saf.idx -P 2 > YB.sfs &
     realSFS CH.saf.idx -P 2 > CH.sfs &
-    realSFS CP.saf.idx -P 2 > CP.sfs &
     realSFS DC.saf.idx -P 2 > DC.sfs &
     realSFS DM.saf.idx -P 2 > DM.sfs &
     realSFS FR.saf.idx -P 2 > FR.sfs &
@@ -1303,7 +1310,6 @@ Make bam lists per pop
     realSFS PB.saf.idx -P 2 > PB.sfs &
     realSFS PP.saf.idx -P 2 > PP.sfs &
     realSFS PR.saf.idx -P 2 > PR.sfs &
-    realSFS RR.saf.idx -P 2 > RR.sfs &
     realSFS SP.saf.idx -P 2 > SP.sfs &
     realSFS SR.saf.idx -P 2 > SR.sfs &
     realSFS CM.saf.idx -P 2 > CM.sfs &
@@ -1313,6 +1319,8 @@ Make bam lists per pop
     realSFS MP.saf.idx -P 2 > MP.sfs &  
     realSFS MR.saf.idx -P 2 > MR.sfs &
     realSFS SC.saf.idx -P 2 > SC.sfs &
+    realSFS YO.saf.idx -P 2 > YO.sfs &
+    realSFS CP.saf.idx -P 2 > CP.sfs &
 
 ## Third step (doThetas)
 
@@ -1339,10 +1347,7 @@ Make bam lists per pop
     angsd -bam SB_bam_names.txt -out SB -doThetas 1 -doSaf 1 -pest SB.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
     angsd -bam SH_bam_names.txt -out SH -doThetas 1 -doSaf 1 -pest SH.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
     angsd -bam ST_bam_names.txt -out ST -doThetas 1 -doSaf 1 -pest ST.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-    angsd -bam YA_bam_names.txt -out YA -doThetas 1 -doSaf 1 -pest YA.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-    angsd -bam YB_bam_names.txt -out YB -doThetas 1 -doSaf 1 -pest YB.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
     angsd -bam CH_bam_names.txt -out CH -doThetas 1 -doSaf 1 -pest CH.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-    angsd -bam CP_bam_names.txt -out CP -doThetas 1 -doSaf 1 -pest CP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
     angsd -bam DC_bam_names.txt -out DC -doThetas 1 -doSaf 1 -pest DC.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
     angsd -bam DM_bam_names.txt -out DM -doThetas 1 -doSaf 1 -pest DM.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
     angsd -bam FR_bam_names.txt -out FR -doThetas 1 -doSaf 1 -pest FR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
@@ -1352,7 +1357,6 @@ Make bam lists per pop
     angsd -bam PB_bam_names.txt -out PB -doThetas 1 -doSaf 1 -pest PB.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
     angsd -bam PP_bam_names.txt -out PP -doThetas 1 -doSaf 1 -pest PP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
     angsd -bam PR_bam_names.txt -out PR -doThetas 1 -doSaf 1 -pest PR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
-    angsd -bam RR_bam_names.txt -out RR -doThetas 1 -doSaf 1 -pest RR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
     angsd -bam SP_bam_names.txt -out SP -doThetas 1 -doSaf 1 -pest SP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
     angsd -bam SR_bam_names.txt -out SR -doThetas 1 -doSaf 1 -pest SR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
     angsd -bam CM_bam_names.txt -out CM -doThetas 1 -doSaf 1 -pest CM.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
@@ -1362,6 +1366,8 @@ Make bam lists per pop
     angsd -bam MP_bam_names.txt -out MP -doThetas 1 -doSaf 1 -pest MP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
     angsd -bam MR_bam_names.txt -out MR -doThetas 1 -doSaf 1 -pest MR.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
     angsd -bam SC_bam_names.txt -out SC -doThetas 1 -doSaf 1 -pest SC.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 & 
+    angsd -bam YO_bam_names.txt -out YO -doThetas 1 -doSaf 1 -pest YO.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
+    angsd -bam CP_bam_names.txt -out CP -doThetas 1 -doSaf 1 -pest CP.sfs -anc /working/lgalland/pines_combined/bwa/sam_sai/pine_ref.fasta -GL 1 &
 
 
 ## Fourth step (thetaStat do_stat)
@@ -1382,10 +1388,7 @@ Make bam lists per pop
     thetaStat do_stat SB.thetas.idx -win 1 -step 1 -outnames SB.thetaWindow
     thetaStat do_stat SH.thetas.idx -win 1 -step 1 -outnames SH.thetaWindow
     thetaStat do_stat ST.thetas.idx -win 1 -step 1 -outnames ST.thetaWindow
-    thetaStat do_stat YA.thetas.idx -win 1 -step 1 -outnames YA.thetaWindow
-    thetaStat do_stat YB.thetas.idx -win 1 -step 1 -outnames YB.thetaWindow
     thetaStat do_stat CH.thetas.idx -win 1 -step 1 -outnames CH.thetaWindow
-    thetaStat do_stat CP.thetas.idx -win 1 -step 1 -outnames CP.thetaWindow
     thetaStat do_stat DC.thetas.idx -win 1 -step 1 -outnames DC.thetaWindow
     thetaStat do_stat DM.thetas.idx -win 1 -step 1 -outnames DM.thetaWindow
     thetaStat do_stat FR.thetas.idx -win 1 -step 1 -outnames FR.thetaWindow
@@ -1395,7 +1398,6 @@ Make bam lists per pop
     thetaStat do_stat PB.thetas.idx -win 1 -step 1 -outnames PB.thetaWindow
     thetaStat do_stat PP.thetas.idx -win 1 -step 1 -outnames PP.thetaWindow
     thetaStat do_stat PR.thetas.idx -win 1 -step 1 -outnames PR.thetaWindow
-    thetaStat do_stat RR.thetas.idx -win 1 -step 1 -outnames RR.thetaWindow
     thetaStat do_stat SP.thetas.idx -win 1 -step 1 -outnames SP.thetaWindow
     thetaStat do_stat SR.thetas.idx -win 1 -step 1 -outnames SR.thetaWindow
     thetaStat do_stat CM.thetas.idx -win 1 -step 1 -outnames CM.thetaWindow
@@ -1405,7 +1407,8 @@ Make bam lists per pop
     thetaStat do_stat MP.thetas.idx -win 1 -step 1 -outnames MP.thetaWindow
     thetaStat do_stat MR.thetas.idx -win 1 -step 1 -outnames MR.thetaWindow
     thetaStat do_stat SC.thetas.idx -win 1 -step 1 -outnames SC.thetaWindow
-
+    thetaStat do_stat CP.thetas.idx -win 1 -step 1 -outnames CP.thetaWindow
+    thetaStat do_stat YO.thetas.idx -win 1 -step 1 -outnames YO.thetaWindow
 
 
 ## Fourth step data extraction (Tajima's D)
@@ -1471,10 +1474,7 @@ Make bam lists per pop
     thetaStat print SB.thetas.idx > SB.theta_out
     thetaStat print SH.thetas.idx > SH.theta_out
     thetaStat print ST.thetas.idx > ST.theta_out
-    thetaStat print YA.thetas.idx > YA.theta_out
-    thetaStat print YB.thetas.idx > YB.theta_out
     thetaStat print CH.thetas.idx > CH.theta_out
-    thetaStat print CP.thetas.idx > CP.theta_out
     thetaStat print DC.thetas.idx > DC.theta_out
     thetaStat print DM.thetas.idx > DM.theta_out
     thetaStat print FR.thetas.idx > FR.theta_out
@@ -1484,7 +1484,6 @@ Make bam lists per pop
     thetaStat print PB.thetas.idx > PB.theta_out
     thetaStat print PP.thetas.idx > PP.theta_out
     thetaStat print PR.thetas.idx > PR.theta_out
-    thetaStat print RR.thetas.idx > RR.theta_out
     thetaStat print SP.thetas.idx > SP.theta_out
     thetaStat print SR.thetas.idx > SR.theta_out
     thetaStat print CM.thetas.idx > CM.theta_out
@@ -1494,7 +1493,8 @@ Make bam lists per pop
     thetaStat print MP.thetas.idx > MP.theta_out
     thetaStat print MR.thetas.idx > MR.theta_out
     thetaStat print SC.thetas.idx > SC.theta_out
-
+    thetaStat print CP.thetas.idx > CP.theta_out
+    thetaStat print YO.thetas.idx > YO.theta_out
 
 
 ## Fifth step data extraction (pi and theta W)
@@ -1521,23 +1521,23 @@ Make bam lists per pop
     subsetPisamp_df <- as.data.frame(matrix(ncol=2))
     names(subsetPisamp_df) <- c('Pop','Pi')
     for (i in 1:length(subsetTheta_files)){
-    infile <- fread(subsetTheta_files[i])
-    Pop <- unlist(strsplit(subsetTheta_files[i],'.',fixed=TRUE))[1]
-    pi <- exp(infile$Pairwise) #in log form so must exp
-    watt <- exp(infile$Watterson)
+        infile <- fread(subsetTheta_files[i])
+        Pop <- unlist(strsplit(subsetTheta_files[i],'.',fixed=TRUE))[1]
+        pi <- exp(infile$Pairwise) #in log form so must exp
+        watt <- exp(infile$Watterson)
     
-    subsetPisum_df$Pop[i] <- Pop
-    subsetPisum_df$Pi[i] <- mean(pi) #in log form 
-    subsetPisum_df$Watt[i] <- mean(watt) #in log form 
+        subsetPisum_df$Pop[i] <- Pop
+        subsetPisum_df$Pi[i] <- mean(pi) #in log form 
+        subsetPisum_df$Watt[i] <- mean(watt) #in log form 
     
-    ci_pi <- CI(pi)
-    subsetPisum_df$Pi_low[i] <- ci_pi[1]
-    subsetPisum_df$Pi_high[i] <- ci_pi[2]
+        ci_pi <- CI(pi)
+        subsetPisum_df$Pi_low[i] <- ci_pi[1]
+        subsetPisum_df$Pi_high[i] <- ci_pi[2]
     
-    ci_watt <- CI(watt)
-    subsetPisum_df$Watt_low[i] <- ci_watt[1]
-    subsetPisum_df$Watt_high[i] <- ci_watt[2]
-    }
+        ci_watt <- CI(watt)
+        subsetPisum_df$Watt_low[i] <- ci_watt[1]
+        subsetPisum_df$Watt_high[i] <- ci_watt[2]
+        }
     
     rm('infile')
     write.csv(subsetPisum_df,'full_angsd_piWatt_out.csv',row.names=FALSE)
@@ -1698,6 +1698,7 @@ Make subdirectories for each chain and copy all the LDA files (e.g., ldak2.txt, 
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k6.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 6 -q ldak6.txt -m 1 -w 0 &> k6stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k7.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 7 -q ldak7.txt -m 1 -w 0 &> k7stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k8.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 8 -q ldak8.txt -m 1 -w 0 &> k8stdout.txt &
+    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k9.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 9 -q ldak9.txt -m 1 -w 0 &> k9stdout.txt &
 
 
 
@@ -1710,7 +1711,6 @@ Make subdirectories for each chain and copy all the LDA files (e.g., ldak2.txt, 
 
 DONE TO HERE!
 
-    $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k9.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 9 -q ldak9.txt -m 1 -w 0 &> k9stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k10.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 10 -q ldak10.txt -m 1 -w 0 &> k10stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k11.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 11 -q ldak11.txt -m 1 -w 0 &> k11stdout.txt &
 
