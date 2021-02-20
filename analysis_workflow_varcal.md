@@ -1737,11 +1737,11 @@ Extract q estimates
     $ estpost.entropy pine_redone_entropy_k3.hdf5  -p q -s 0 -o q3.txt
     $ estpost.entropy pine_redone_entropy_k4.hdf5  -p q -s 0 -o q4.txt
     $ estpost.entropy pine_redone_entropy_k5.hdf5  -p q -s 0 -o q5.txt
-
-
-
     $ estpost.entropy pine_redone_entropy_k6.hdf5  -p q -s 0 -o q6.txt
     $ estpost.entropy pine_redone_entropy_k7.hdf5  -p q -s 0 -o q7.txt
+
+
+
     $ estpost.entropy pine_redone_entropy_k8.hdf5  -p q -s 0 -o q8.txt
     $ estpost.entropy pine_redone_entropy_k9.hdf5  -p q -s 0 -o q9.txt
     $ estpost.entropy pine_redone_entropy_k10.hdf5  -p q -s 0 -o q10.txt
@@ -1753,11 +1753,12 @@ Extract gprob estimates from .hdf5 FSmpressed results:
     $ estpost.entropy  pine_redone_entropy_k3.hdf5 -p gprob -s 0 -o gprob3.txt &
     $ estpost.entropy  pine_redone_entropy_k4.hdf5 -p gprob -s 0 -o gprob4.txt &
     $ estpost.entropy  pine_redone_entropy_k5.hdf5 -p gprob -s 0 -o gprob5.txt &
-
-
-
-
     $ estpost.entropy  pine_redone_entropy_k6.hdf5 -p gprob -s 0 -o gprob6.txt &
+    $ estpost.entropy  pine_redone_entropy_k7.hdf5 -p gprob -s 0 -o gprob7.txt &
+
+
+
+
     $ estpost.entropy  pine_redone_entropy_k7.hdf5 -p gprob -s 0 -o gprob7.txt &
     $ estpost.entropy  pine_redone_entropy_k8.hdf5 -p gprob -s 0 -o gprob8.txt &
     $ estpost.entropy  pine_redone_entropy_k9.hdf5 -p gprob -s 0 -o gprob9.txt &
@@ -1770,11 +1771,12 @@ Extract DIC estimates from .hdf5 TAmpressed results:
     $ estpost.entropy pine_redone_entropy_k3.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k4.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k5.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k6.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k7.hdf5 -s 3 -p deviance
 
 
 
     
-    $ estpost.entropy pine_redone_entropy_k6.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k7.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k8.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k9.hdf5 -s 3 -p deviance
