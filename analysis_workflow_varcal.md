@@ -1699,33 +1699,8 @@ Make subdirectories for each chain and copy all the LDA files (e.g., ldak2.txt, 
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k7.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 7 -q ldak7.txt -m 1 -w 0 &> k7stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k8.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 8 -q ldak8.txt -m 1 -w 0 &> k8stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k9.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 9 -q ldak9.txt -m 1 -w 0 &> k9stdout.txt &
-
-
-
-
-
-
-
-
-
-
-DONE TO HERE!
-
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k10.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 10 -q ldak10.txt -m 1 -w 0 &> k10stdout.txt &
     $ entropy -i pine_redone_entropy.mpgl -o pine_redone_entropy_k11.hdf5 -l 70000 -b 30000 -t 10 -s 20 -e .01 -k 11 -q ldak11.txt -m 1 -w 0 &> k11stdout.txt &
-
-
-
-
-    
-
-
-
-
-
-
-
-
 
 ## 4. Extracting parameter estimates
 
@@ -1739,10 +1714,35 @@ Extract q estimates
     $ estpost.entropy pine_redone_entropy_k5.hdf5  -p q -s 0 -o q5.txt
     $ estpost.entropy pine_redone_entropy_k6.hdf5  -p q -s 0 -o q6.txt
     $ estpost.entropy pine_redone_entropy_k7.hdf5  -p q -s 0 -o q7.txt
-
-
-
     $ estpost.entropy pine_redone_entropy_k8.hdf5  -p q -s 0 -o q8.txt
+
+
+
+
+
+
+
+
+
+
+
+DONE TO HERE!
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
     $ estpost.entropy pine_redone_entropy_k9.hdf5  -p q -s 0 -o q9.txt
     $ estpost.entropy pine_redone_entropy_k10.hdf5  -p q -s 0 -o q10.txt
     $ estpost.entropy pine_redone_entropy_k11.hdf5  -p q -s 0 -o q11.txt
@@ -1755,12 +1755,11 @@ Extract gprob estimates from .hdf5 FSmpressed results:
     $ estpost.entropy  pine_redone_entropy_k5.hdf5 -p gprob -s 0 -o gprob5.txt &
     $ estpost.entropy  pine_redone_entropy_k6.hdf5 -p gprob -s 0 -o gprob6.txt &
     $ estpost.entropy  pine_redone_entropy_k7.hdf5 -p gprob -s 0 -o gprob7.txt &
-
-
-
-
-    $ estpost.entropy  pine_redone_entropy_k7.hdf5 -p gprob -s 0 -o gprob7.txt &
     $ estpost.entropy  pine_redone_entropy_k8.hdf5 -p gprob -s 0 -o gprob8.txt &
+
+
+
+
     $ estpost.entropy  pine_redone_entropy_k9.hdf5 -p gprob -s 0 -o gprob9.txt &
     $ estpost.entropy  pine_redone_entropy_k10.hdf5 -p gprob -s 0 -o gprob10.txt &
     $ estpost.entropy  pine_redone_entropy_k11.hdf5 -p gprob -s 0 -o gprob11.txt &
@@ -1773,12 +1772,11 @@ Extract DIC estimates from .hdf5 TAmpressed results:
     $ estpost.entropy pine_redone_entropy_k5.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k6.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k7.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k8.hdf5 -s 3 -p deviance
 
 
 
     
-    $ estpost.entropy pine_redone_entropy_k7.hdf5 -s 3 -p deviance
-    $ estpost.entropy pine_redone_entropy_k8.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k9.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k10.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k11.hdf5 -s 3 -p deviance
