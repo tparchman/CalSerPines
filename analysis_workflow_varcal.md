@@ -1063,14 +1063,14 @@ In R
 
     coverage <- read.csv("variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird.recode.mpgl_coverage.csv", header=F)
     coverage[1:10,1:10]
-    dim(coverage) # 543 * 8563 (because first column is ID)
+    dim(coverage) # 543 * 12101 (because first column is ID)
 
     coverage1 <- coverage[,-1]
     coverage1[1:10, 1:10]
     mean_vect <- vector()
     for (i in 1:543) { mean_vect <- append(mean_vect, mean(as.numeric(coverage1[i,]))) }
     mean(mean_vect)
-        ## 12.28467
+        ## 8.374944
 
 ################################################################################################
 
@@ -1715,6 +1715,8 @@ Extract q estimates
     $ estpost.entropy pine_redone_entropy_k6.hdf5  -p q -s 0 -o q6.txt
     $ estpost.entropy pine_redone_entropy_k7.hdf5  -p q -s 0 -o q7.txt
     $ estpost.entropy pine_redone_entropy_k8.hdf5  -p q -s 0 -o q8.txt
+    $ estpost.entropy pine_redone_entropy_k9.hdf5  -p q -s 0 -o q9.txt
+    $ estpost.entropy pine_redone_entropy_k10.hdf5  -p q -s 0 -o q10.txt
 
 
 
@@ -1743,8 +1745,6 @@ DONE TO HERE!
 
 
 
-    $ estpost.entropy pine_redone_entropy_k9.hdf5  -p q -s 0 -o q9.txt
-    $ estpost.entropy pine_redone_entropy_k10.hdf5  -p q -s 0 -o q10.txt
     $ estpost.entropy pine_redone_entropy_k11.hdf5  -p q -s 0 -o q11.txt
 
 Extract gprob estimates from .hdf5 FSmpressed results:
@@ -1756,12 +1756,12 @@ Extract gprob estimates from .hdf5 FSmpressed results:
     $ estpost.entropy  pine_redone_entropy_k6.hdf5 -p gprob -s 0 -o gprob6.txt &
     $ estpost.entropy  pine_redone_entropy_k7.hdf5 -p gprob -s 0 -o gprob7.txt &
     $ estpost.entropy  pine_redone_entropy_k8.hdf5 -p gprob -s 0 -o gprob8.txt &
-
-
-
-
     $ estpost.entropy  pine_redone_entropy_k9.hdf5 -p gprob -s 0 -o gprob9.txt &
     $ estpost.entropy  pine_redone_entropy_k10.hdf5 -p gprob -s 0 -o gprob10.txt &
+
+
+
+
     $ estpost.entropy  pine_redone_entropy_k11.hdf5 -p gprob -s 0 -o gprob11.txt &
 
 Extract DIC estimates from .hdf5 TAmpressed results:
@@ -1773,12 +1773,12 @@ Extract DIC estimates from .hdf5 TAmpressed results:
     $ estpost.entropy pine_redone_entropy_k6.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k7.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k8.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k9.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k10.hdf5 -s 3 -p deviance
 
 
 
     
-    $ estpost.entropy pine_redone_entropy_k9.hdf5 -s 3 -p deviance
-    $ estpost.entropy pine_redone_entropy_k10.hdf5 -s 3 -p deviance
     $ estpost.entropy pine_redone_entropy_k11.hdf5 -s 3 -p deviance
 
 
