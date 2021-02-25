@@ -1717,8 +1717,65 @@ Extract q estimates
     $ estpost.entropy pine_redone_entropy_k8.hdf5  -p q -s 0 -o q8.txt
     $ estpost.entropy pine_redone_entropy_k9.hdf5  -p q -s 0 -o q9.txt
     $ estpost.entropy pine_redone_entropy_k10.hdf5  -p q -s 0 -o q10.txt
+    $ estpost.entropy pine_redone_entropy_k11.hdf5  -p q -s 0 -o q11.txt
 
 
+Extract gprob estimates from .hdf5 FSmpressed results:
+
+    $ estpost.entropy  pine_redone_entropy_k2.hdf5 -p gprob -s 0 -o gprob2.txt &
+    $ estpost.entropy  pine_redone_entropy_k3.hdf5 -p gprob -s 0 -o gprob3.txt &
+    $ estpost.entropy  pine_redone_entropy_k4.hdf5 -p gprob -s 0 -o gprob4.txt &
+    $ estpost.entropy  pine_redone_entropy_k5.hdf5 -p gprob -s 0 -o gprob5.txt &
+    $ estpost.entropy  pine_redone_entropy_k6.hdf5 -p gprob -s 0 -o gprob6.txt &
+    $ estpost.entropy  pine_redone_entropy_k7.hdf5 -p gprob -s 0 -o gprob7.txt &
+    $ estpost.entropy  pine_redone_entropy_k8.hdf5 -p gprob -s 0 -o gprob8.txt &
+    $ estpost.entropy  pine_redone_entropy_k9.hdf5 -p gprob -s 0 -o gprob9.txt &
+    $ estpost.entropy  pine_redone_entropy_k10.hdf5 -p gprob -s 0 -o gprob10.txt &
+    $ estpost.entropy  pine_redone_entropy_k11.hdf5 -p gprob -s 0 -o gprob11.txt &
+
+
+Extract DIC estimates from .hdf5 TAmpressed results:
+
+    $ estpost.entropy pine_redone_entropy_k2.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k3.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k4.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k5.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k6.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k7.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k8.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k9.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k10.hdf5 -s 3 -p deviance
+    $ estpost.entropy pine_redone_entropy_k11.hdf5 -s 3 -p deviance
+
+
+#######################################
+## making entropy barplots
+#######################################
+
+# First, scp q files (like q2.txt) and an ID file to laptop 
+## IMPORTANT: After seeing the first barplot (I guess?), you need to go through and sort the q file and the IDs file (sort in the same way), so that like-colors (ancestral clusters) are together.
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_ids_543_good_noHead.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/entropy/run1/q2.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/entropy/run0/q3.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/entropy/run1/q4.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/entropy/run1/q5.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/entropy/run0/q6.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/entropy/run2/q7.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy
+
+scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/entropy/run3/q8.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy
+
+/working/lgalland/pines_combined/bwa/sam_sai
+
+
+
+    
 
 
 
@@ -1738,91 +1795,6 @@ DONE TO HERE!
 
 
 
-
-
-
-
-
-
-
-    $ estpost.entropy pine_redone_entropy_k11.hdf5  -p q -s 0 -o q11.txt
-
-Extract gprob estimates from .hdf5 FSmpressed results:
-
-    $ estpost.entropy  pine_redone_entropy_k2.hdf5 -p gprob -s 0 -o gprob2.txt &
-    $ estpost.entropy  pine_redone_entropy_k3.hdf5 -p gprob -s 0 -o gprob3.txt &
-    $ estpost.entropy  pine_redone_entropy_k4.hdf5 -p gprob -s 0 -o gprob4.txt &
-    $ estpost.entropy  pine_redone_entropy_k5.hdf5 -p gprob -s 0 -o gprob5.txt &
-    $ estpost.entropy  pine_redone_entropy_k6.hdf5 -p gprob -s 0 -o gprob6.txt &
-    $ estpost.entropy  pine_redone_entropy_k7.hdf5 -p gprob -s 0 -o gprob7.txt &
-    $ estpost.entropy  pine_redone_entropy_k8.hdf5 -p gprob -s 0 -o gprob8.txt &
-    $ estpost.entropy  pine_redone_entropy_k9.hdf5 -p gprob -s 0 -o gprob9.txt &
-    $ estpost.entropy  pine_redone_entropy_k10.hdf5 -p gprob -s 0 -o gprob10.txt &
-
-
-
-
-    $ estpost.entropy  pine_redone_entropy_k11.hdf5 -p gprob -s 0 -o gprob11.txt &
-
-Extract DIC estimates from .hdf5 TAmpressed results:
-
-    $ estpost.entropy pine_redone_entropy_k2.hdf5 -s 3 -p deviance
-    $ estpost.entropy pine_redone_entropy_k3.hdf5 -s 3 -p deviance
-    $ estpost.entropy pine_redone_entropy_k4.hdf5 -s 3 -p deviance
-    $ estpost.entropy pine_redone_entropy_k5.hdf5 -s 3 -p deviance
-    $ estpost.entropy pine_redone_entropy_k6.hdf5 -s 3 -p deviance
-    $ estpost.entropy pine_redone_entropy_k7.hdf5 -s 3 -p deviance
-    $ estpost.entropy pine_redone_entropy_k8.hdf5 -s 3 -p deviance
-    $ estpost.entropy pine_redone_entropy_k9.hdf5 -s 3 -p deviance
-    $ estpost.entropy pine_redone_entropy_k10.hdf5 -s 3 -p deviance
-
-
-
-    
-    $ estpost.entropy pine_redone_entropy_k11.hdf5 -s 3 -p deviance
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#######################################
-## making entropy barplots
-#######################################
-
-# First, scp q files (like q2.txt) and an ID file to laptop 
-## IMPORTANT: After seeing the first barplot (I guess?), you need to go through and sort the q file and the IDs file (sort in the same way), so that like-colors (ancestral clusters) are together.
-
-scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/OM_ids_150_good_noHead.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
-
-scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run0/q2.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
-
-scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run2/q3.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
-
-scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run4/q4.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
-
-scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run1/q5.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
-
-scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run0/q6.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
-
-scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run0/q7.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
-
-scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run3/q8.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy
-
-/working/lgalland/rbt/bwa/sam_sai
 
 ############ THIS IS FOR AFTER YOU SEE INITIAL BARPLOTS > the following steps rearrange the populations, based on colors we want next together. Should probably have done this manually to save time, but here's the code since I did it. (My ID file is HT_ids_83_col.txt, indicating that it's the ID file with only 83 individuals, which is the number of individuals after all filtering steps. It's in a column format, with no header, like TA_AM_0024, TA_AM_0094, etc. etc.)
 
@@ -1846,101 +1818,192 @@ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy
 ########## Changing the order of the lines in the q file to match the resorted IDs file. Done manually by opening the q2.txt file in text reader and copying and pasting chunks of individuals. Order: AM, ON, TU. SUPER IMPORTANT TO REMEMBER THIS STEP!!!
 
 ##############################
-# in R to make entropy barplots
+### in R to make entropy barplots
 ##############################
 
-setwd("/Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy")
+    setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy")
 
-##############################
-## 1) Load data
-##############################
+1) Load data
 
-names_sort <- read.table("names_sorted_for_final_bar.txt", header=F)
-# names_sort <- read.table("OM_ids_150_good_noHead.txt", header=F)
+    names_sort <- read.table("names_sorted_for_final_bar.txt", header=F)
+    # names_sort <- read.table("pine_ids_543_good_noHead.txt", header=F)
 
-dim(names_sort) # 150 x 1
-head(names_sort)
+    dim(names_sort) # 543 x 1
+    head(names_sort)
 
-##############################
-## 2) Entropy barplots
-##############################
+2) Entropy barplots
 
 
-######### k2
+    ######### k2
 
-# run4 had the lowest DIC.
-q_dat_sort_2 <- read.csv("q2_run0_sorted_for_bar.txt", header=T)
-# q_dat_sort_2 <- read.csv("q2.txt", header=T)
+    # run1 had the lowest DIC.
+    q_dat_sort_2 <- read.csv("q2_run1_sorted_for_bar.txt", header=T)
+    #q_dat_sort_2 <- read.csv("q2.txt", header=T)
 
-dim(q_dat_sort_2) # 300 x 5
-head(q_dat_sort_2)
+    dim(q_dat_sort_2) # 1086 x 5
+    head(q_dat_sort_2)
 
-nind <- 150
+    nind <- 543
 
-cluster21 <- cbind(names_sort, q_dat_sort_2[1:nind,])
-cluster22 <- cbind(names_sort, q_dat_sort_2[(1+nind):(nind*2),])
+    cluster21 <- cbind(names_sort, q_dat_sort_2[1:nind,])
+    cluster22 <- cbind(names_sort, q_dat_sort_2[(1+nind):(nind*2),])
 
-means2 <- data.frame(cbind(cluster21$mean,cluster22$mean))
+    means2 <- data.frame(cbind(cluster21$mean,cluster22$mean))
 
-t.means2 <- t(means2)
-##writing table for with better organized data for future plots
-ids_means2.txt <- cbind(names_sort, means2)
-##write.table(ids_means2.txt, file = "k2_means_ids.txt
+    t.means2 <- t(means2)
+    ##writing table for with better organized data for future plots
+    ids_means2.txt <- cbind(names_sort, means2)
+    ##write.table(ids_means2.txt, file = "k2_means_ids.txt
 
-quartz(width=8, height=7.5)
-par(mar=c(5,5,3,1),mfrow=c(3,1))
+    quartz(width=8, height=7.5)
+    par(mar=c(5,5,3,1),mfrow=c(3,1))
 
-colors= c("deepskyblue", "grey30", "coral", "chartreuse1")
-barplot(t.means2, col=colors, beside=F, names.arg=names_sort[1:150,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
+    colors= c("deepskyblue", "grey30", "coral", "chartreuse1", "gold", "black", "red1")
+    barplot(t.means2, col=colors, beside=F, names.arg=names_sort[1:543,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
 
-######### k3
 
-q_dat_sort_3 <- read.csv("q3_run2_sorted_for_bar.txt", header=T)
-dim(q_dat_sort_3) # 450 x 5
-head(q_dat_sort_3)
 
-nind <- 150
+    ######### k3
 
-cluster31 <- cbind(names_sort, q_dat_sort_3[1:nind,])
-cluster32 <- cbind(names_sort, q_dat_sort_3[(1+nind):(nind*2),])
-cluster33 <- cbind(names_sort, q_dat_sort_3[(1+nind*2):(nind*3),])
+    q_dat_sort_3 <- read.csv("q3_run0_sorted_for_bar.txt", header=T)
+    #q_dat_sort_3 <- read.csv("q3.txt", header=T)
 
-means3 <- data.frame(cbind(cluster31$mean,cluster32$mean,cluster33$mean))
+    dim(q_dat_sort_3) # 1629 x 5
+    head(q_dat_sort_3)
 
-t.means3 <- t(means3)
-##writing table for with better organized data for future plots
-ids_means3.txt <- cbind(names_sort, means3)
-##write.table(ids_means3.txt, file = "k3_means_ids.txt", quote=F, row.names=F, col.names=F)
+    nind <- 543
 
-barplot(t.means3, col=colors, beside=F, names.arg=names_sort[1:150,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
+    cluster31 <- cbind(names_sort, q_dat_sort_3[1:nind,])
+    cluster32 <- cbind(names_sort, q_dat_sort_3[(1+nind):(nind*2),])
+    cluster33 <- cbind(names_sort, q_dat_sort_3[(1+nind*2):(nind*3),])
 
-######### k4
+    means3 <- data.frame(cbind(cluster31$mean,cluster32$mean,cluster33$mean))
 
-q_dat_sort_4 <- read.csv("q4_run4_sorted_for_bar.txt", header=T)
-dim(q_dat_sort_4) # 600 x 5
-head(q_dat_sort_4)
+    t.means3 <- t(means3)
+    ##writing table for with better organized data for future plots
+    ids_means3.txt <- cbind(names_sort, means3)
+    ##write.table(ids_means3.txt, file = "k3_means_ids.txt", quote=F, row.names=F, col.names=F)
 
-nind <- 150
+    barplot(t.means3, col=colors, beside=F, names.arg=names_sort[1:543,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
 
-cluster41 <- cbind(names_sort, q_dat_sort_4[1:nind,])
-cluster42 <- cbind(names_sort, q_dat_sort_4[(1+nind):(nind*2),])
-cluster43 <- cbind(names_sort, q_dat_sort_4[(1+nind*2):(nind*3),])
-cluster44 <- cbind(names_sort, q_dat_sort_4[(1+nind*3):(nind*4),])
 
-means4 <- data.frame(cbind(cluster43$mean,cluster42$mean, cluster41$mean, cluster44$mean))
 
-t.means4 <- t(means4)
-##writing table for with better organized data for future plots
-ids_means4.txt <- cbind(names_sort, means4)
-#write.table(ids_means4.txt, file = "k4_means_ids.txt", quote=F, row.names=F, col.names=F)
+    ######### k4
 
-barplot(t.means4, col=colors, beside=F, names.arg=names_sort[1:150,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
+    q_dat_sort_4 <- read.csv("q4_run1_sorted_for_bar.txt", header=T)
+    #q_dat_sort_4 <- read.csv("q4.txt", header=T)
 
-# SAVE QUARTZ WINDOW AS entropy_barplot_3panel.pdf
+    dim(q_dat_sort_4) # 2172 x 5
+    head(q_dat_sort_4)
 
-# copy and paste everything to notes file!
-# Nothing but the k2 plot is informative. Thsi is what I expected, but I went forward with all plots through k6 to be thorough in the event we need the plots for supplementary information.
+    nind <- 543
 
+    cluster41 <- cbind(names_sort, q_dat_sort_4[1:nind,])
+    cluster42 <- cbind(names_sort, q_dat_sort_4[(1+nind):(nind*2),])
+    cluster43 <- cbind(names_sort, q_dat_sort_4[(1+nind*2):(nind*3),])
+    cluster44 <- cbind(names_sort, q_dat_sort_4[(1+nind*3):(nind*4),])
+
+    means4 <- data.frame(cbind(cluster43$mean,cluster42$mean, cluster41$mean, cluster44$mean))
+
+    t.means4 <- t(means4)
+    ##writing table for with better organized data for future plots
+    ids_means4.txt <- cbind(names_sort, means4)
+    #write.table(ids_means4.txt, file = "k4_means_ids.txt", quote=F, row.names=F, col.names=F)
+
+    barplot(t.means4, col=colors, beside=F, names.arg=names_sort[1:543,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
+
+    # SAVE QUARTZ WINDOW AS entropy_barplot_k2k3k4.pdf
+
+
+    ######### k5
+
+    q_dat_sort_5 <- read.csv("q5_run1_sorted_for_bar.txt", header=T)
+    #q_dat_sort_5 <- read.csv("q5.txt", header=T)
+
+    dim(q_dat_sort_5) # 2715 x 5
+    head(q_dat_sort_5)
+
+    nind <- 543
+
+    cluster51 <- cbind(names_sort, q_dat_sort_5[1:nind,])
+    cluster52 <- cbind(names_sort, q_dat_sort_5[(1+nind):(nind*2),])
+    cluster53 <- cbind(names_sort, q_dat_sort_5[(1+nind*2):(nind*3),])
+    cluster54 <- cbind(names_sort, q_dat_sort_5[(1+nind*3):(nind*4),])
+    cluster55 <- cbind(names_sort, q_dat_sort_5[(1+nind*4):(nind*5),])
+
+    means5 <- data.frame(cbind(cluster55$mean, cluster54$mean, cluster53$mean, cluster52$mean, cluster51$mean))
+
+    t.means5 <- t(means5)
+    ##writing table for with better organized data for future plots
+    ids_means5.txt <- cbind(names_sort, means5)
+    #write.table(ids_means5.txt, file = "k5_means_ids.txt", quote=F, row.names=F, col.names=F)
+
+    quartz(width=8, height=7.5)
+    par(mar=c(5,5,3,1),mfrow=c(3,1))
+
+    barplot(t.means5, col=colors, beside=F, names.arg=names_sort[1:543,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
+
+
+
+    ######### k6
+
+    q_dat_sort_6 <- read.csv("q6_run0_sorted_for_bar.txt", header=T)
+    #q_dat_sort_6 <- read.csv("q6.txt", header=T)
+
+    dim(q_dat_sort_6) # 3258 x 5
+    head(q_dat_sort_6)
+
+    nind <- 543
+
+    cluster61 <- cbind(names_sort, q_dat_sort_6[1:nind,])
+    cluster62 <- cbind(names_sort, q_dat_sort_6[(1+nind):(nind*2),])
+    cluster63 <- cbind(names_sort, q_dat_sort_6[(1+nind*2):(nind*3),])
+    cluster64 <- cbind(names_sort, q_dat_sort_6[(1+nind*3):(nind*4),])
+    cluster65 <- cbind(names_sort, q_dat_sort_6[(1+nind*4):(nind*5),])
+    cluster66 <- cbind(names_sort, q_dat_sort_6[(1+nind*5):(nind*6),])
+
+    means6 <- data.frame(cbind(cluster66$mean, cluster65$mean, cluster64$mean, cluster63$mean, cluster62$mean, cluster61$mean))
+
+    t.means6 <- t(means6)
+    ##writing table for with better organized data for future plots
+    ids_means6.txt <- cbind(names_sort, means6)
+    #write.table(ids_means6.txt, file = "k6_means_ids.txt", quote=F, row.names=F, col.names=F)
+
+    barplot(t.means6, col=colors, beside=F, names.arg=names_sort[1:543,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
+
+
+    ######### k7
+
+    q_dat_sort_7 <- read.csv("q7_run2_sorted_for_bar.txt", header=T)
+    #q_dat_sort_7 <- read.csv("q7.txt", header=T)
+
+    dim(q_dat_sort_7) # 3801 x 5
+    head(q_dat_sort_7)
+
+    nind <- 543
+
+    cluster71 <- cbind(names_sort, q_dat_sort_7[1:nind,])
+    cluster72 <- cbind(names_sort, q_dat_sort_7[(1+nind):(nind*2),])
+    cluster73 <- cbind(names_sort, q_dat_sort_7[(1+nind*2):(nind*3),])
+    cluster74 <- cbind(names_sort, q_dat_sort_7[(1+nind*3):(nind*4),])
+    cluster75 <- cbind(names_sort, q_dat_sort_7[(1+nind*4):(nind*5),])
+    cluster76 <- cbind(names_sort, q_dat_sort_7[(1+nind*5):(nind*6),])
+    cluster77 <- cbind(names_sort, q_dat_sort_7[(1+nind*6):(nind*7),])
+
+
+    means7 <- data.frame(cbind(cluster77$mean, cluster76$mean, cluster75$mean, cluster74$mean, cluster73$mean, cluster72$mean, cluster71$mean))
+
+    t.means7 <- t(means7)
+    ##writing table for with better organized data for future plots
+    ids_means7.txt <- cbind(names_sort, means7)
+    #write.table(ids_means7.txt, file = "k7_means_ids.txt", quote=F, row.names=F, col.names=F)
+
+    barplot(t.means7, col=colors, beside=F, names.arg=names_sort[1:543,], cex.names=.55, las=2, ylab = "Assignment probability",  space=0,lwd=1.5)
+    
+    # SAVE QUARTZ WINDOW AS entropy_barplot_k5k6k7.pdf
+
+    
+    # copy and paste everything to notes file!
 
 ##############################################################
 ###### PCA on gprobs from entropy. 
