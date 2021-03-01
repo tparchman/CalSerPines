@@ -1982,26 +1982,6 @@ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy
     # copy and paste everything to notes file!
 
 
-    
-
-
-
-
-
-
-
-
-
-DONE TO HERE!
-
-
-
-
-
-    
-
-
-
 ##############################################################
 ###### PCA on gprobs from entropy. 
 ##############################################################
@@ -2217,6 +2197,26 @@ Using the gprob4.txt from the run with the lowest DIC (which is gprob2.txt from 
     # save window as pinesCombined_bySpecies.pdf
 
     # copy and paste all R code into notes file!
+
+
+    
+
+
+
+
+
+
+
+
+
+DONE TO HERE!
+
+
+
+
+
+    
+
 
 ##########################################
 ##########################################
