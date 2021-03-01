@@ -1102,8 +1102,8 @@ Get rolling:
 
 Populations to be included (32 after combinations)
 
-	## AH, Auburn High PIMU			
-	## AL, Aubur Low PIMU
+	## AH, Auburn High PIAT			
+	## AL, Auburn Low PIAT
     ## BS, Big Sur PIAT
     ## CG, Cuesta Grade PIAT
     ## LA, Los Angeles PIAT
