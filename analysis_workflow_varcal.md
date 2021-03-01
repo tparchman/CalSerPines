@@ -856,8 +856,6 @@ Identify over-assembled loci in R
         ## 13411
     sum(in_out_15404_40)  ## choosing to kill all locs with mean cov/ind >= 40
         ## 13637
-
-
     sub_40 <- dat_noname[,in_out_15404_40==1]
         dim(sub_40)
         # 553 x 13637    
@@ -1774,28 +1772,6 @@ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_
 /working/lgalland/pines_combined/bwa/sam_sai
 
 
-
-    
-
-
-
-
-
-
-
-
-
-DONE TO HERE!
-
-
-
-
-
-    
-
-
-
-
 ############ THIS IS FOR AFTER YOU SEE INITIAL BARPLOTS > the following steps rearrange the populations, based on colors we want next together. Should probably have done this manually to save time, but here's the code since I did it. (My ID file is HT_ids_83_col.txt, indicating that it's the ID file with only 83 individuals, which is the number of individuals after all filtering steps. It's in a column format, with no header, like TA_AM_0024, TA_AM_0094, etc. etc.)
 
 cp OM_ids_150_col.txt entropy/
@@ -2005,150 +1981,242 @@ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy
     
     # copy and paste everything to notes file!
 
+
+    
+
+
+
+
+
+
+
+
+
+DONE TO HERE!
+
+
+
+
+
+    
+
+
+
 ##############################################################
 ###### PCA on gprobs from entropy. 
 ##############################################################
 
-/working/lgalland/rbt/bwa/sam_sai/
+    /working/lgalland/pines_combined/bwa/sam_sai/
   
-  # 150 lines, with DL DL DL AM AM AM, etc etc
+pine_543_pops.txt is the ID file we need/want for PCA! 
+      
+      # 543 lines, with DL DL DL AM AM AM, etc etc
 
-### OM_pops_150.txt is the ID file we need/want for PCA! 
+Using the gprob4.txt from the run with the lowest DIC (which is gprob2.txt from run1).
 
-$ sed -s "s/_[A-Z][A-Z]//" OM_ids_150_col.txt > OM_pops3.txt
-$ sed -s "s/_[0-9]*//" OM_pops3.txt > OM_pops_150.txt
+    $ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_543_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/PCA
 
-# Using the gprob2.txt from the run with the lowest DIC (which is gprob2.txt from run0).
-
-scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/OM_pops_150.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy/PCA
-
-scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/rbt/bwa/sam_sai/entropy/run0/gprob2.txt /Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy/PCA
+    $ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/entropy/run1/gprob4.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/PCA
 
 ##############################################################
-## in R, to make entropy gprob PCAs
+##### in R, to make entropy gprob PCAs
 ##############################################################
 
-setwd("/Users/lanie/lanie/PhD/genomics/trout/data_analysis/entropy/PCA")
+    setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/PCA")
 
-######################
-# Read in the data
-#####################
+    ######################
+    # Read in the data
+    #####################
 
-# file with ONLY the ID names, in original order matching the gprob file, no header, AM AM AM AM DL DL DL DL etc etc
-popIDs <- read.csv("OM_pops_150.txt", header=FALSE)
+    # file with ONLY the ID names, in original order matching the gprob file, no header, AM AM AM AM DL DL DL DL etc etc
+    popIDs <- read.csv("pine_543_pops.txt", header=FALSE)
 
-# gprob file output from entropy, from the run with the lowest k2 DIC
-gprobs <- read.csv("gprob2.txt", header=TRUE)
-dim(gprobs)
-# 150 x 12808 (one more than the actual 12807 loci). the first column is "ind_0" etc etc (which we don't need)
-gprobs[1:10,1:10]
+    # gprob file output from entropy, from the run with the lowest k4 DIC
+    gprobs <- read.csv("gprob4.txt", header=TRUE)
+    dim(gprobs)
+    # 543 x 12101 (one more than the actual 12100 loci). the first column is "ind_0" etc etc (which we don't need)
+    gprobs[1:10,1:10]
 
-gprobs_noname <- gprobs[,-1] # taking off the first column, which is ind_0, etc etc etc
-dim(gprobs_noname)
-# 150 x 12807. Even though there is technically a 84th row, it isn't counted because we called it a header=TRUE
-gprobs_noname[1:10,1:10]
+    gprobs_noname <- gprobs[,-1] # taking off the first column, which is ind_0, etc etc etc
+    dim(gprobs_noname)
+    # 543 x 12100
+    gprobs_noname[1:10,1:10]
 
-# need to cbind the HT_83_pops.txt and gprob2.txt, so we have the gprob file with IDs for plotting points and colors
-gprob <- cbind(popIDs, gprobs_noname)
-dim(gprob) # 150 * 12808
-gprob[1:10,1:10] # perfect
+    # need to cbind the pops with gprob, so we have the gprob file with IDs for plotting points and colors
+    gprob <- cbind(popIDs, gprobs_noname)
+    dim(gprob) # 543 * 12101
+    gprob[1:10,1:10] # perfect
 
-##############
-# run PCA
-##############
+    ##############
+    # run PCA
+    ##############
 
-pcaout <- prcomp(gprobs_noname, center=TRUE, scale=FALSE)
-imp <- summary(pcaout)
-summary(pcaout)
+    pcaout <- prcomp(gprobs_noname, center=TRUE, scale=FALSE)
+    imp <- summary(pcaout)
+    summary(pcaout)
 
-# Importance of components:
-#   PC1     PC2     PC3     PC4     PC5     PC6     PC7     PC8     PC9    PC10    PC11    PC12    PC13    PC14    PC15    PC16    PC17    PC18
-# Standard deviation     7.71872 5.58128 5.48321 4.93270 4.82110 4.75564 4.70291 4.62249 4.56722 4.53266 4.45125 4.43147 4.42384 4.40187 4.33745 4.28764 4.26906 4.22419
-# Proportion of Variance 0.03059 0.01599 0.01544 0.01249 0.01193 0.01161 0.01136 0.01097 0.01071 0.01055 0.01017 0.01008 0.01005 0.00995 0.00966 0.00944 0.00936 0.00916
-# Cumulative Proportion  0.03059 0.04659 0.06202 0.07452 0.08645 0.09807 0.10942 0.12039 0.13110 0.14165 0.15183 0.16191 0.17196 0.18191 0.19157 0.20101 0.21037 0.21953
+    ### IMPORTANT NOTE: If you want to see the PC scores, or investigate the pcaout, do the following:
+    # to investigate the srtructure:
+    str(pcaout)
+    # to view PC scores, which is the "x" in this case:
+    pcaout$x[,1]
 
-### IMPORTANT NOTE: If you want to see the PC scores, or investigate the pcaout, do the following:
-# to investigate the srtructure:
-str(pcaout)
-# to view PC scores, which is the "x" in this case:
-pcaout$x[,1]
-
-######### PLOTTING PCA ###########
-colors <-c(
-  "#7c36bb",
-  "#d4967d",
-  "#c7007f",
-  "#d47000",
-  "#00702e",
-  "#007dd7",
-  "#e0c540",
-  "#873752")
-
-quartz(width=5, height=10)
-par(mar=c(5,5,3,1),mfrow=c(2,1))
-
-#############
-# PC 1v2
-#############
-
-plot(pcaout$x[,1], pcaout $x[,2], type="n", xlab=paste("PC1 (",(imp$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
-
-legend("bottomleft", legend=c("Upper Truckee (UT)", "Taylor (TA)", "McKinney (MC)", "Madden (MD)", "Blackwood (BK)", "Ward (WR)", "Incline (IN)", "Third (TH)"), pch=c(16,16,16,16,16,16,16,16), ncol=2, col=colors[1:8], cex=.52)
-
-points(pcaout $x[which(gprob[,1]=="UT"),1], pcaout $x[which(gprob[,1]=="UT"), 2], pch=21, bg=colors[1], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="TA"),1], pcaout $x[which(gprob[,1]=="TA"), 2], pch=21, bg=colors[2], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="MC"),1], pcaout $x[which(gprob[,1]=="MC"), 2], pch=21, bg=colors[3], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="MD"),1], pcaout $x[which(gprob[,1]=="MD"), 2], pch=21, bg=colors[4], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="BK"),1], pcaout $x[which(gprob[,1]=="BK"), 2], pch=21, bg=colors[5], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="WR"),1], pcaout $x[which(gprob[,1]=="WR"), 2], pch=21, bg=colors[6], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="IN"),1], pcaout $x[which(gprob[,1]=="IN"), 2], pch=21, bg=colors[7], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="TH"),1], pcaout $x[which(gprob[,1]=="TH"), 2], pch=21, bg=colors[8], cex=1.2)
-
-#############
-# PC 1v2, grouped by region
-#############
-colors2 <-c(
-  "#7c36bb",
-  "darkgreen",
-  "gold")
-
-plot(pcaout$x[,1], pcaout $x[,2], type="n", xlab=paste("PC1 (",(imp$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
-
-legend("bottomleft", legend=c("South Lake", "West Lake", "North Lake"), pch=c(16,16,16), ncol=1, col=colors2[1:3], cex=.7)
-
-points(pcaout $x[which(gprob[,1]=="UT"),1], pcaout $x[which(gprob[,1]=="UT"), 2], pch=21, bg=colors2[1], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="TA"),1], pcaout $x[which(gprob[,1]=="TA"), 2], pch=21, bg=colors2[1], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="MC"),1], pcaout $x[which(gprob[,1]=="MC"), 2], pch=21, bg=colors2[2], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="MD"),1], pcaout $x[which(gprob[,1]=="MD"), 2], pch=21, bg=colors2[2], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="BK"),1], pcaout $x[which(gprob[,1]=="BK"), 2], pch=21, bg=colors2[2], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="WR"),1], pcaout $x[which(gprob[,1]=="WR"), 2], pch=21, bg=colors2[2], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="IN"),1], pcaout $x[which(gprob[,1]=="IN"), 2], pch=21, bg=colors2[3], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="TH"),1], pcaout $x[which(gprob[,1]=="TH"), 2], pch=21, bg=colors2[3], cex=1.2)
- 
-#save quartz window as PCA_1v2_IndAndGrouped.pdf
-
-#############
-# PC 3v4
-#############
-
-plot(pcaout$x[,3], pcaout $x[,4], type="n", xlab=paste("PC3 (",(imp$importance[,3][[2]]*100), "% )", sep=""), ylab=paste("PC4 (",(imp$importance[,4][[2]]*100), "% )", sep=""), cex.lab=1.2)
-# the 3 and 4 in imp$importance[,3][[2]]*100), "% )", sep=""), ylab=paste("PC4 (",(imp$importance[,4][[2]]*100), refer to the percent of variance that is calculated and printed on the x and y axis. It does not change the placement of the points on the PCA
-# to change the points plotted, you have to change each one of the "points" lines below.
-
-legend("bottomleft", legend=c("Blackwood (BK)", "Incline (IN)", "McKinney (MC)", "Madden (MD)", "Taylor (TA)", "Third (TH)", "Upper Truckee (UT)", "Ward (WR)"), pch=c(16,16,16,16,16,16,16,16), ncol=1, col=colors[1:8], cex=.6)
-
-points(pcaout $x[which(gprob[,1]=="UT"),3], pcaout $x[which(gprob[,1]=="UT"), 4], pch=21, bg=colors[1], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="TA"),3], pcaout $x[which(gprob[,1]=="TA"), 4], pch=21, bg=colors[2], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="MC"),3], pcaout $x[which(gprob[,1]=="MC"), 4], pch=21, bg=colors[3], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="MD"),3], pcaout $x[which(gprob[,1]=="MD"), 4], pch=21, bg=colors[4], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="BK"),3], pcaout $x[which(gprob[,1]=="BK"), 4], pch=21, bg=colors[5], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="WR"),3], pcaout $x[which(gprob[,1]=="WR"), 4], pch=21, bg=colors[6], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="IN"),3], pcaout $x[which(gprob[,1]=="IN"), 4], pch=21, bg=colors[7], cex=1.2)
-points(pcaout $x[which(gprob[,1]=="TH"),3], pcaout $x[which(gprob[,1]=="TH"), 4], pch=21, bg=colors[8], cex=1.2)
+    ######### PLOTTING PCA ###########
+    colors <-c(
+  		"#b34469",
+        "#4fb848",
+        "#9557cf",
+        "#8fb63d",
+        "#5a72e0",
+        "#c2b43a",
+        "#cf5dc8",
+        "#52c47c",
+        "#d84491",
+        "#5b872a",
+        "#6e51a3",
+        "#dc9130",
+        "#5a74b9",
+        "#e46332",
+        "#3abec8",
+        "#d13736",
+        "#53c2a3",
+        "#db3963",
+        "#69ab6e",
+        "#9d5096",
+        "#35773e",
+        "#b68edf",
+        "#947c2b",
+        "#60a4da",
+        "#ae5020",
+        "#308266",
+        "#bc4c49",
+        "#9fab65",
+        "#dc87b7",
+        "#5f6726",
+        "#924a67",
+        "#d3a667",
+        "#d97b7e",
+        "#965e30",
+        "#e48e69")
 
 
-# save the quartz window as rbt_gprob_all.pdf
-# copy and paste all R code into notes file!
+# PC 1v2, miss30, independent colors
+
+	# the plot function in the line below sets the axes right off the bat
+	# so, the pcgcov30$x[,1] refers to PC 1, and pcgcov30$x[,2] refers to PC 2
+    
+    plot(pcaout$x[,1], pcaout $x[,2], type="n", main = "Pines combined", xlab=paste("PC1 (",(imp$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+
+	# the blue 1 and 2 in the points function refer to the PCs
+	# must change these to 2 and 3 for PCs 2 v 3, for example!
+
+    # P. muricata
+    points(pcaout$x[which(gprob[,1]=="DC"),1], pcaout$x[which(gprob[,1]=="DC"), 2], pch=21, bg=colors[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="FR"),1], pcaout$x[which(gprob[,1]=="FR"), 2], pch=21, bg=colors[2], cex=1)
+    points(pcaout$x[which(gprob[,1]=="NR"),1], pcaout$x[which(gprob[,1]=="NR"), 2], pch=21, bg=colors[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="PA"),1], pcaout$x[which(gprob[,1]=="PA"), 2], pch=21, bg=colors[4], cex=1)
+    points(pcaout$x[which(gprob[,1]=="PP"),1], pcaout$x[which(gprob[,1]=="PP"), 2], pch=21, bg=colors[5], cex=1)
+    points(pcaout$x[which(gprob[,1]=="SP"),1], pcaout$x[which(gprob[,1]=="SP"), 2], pch=21, bg=colors[6], cex=1)
+    points(pcaout$x[which(gprob[,1]=="SR"),1], pcaout$x[which(gprob[,1]=="SR"), 2], pch=21, bg=colors[7], cex=1)
+    points(pcaout$x[which(gprob[,1]=="PR"),1], pcaout$x[which(gprob[,1]=="PR"), 2], pch=21, bg=colors[8], cex=1)
+    points(pcaout$x[which(gprob[,1]=="CH"),1], pcaout$x[which(gprob[,1]=="CH"), 2], pch=21, bg=colors[9], cex=1)
+    points(pcaout$x[which(gprob[,1]=="CP"),1], pcaout$x[which(gprob[,1]=="CP"), 2], pch=21, bg=colors[10], cex=1)
+    points(pcaout$x[which(gprob[,1]=="DM"),1], pcaout$x[which(gprob[,1]=="DM"), 2], pch=21, bg=colors[11], cex=1)
+    points(pcaout$x[which(gprob[,1]=="LO"),1], pcaout$x[which(gprob[,1]=="LO"), 2], pch=21, bg=colors[12], cex=1)
+    points(pcaout$x[which(gprob[,1]=="PB"),1], pcaout$x[which(gprob[,1]=="PB"), 2], pch=21, bg=colors[13], cex=1)
+    points(pcaout$x[which(gprob[,1]=="RR"),1], pcaout$x[which(gprob[,1]=="RR"), 2], pch=21, bg=colors[14], cex=1)
+
+    # P. attenuata
+	points(pcaout$x[which(gprob[,1]=="AH"),1], pcaout$x[which(gprob[,1]=="AH"), 2], pch=21, bg=colors[15], cex=1)
+	points(pcaout$x[which(gprob[,1]=="AL"),1], pcaout$x[which(gprob[,1]=="AL"), 2], pch=21, bg=colors[16], cex=1)
+	points(pcaout$x[which(gprob[,1]=="BS"),1], pcaout$x[which(gprob[,1]=="BS"), 2], pch=21, bg=colors[17], cex=1)
+	points(pcaout$x[which(gprob[,1]=="CG"),1], pcaout$x[which(gprob[,1]=="CG"), 2], pch=21, bg=colors[18], cex=1)
+	points(pcaout$x[which(gprob[,1]=="LA"),1], pcaout$x[which(gprob[,1]=="LA"), 2], pch=21, bg=colors[19], cex=1)
+	points(pcaout$x[which(gprob[,1]=="LS"),1], pcaout$x[which(gprob[,1]=="LS"), 2], pch=21, bg=colors[20], cex=1)
+	points(pcaout$x[which(gprob[,1]=="OC"),1], pcaout$x[which(gprob[,1]=="OC"), 2], pch=21, bg=colors[21], cex=1)
+	points(pcaout$x[which(gprob[,1]=="PF"),1], pcaout$x[which(gprob[,1]=="PF"), 2], pch=21, bg=colors[22], cex=1)
+	points(pcaout$x[which(gprob[,1]=="SB"),1], pcaout$x[which(gprob[,1]=="SB"), 2], pch=21, bg=colors[23], cex=1)
+	points(pcaout$x[which(gprob[,1]=="SH"),1], pcaout$x[which(gprob[,1]=="SH"), 2], pch=21, bg=colors[24], cex=1)
+	points(pcaout$x[which(gprob[,1]=="SL"),1], pcaout$x[which(gprob[,1]=="SL"), 2], pch=21, bg=colors[25], cex=1)
+	points(pcaout$x[which(gprob[,1]=="ST"),1], pcaout$x[which(gprob[,1]=="ST"), 2], pch=21, bg=colors[26], cex=1)
+	points(pcaout$x[which(gprob[,1]=="YA"),1], pcaout$x[which(gprob[,1]=="YA"), 2], pch=21, bg=colors[27], cex=1)
+	points(pcaout$x[which(gprob[,1]=="YB"),1], pcaout$x[which(gprob[,1]=="YB"), 2], pch=21, bg=colors[28], cex=1)
+
+    # P. radiata
+    points(pcaout$x[which(gprob[,1]=="CM"),1], pcaout$x[which(gprob[,1]=="CM"), 2], pch=21, bg=colors[29], cex=1)
+    points(pcaout$x[which(gprob[,1]=="CN"),1], pcaout$x[which(gprob[,1]=="CN"), 2], pch=21, bg=colors[30], cex=1)
+    points(pcaout$x[which(gprob[,1]=="CS"),1], pcaout$x[which(gprob[,1]=="CS"), 2], pch=21, bg=colors[31], cex=1)
+    points(pcaout$x[which(gprob[,1]=="GU"),1], pcaout$x[which(gprob[,1]=="GU"), 2], pch=21, bg=colors[32], cex=1)
+    points(pcaout$x[which(gprob[,1]=="MR"),1], pcaout$x[which(gprob[,1]=="MR"), 2], pch=21, bg=colors[33], cex=1)
+    points(pcaout$x[which(gprob[,1]=="SC"),1], pcaout$x[which(gprob[,1]=="SC"), 2], pch=21, bg=colors[34], cex=1)
+	points(pcaout$x[which(gprob[,1]=="MP"),1], pcaout$x[which(gprob[,1]=="MP"), 2], pch=21, bg=colors[35], cex=1)
+
+
+    legend("bottomright", legend=c("Diablo Canyon PIMU", "Fort Ross PIMU", "Navarro River PIMU", "Point Arena PIMU", "Patrick Point PIMU", "Salt Point PIMU", "Sea Ranch PIMU", "Point Reyes PIMU", "China Pines SCI PIMU", "Christy Pines SCI PIMU", "Monterey Peninsula (DM) PIMU", "Lompoc PIMU", "Pelican Bay SCI PIMU", "Ridge Road PIMU", "Auburn High PIAT", "Auburn Low PIAT", "Big Sur PIAT", "Cuesta Grade(SLO) PIAT", "Los Angeles PIAT", "Lake Shasta PIAT", "Orange County PIAT", "Panther Flat (OR border) PIAT", "San Bernardino PIAT", "Santa Cruz High PIAT", "Santa Cruz Low PIAT", "Santa Cruz Top PIAT", "Yosemite A PIAT", "Yosemite B PIAT", "Cambria PIRA", "Cedros North PIRA", "Cedros South PIRA", "Guadalupe PIRA", "Monterey PIRA", "Santa Cruz PIRA", "Monterey Peninsula PIRA"), pch=c(16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16), ncol=2, col=colors[1:35], cex=.38)
+
+	# save plot window as pinesCombined.pdf
+
+
+
+
+    ####### PC 1v2, miss30, grouped on species
+    
+    colors2 <-c(
+            "#1694e8",
+            "#f7b84f",
+            "#198c49")
+
+    plot(pcaout$x[,1], pcaout $x[,2], type="n", main = "Pines combined, by species", xlab=paste("PC1 (",(imp$importance[,1][[2]]*100), "% )", sep=""), ylab=paste("PC2 (",(imp$importance[,2][[2]]*100), "% )", sep=""), cex.lab=1.2)
+
+	# the blue 1 and 2 in the points function refer to the PCs
+	# must change these to 2 and 3 for PCs 2 v 3, for example!
+
+    # P. muricata
+    points(pcaout$x[which(gprob[,1]=="DC"),1], pcaout$x[which(gprob[,1]=="DC"), 2], pch=21, bg=color2s[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="FR"),1], pcaout$x[which(gprob[,1]=="FR"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="NR"),1], pcaout$x[which(gprob[,1]=="NR"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="PA"),1], pcaout$x[which(gprob[,1]=="PA"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="PP"),1], pcaout$x[which(gprob[,1]=="PP"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="SP"),1], pcaout$x[which(gprob[,1]=="SP"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="SR"),1], pcaout$x[which(gprob[,1]=="SR"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="PR"),1], pcaout$x[which(gprob[,1]=="PR"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="CH"),1], pcaout$x[which(gprob[,1]=="CH"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="CP"),1], pcaout$x[which(gprob[,1]=="CP"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="DM"),1], pcaout$x[which(gprob[,1]=="DM"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="LO"),1], pcaout$x[which(gprob[,1]=="LO"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="PB"),1], pcaout$x[which(gprob[,1]=="PB"), 2], pch=21, bg=colors2[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="RR"),1], pcaout$x[which(gprob[,1]=="RR"), 2], pch=21, bg=colors2[1], cex=1)
+
+    # P. attenuata
+    points(pcaout$x[which(gprob[,1]=="AH"),1], pcaout$x[which(gprob[,1]=="AH"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="AL"),1], pcaout$x[which(gprob[,1]=="AL"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="BS"),1], pcaout$x[which(gprob[,1]=="BS"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="CG"),1], pcaout$x[which(gprob[,1]=="CG"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="LA"),1], pcaout$x[which(gprob[,1]=="LA"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="LS"),1], pcaout$x[which(gprob[,1]=="LS"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="OC"),1], pcaout$x[which(gprob[,1]=="OC"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="PF"),1], pcaout$x[which(gprob[,1]=="PF"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="SB"),1], pcaout$x[which(gprob[,1]=="SB"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="SH"),1], pcaout$x[which(gprob[,1]=="SH"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="SL"),1], pcaout$x[which(gprob[,1]=="SL"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="ST"),1], pcaout$x[which(gprob[,1]=="ST"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="YA"),1], pcaout$x[which(gprob[,1]=="YA"), 2], pch=21, bg=colors2[3], cex=1)
+    points(pcaout$x[which(gprob[,1]=="YB"),1], pcaout$x[which(gprob[,1]=="YB"), 2], pch=21, bg=colors2[3], cex=1)
+
+    # P. radiata
+    points(pcaout$x[which(gprob[,1]=="CM"),1], pcaout$x[which(gprob[,1]=="CM"), 2], pch=21, bg=colors2[2], cex=1)
+    points(pcaout$x[which(gprob[,1]=="CN"),1], pcaout$x[which(gprob[,1]=="CN"), 2], pch=21, bg=colors2[2], cex=1)
+    points(pcaout$x[which(gprob[,1]=="CS"),1], pcaout$x[which(gprob[,1]=="CS"), 2], pch=21, bg=colors2[2], cex=1)
+    points(pcaout$x[which(gprob[,1]=="GU"),1], pcaout$x[which(gprob[,1]=="GU"), 2], pch=21, bg=colors2[2], cex=1)
+    points(pcaout$x[which(gprob[,1]=="MR"),1], pcaout$x[which(gprob[,1]=="MR"), 2], pch=21, bg=colors2[2], cex=1)
+    points(pcaout$x[which(gprob[,1]=="SC"),1], pcaout$x[which(gprob[,1]=="SC"), 2], pch=21, bg=colors2[2], cex=1)
+    points(pcaout$x[which(gprob[,1]=="MP"),1], pcaout$x[which(gprob[,1]=="MP"), 2], pch=21, bg=colors2[2], cex=1)
+
+    legend("bottomright", legend=c("P. muricata", "P. radiata", "P. attenuata"), pch=c(16,16,16), ncol=1, col=colors2[1:3], cex=1)
+
+    # save window as pinesCombined_bySpecies.pdf
+
+    # copy and paste all R code into notes file!
 
 ##########################################
 ##########################################
