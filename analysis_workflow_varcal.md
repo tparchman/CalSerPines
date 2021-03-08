@@ -224,6 +224,51 @@ kept data threshold low to retain Mexican island populations
 
 removed 19 individuals. new total = 570 individuals
 
+### As of 3/1/2021, we wanted to remove the Auburn Low samples and all individuals that were later deemed inappropriate for analyses (All LA samples, some OC samples, some random ones). Moved these to /working/lgalland/pines_combined/bwa/excluded_fastqs
+
+    /working/lgalland/pines_combined/bwa/
+
+    mv PA_BS_0139.fastq.gz excluded_fastqs/
+    mv PA_CG_0901.fastq.gz excluded_fastqs/
+    mv PA_LA_0066.fastq.gz excluded_fastqs/
+    mv PA_LA_0067.fastq.gz excluded_fastqs/
+    mv PA_LA_0068.fastq.gz excluded_fastqs/
+    mv PA_LA_0069.fastq.gz excluded_fastqs/
+    mv PA_LA_0070.fastq.gz excluded_fastqs/
+    mv PA_LA_0071.fastq.gz excluded_fastqs/
+    mv PA_LA_0072.fastq.gz excluded_fastqs/
+    mv PA_LA_0073.fastq.gz excluded_fastqs/
+    mv PA_LA_0076.fastq.gz excluded_fastqs/
+    mv PA_LS_0021.fastq.gz excluded_fastqs/
+    mv PA_LS_0022.fastq.gz excluded_fastqs/
+    mv PA_OC_0094.fastq.gz excluded_fastqs/
+    mv PA_OC_0097.fastq.gz excluded_fastqs/
+    mv PA_OC_0098.fastq.gz excluded_fastqs/
+    mv PA_OC_0099.fastq.gz excluded_fastqs/
+    mv PA_OC_0101.fastq.gz excluded_fastqs/
+    mv PA_PF_0046.fastq.gz excluded_fastqs/
+    mv PA_AL_0001.fastq.gz excluded_fastqs/
+    mv PA_AL_0002.fastq.gz excluded_fastqs/
+    mv PA_AL_0003.fastq.gz excluded_fastqs/
+    mv PA_AL_0004.fastq.gz excluded_fastqs/
+    mv PA_AL_0005.fastq.gz excluded_fastqs/
+    mv PA_AL_0006.fastq.gz excluded_fastqs/
+    mv PA_AL_0007.fastq.gz excluded_fastqs/
+    mv PA_AL_0008.fastq.gz excluded_fastqs/
+    mv PA_AL_0009.fastq.gz excluded_fastqs/
+    mv PA_AL_0010.fastq.gz excluded_fastqs/
+    mv PM_PP_0153.fastq.gz excluded_fastqs/
+    mv PM_DC_0216.fastq.gz excluded_fastqs/
+    mv PM_PR_0172.fastq.gz excluded_fastqs/
+    mv PA_SL_0119.fastq.gz excluded_fastqs/
+    mv PA_SL_0120.fastq.gz excluded_fastqs/
+    mv PR_MP_0827.fastq.gz excluded_fastqs/
+    mv PA_LA_0075.fastq.gz excluded_fastqs/
+    mv PA_LA_0077.fastq.gz excluded_fastqs/
+
+excluding 37 individuals. new total = 533 individuals
+
+
 ### Combined pines, de novo assembly
 
 #### 1. gzip files (takes time)
@@ -258,7 +303,7 @@ removed 19 individuals. new total = 570 individuals
     $ parallel --no-notice -j 8 mawk -v x=4 \''$1 >= x'\' ::: *.uniq.seqs | cut -f2 | perl -e 'while (<>) {chomp; $z{$_}++;} while(($k,$v) = each(%z)) {print "$v\t$k\n";}' > uniqCperindv
     
     $ wc -l uniqCperindv
-        16759980 uniq sequences per individual
+        18507921 uniq sequences per individual
 
 #### 8. restrict the data by how many individuals have that read
     `NOTE`: the bash below loop just makes a list from 2 to 10
@@ -272,15 +317,15 @@ removed 19 individuals. new total = 570 individuals
     
     $ more uniqseq.peri.data
 
-        2	5937752
-        3	3674369
-        4	2709744
-        5	2167809
-        6	1810265
-        7	1550095
-        8	1353227
-        9	1196393
-        10	1068049
+        2	6798843
+        3	4236431
+        4	3119575
+        5	2487885
+        6	2071362
+        7	1773021
+        8	1546059
+        9	1364737
+        10	1217595
 
     $ rm -rf ufile
     
@@ -288,7 +333,7 @@ removed 19 individuals. new total = 570 individuals
 
     $ mawk -v x=4 '$1 >= x' uniqCperindv > uniq.k.4.c.4.seqs
     $ wc -l uniq.k.4.c.4.seqs
-        2709744 uniq.k.4.c.4.seqs
+        3119575 uniq.k.4.c.4.seqs
 
 #### 10. Convert these sequences to fasta format (both pretty instant)
  
@@ -310,7 +355,7 @@ removed 19 individuals. new total = 570 individuals
     $ nohup cd-hit-est -i uniq.F.fasta -o reference.fasta.original -M 0 -T 0 -c 0.9 &>/dev/null &
 
     $ grep "^>" reference.fasta.original -c
-        615977 contigs
+        679039 contigs
 
 MOVING FORWARD WITH 0.9 MATCH THRESHOLD
 
@@ -327,17 +372,17 @@ MOVING FORWARD WITH 0.9 MATCH THRESHOLD
 Artificial reference is: reference.fasta.original
     
     $ grep "^>" reference.fasta.original -c
-        615977 contigs for -c 0.9
+        679039 contigs for -c 0.9
 
 Rename id lines from contig to scaffold:
     
-    $ sed "s/Contig/scaffold/" reference.fasta.original >pine_ref.fasta
+    $ sed "s/Contig/scaffold/" reference.fasta.original > pine_ref.fasta
 
 `NOTE`: pine_ref.fasta is the reference to use below
 
     $ rm reference.fasta.original
     $ grep ">" pine_ref.fasta -c
-        615977 contigs in the reference
+        679039 contigs in the reference
 
 Index reference genome (about 1 minute. makes other ref files (.amb, etc.))
     
@@ -358,11 +403,11 @@ Unzip fastqs. Originally did about 5 per minute:
 Calculate the mean number of reads per individual, from your individual fastqs
 
     grep "^@" -c *.fastq > meanReads_perInd.txt &
-    
+ 
     R
     meanReads <- read.delim("meanReads_perInd.txt", header=FALSE, sep=":")
     mean(meanReads[,2])
-2590771 (this is the mean!)
+2644246 (this is the mean!)
 
     quit()
 
@@ -404,7 +449,7 @@ Count assembled
 
     $ module load samtools/1.3
     $ nohup perl /working/lgalland/perl_scripts/count_assembled.pl *.sorted.bam &>/dev/null &
-    
+  
 Make a plot in R of assembled vs. raw read counts per individual
 
 
@@ -437,12 +482,12 @@ The following takes several (2-4) hours. `NOTE`: Run the following lines as one 
     $ samtools mpileup -P ILLUMINA --BCF --max-depth 100 --adjust-MQ 50 --min-BQ 20 --min-MQ 20 --skip-indels --output-tags DP,AD --fasta-ref pine_ref.fasta aln*sorted.bam | \
     bcftools call -m --variants-only --format-fields GQ --skip-variants indels | \
     bcftools filter --set-GTs . -i 'QUAL > 19 && FMT/GQ >9' | \
-    bcftools view -m 2 -M 2 -v snps --apply-filter "PASS" --output-type v --output-file variants_rawfiltered_12JAN2021.vcf &
+    bcftools view -m 2 -M 2 -v snps --apply-filter "PASS" --output-type v --output-file variants_rawfiltered_5MAR2021.vcf &
 
 Number of loci in the vcf
 
-    $ grep -c "^scaffold" variants_rawfiltered_12JAN2021.vcf
-        2461844
+    $ grep -c "^scaffold" variants_rawfiltered_5MAR2021.vcf
+        2513739
 
 Make id file for reheadering
 
@@ -454,22 +499,22 @@ Reheader variants_rawfiltered_dateHERE.vcf:
     $ module load samtools/1.3
 	$ module load vcftools/0.1.14
     
-    $ nohup bcftools reheader -s pine_ids_col.txt variants_rawfiltered_12JAN2021.vcf -o rehead_variants_rawfiltered_12JAN2021.vcf &>/dev/null & 
+    $ nohup bcftools reheader -s pine_ids_col.txt variants_rawfiltered_5MAR2021.vcf -o rehead_variants_rawfiltered_5MAR2021.vcf &>/dev/null & 
 
 ####################################################################################
 ## 7. filtering
 ####################################################################################
 
-Initial round of filtering (just getting a feeling of how filtering parameters might shape the dataset). 570 individuals.
+Initial round of filtering (just getting a feeling of how filtering parameters might shape the dataset). 533 individuals. (`NOTE': the only ones I reran on 5 March was miss30_maf05)
 
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss10_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.9 --recode --thin 90
-            After filtering, kept 3071 out of a possible 2461844 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss20_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.8 --recode --thin 90
-	        After filtering, kept 9703 out of a possible 2461844 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss30_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.7 --recode --thin 90
-	        After filtering, kept 14627 out of a possible 2461844 Sites
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --out variants_miss40_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.6 --recode --thin 90
-	        After filtering, kept 19564 out of a possible 2461844 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_5MAR2021.vcf --out variants_miss10_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.9 --recode --thin 90
+            After filtering, kept 3768 out of a possible 2513739 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_5MAR2021.vcf --out variants_miss20_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.8 --recode --thin 90
+	        After filtering, kept 10426 out of a possible 2513739 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_5MAR2021.vcf --out variants_miss30_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.7 --recode --thin 90
+	        After filtering, kept 15381 out of a possible 2513739 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_5MAR2021.vcf --out variants_miss40_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.6 --recode --thin 90
+	        After filtering, kept 20756 out of a possible 2513739 Sites
 
 `NOTE`: moving forward with `miss30_maf05`
 
@@ -488,31 +533,31 @@ Filter out bad individuals, then refilter
 `NOTE`: will remove individuals with >50% missing data (N = 17). (As this decimal number decreases, the number of individuals to remove increases. That is, the lower the fraction, the more stringent you are filtering.)
 
     $ mawk '$5 > 0.5' out.imiss | cut -f1 > lowDP.indv
-    $ vcftools --vcf rehead_variants_rawfiltered_12JAN2021.vcf --remove lowDP.indv --recode --recode-INFO-all --out rehead_variants_rawfiltered_12JAN2021_noBadInds
-        After filtering, kept 553 out of 570 Individuals
-        After filtering, kept 2461844 out of a possible 2461844 Sites
+    $ vcftools --vcf rehead_variants_rawfiltered_5MAR2021.vcf --remove lowDP.indv --recode --recode-INFO-all --out rehead_variants_rawfiltered_5MAR2021_noBadInds
+        After filtering, kept 517 out of 533 Individuals
+        After filtering, kept 2513739 out of a possible 2513739 Sites
 
 Clean up the massive mess of files created above.
 
 	$ rm variants_miss*
-    $ gzip variants_rawfiltered_12JAN2021.vcf &
-    $ gzip rehead_variants_rawfiltered_12JAN2021.vcf &
+    $ gzip variants_rawfiltered_5MAR2021.vcf &
+    $ gzip rehead_variants_rawfiltered_5MAR2021.vcf &
 
 Filter the entire raw, NEW vcf file (the one without the bad Inds), at least 70% of individuals have at least one read, and filtering on maf .05 (filtering on loci)
 
 	$ module load vcftools/0.1.14
 	$ module load bcftools/1.3
 
-	$ vcftools --vcf rehead_variants_rawfiltered_12JAN2021_noBadInds.recode.vcf --out variants_miss30_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.7 --recode --thin 90
-		After filtering, kept 15404 out of a possible 2461844 Sites
+	$ vcftools --vcf rehead_variants_rawfiltered_5MAR2021_noBadInds.recode.vcf --out variants_miss30_maf05 --remove-filtered-all --maf 0.05 --max-missing 0.7 --recode --thin 90
+		After filtering, kept 16366 out of a possible 2513739 Sites
 
 Rekill bad inds (missing >50%). 0 inds removed
 
     $ vcftools --vcf variants_miss30_maf05.recode.vcf --missing-indv
     $ mawk '$5 > 0.5' out.imiss | cut -f1 > lowDP.indv
     $ vcftools --vcf variants_miss30_maf05.recode.vcf --remove lowDP.indv --recode --recode-INFO-all --out variants_miss30_maf05_noBadInds
-			After filtering, kept 553 out of 553 Individuals
-            After filtering, kept 15404 out of a possible 15404 Sites
+			After filtering, kept 517 out of 517 Individuals
+            After filtering, kept 16366 out of a possible 16366 Sites
 
 Generate mpgl
 	
@@ -525,34 +570,34 @@ Generate pntest genotype likelihood file (for PCA)
 Make a file of IDs. Start with updated vcf file. Cut the first column and puts it into a new file, which is labeled "good head."
 
     $ vcftools --vcf variants_miss30_maf05_noBadInds.recode.vcf --missing-indv 
-    $ cut -f 1 out.imiss > pine_ids_553.txt
-    $ sed "s/INDV/ind/" pine_ids_553.txt | sed "s/aln_//g" | sed "s/.sorted.bam//g" > pine_ids_553_good_head.txt
+    $ cut -f 1 out.imiss > pine_ids_517.txt
+    $ sed "s/INDV/ind/" pine_ids_517.txt | sed "s/aln_//g" | sed "s/.sorted.bam//g" > pine_ids_517_good_head.txt
 
 Make other ID and pop formats for PCA. 
 	
-	$ cp pine_ids_553_good_head.txt pine_ids_553_good_noHead.txt
-	$ nano pine_ids_553_good_noHead.txt
+	$ cp pine_ids_517_good_head.txt pine_ids_517_good_noHead.txt
+	$ nano pine_ids_517_good_noHead.txt
 		remove the "ind" at the top for proper PCA format. The following tells awk that the delimiter is a comma, and to grab and print the first column, and then print it into pine_ids_col.txt (instead of just printing to screen)
 
 The following tells awk that the delimiter is a comma, and to grab and print the first column, and then print it into pine_ids_col.txt (instead of just printing to screen)
 
-	$ cp pine_ids_553_good_noHead.txt pine_ids_553_good_noHead_original.txt
-	$ awk -F "," '{print $1}' pine_ids_553_good_noHead.txt > pine_553_ids_col.txt
+	$ cp pine_ids_517_good_noHead.txt pine_ids_517_good_noHead_original.txt
+	$ awk -F "," '{print $1}' pine_ids_517_good_noHead.txt > pine_517_ids_col.txt
 
 Then, `sed` out the parts you don't want for your pops file (removing the "first term" in your ID file, in this case). (The following worked here, which was in format XX(species)_XX(population)_XXXX(ind).) 
 
-	$ sed -s "s/[A-Z][A-Z]_//" pine_553_ids_col.txt > pine_pops3.txt
-	$ sed -s "s/_[0-9]*//" pine_pops3.txt > pine_553_pops.txt
+	$ sed -s "s/[A-Z][A-Z]_//" pine_517_ids_col.txt > pine_pops3.txt
+	$ sed -s "s/_[0-9]*//" pine_pops3.txt > pine_517_pops.txt
 
-***These are the two files you need for initial verification PCA (species_ids_col.txt and species_pops.txt). file `species_num_ids_col.txt` is a single column format, no header, with individuals listed as HT_MR_0692, etc. File `species_num_pops.txt` is a single column format, no header, with lines (in order) as CN, CN, CN, CN, CN, AB, AB, AB, AB.	
+***These are the two files you need for initial verification PCA. File `species_num_ids_col.txt` is a single column format, no header, with individuals listed as HT_MR_0692, etc. File `species_num_pops.txt` is a single column format, no header, with lines (in order) as CN, CN, CN, CN, CN, AB, AB, AB, AB.	
 
 `scp` files to laptop for initial look at PCAs
 
 	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pntest_mean_variants_miss30_maf05_noBadInds.recode.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 
-	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_553_ids_col.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_517_ids_col.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 
-	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_553_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
+	$ scp lgalland@ponderosa.biology.unr.edu:/working/lgalland/pines_combined/bwa/sam_sai/pine_517_pops.txt /Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/bwa/PCA 
 
 Initial look at PCAs to make sure data is okay, done in R.  
 
@@ -562,57 +607,57 @@ Initial look at PCAs to make sure data is okay, done in R.
 
 	#miss 30 
 	read.table("pntest_mean_variants_miss30_maf05_noBadInds.recode.txt", header=F)->gl
-	read.table("pine_553_ids_col.txt", header=F)->ids
-	read.table("pine_553_pops.txt", header=F)->pops
+	read.table("pine_517_ids_col.txt", header=F)->ids
+	read.table("pine_517_pops.txt", header=F)->pops
 	
     # If you need to remove individuals after seeing the PCA, do the following to remove rows. Just don't forget to change the number of individuals later in the script.
-        ids <- ids[-c(354, 143:144, 480), ]
-        pops <- pops[-c(354, 143:144, 480), ]
-        gl <- gl[ , -c(354, 143:144, 480)]
+        #ids <- ids[-c(354, 143:144, 480), ]
+        #pops <- pops[-c(354, 143:144, 480), ]
+        #gl <- gl[ , -c(354, 143:144, 480)]
 
-        write.table(ids, file="ids_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
-        write.table(pops, file="pops_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
-        write.table(gl, file="gl_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+        #write.table(ids, file="ids_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+        #write.table(pops, file="pops_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
+        #write.table(gl, file="gl_new.txt", sep=" ", row.names=F, col.names=F , quote=F)
 
-        read.table("gl_new.txt", header=F) -> gl
-        read.table("ids_new.txt", header=F) -> ids
-        read.table("pops_new.txt", header=F) -> pops
+        #read.table("gl_new.txt", header=F) -> gl
+        #read.table("ids_new.txt", header=F) -> ids
+        #read.table("pops_new.txt", header=F) -> pops
 
 
     t(gl)->tgl
 	cbind(ids, pops, tgl)->tidsgl
-	write.table(tidsgl, file="new_pine_gl_matrix_miss30_maf05.txt", sep=" ", row.names=F, col.names=F , quote=F)
+	write.table(tidsgl, file="pine_gl_matrix_miss30_maf05.txt", sep=" ", row.names=F, col.names=F , quote=F)
 
 	# Now, the files are ready for PCA
 	# miss 30
 
-	miss30 <- read.delim("new_pine_gl_matrix_miss30_maf05.txt", header=FALSE, sep=" ")
+	miss30 <- read.delim("pine_gl_matrix_miss30_maf05.txt", header=FALSE, sep=" ")
 	miss30[1:10,1:10]
-	dim(miss30) #549 * 15406 ####two more than loci because first column is whole ID identifier, second column is population identifier
+	dim(miss30) #517 * 16368 ####two more than loci because first column is whole ID identifier, second column is population identifier
 
 	g30 <- t(miss30[,3:15406])
-	dim(g30) # 15404 * 549
+	dim(g30) # 16366 * 517
 	g30[1:10,1:10]
 
 	gmn30 <- apply(g30, 1, mean, na.rm=TRUE)
-	gmnmat30 <- matrix(gmn30, nrow=15404, ncol=549)
+	gmnmat30 <- matrix(gmn30, nrow=16366, ncol=517)
 	gprime30 <- g30 - gmnmat30
-	gcovarmat30 <- matrix(NA, nrow=549, ncol=549)
+	gcovarmat30 <- matrix(NA, nrow=517, ncol=517)
 
-	for (i in 1:549)
+	for (i in 1:517)
 	{
-  		for (j in 1:549)
-  		{
-  		if (i==j)
-  		{
-  		gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
-  		}
-  		else
-  		{
-  		gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
-  		gcovarmat30[j,i] <- gcovarmat30[i,j]
-  		}
-  		}
+        for (j in 1:517)
+        {
+        if (i==j)
+        {
+        gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+        }
+        else
+        {
+        gcovarmat30[i,j] <- cov(gprime30[,i], gprime30[,j], use="pairwise.complete.obs")
+        gcovarmat30[j,i] <- gcovarmat30[i,j]
+        }
+        }
 	}
 
 	pcgcov30<-prcomp(x=gcovarmat30,center=TRUE,scale=FALSE)
@@ -713,7 +758,7 @@ Initial look at PCAs to make sure data is okay, done in R.
 
     # Morphological hybrids are listed along their sites. All are part of Santa Cruz (SC) or MR (Monterey) clusters
 
-    legend("bottomright", legend=c("Diablo Canyon PIMU", "Fort Ross PIMU", "Navarro River PIMU", "Point Arena PIMU", "Patrick Point PIMU", "Salt Point PIMU", "Sea Ranch PIMU", "Point Reyes PIMU", "China Pines SCI PIMU", "Christy Pines SCI PIMU", "Monterey Peninsula (DM) PIMU", "Lompoc PIMU", "Pelican Bay SCI PIMU", "Ridge Road PIMU", "Auburn High PIAT", "Auburn Low PIAT", "Big Sur PIAT", "Cuesta Grade(SLO) PIAT", "Los Angeles PIAT", "Lake Shasta PIAT", "Orange County PIAT", "Panther Flat (OR border) PIAT", "San Bernardino PIAT", "Santa Cruz High PIAT", "Santa Cruz Low PIAT", "Santa Cruz Top PIAT", "Yosemite A PIAT", "Yosemite B PIAT", "Cambria PIRA", "Cedros North PIRA", "Cedros South PIRA", "Guadalupe PIRA", "Monterey PIRA", "Santa Cruz PIRA", "Monterey Peninsula PIRA"), pch=c(16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16), ncol=2, col=colors[1:35], cex=.38)
+    legend("bottomright", legend=c("Diablo Canyon PIMU", "Fort Ross PIMU", "Navarro River PIMU", "Point Arena PIMU", "Patrick Point PIMU", "Salt Point PIMU", "Sea Ranch PIMU", "Point Reyes PIMU", "China Pines SCI PIMU", "Christy Pines SCI PIMU", "Monterey Peninsula (DM) PIMU", "Lompoc PIMU", "Pelican Bay SCI PIMU", "Ridge Road PIMU", "Auburn High PIAT", "Auburn Low PIAT", "Big Sur PIAT", "Cuesta Grade(SLO) PIAT", "Los Angeles PIAT", "Lake Shasta PIAT", "Orange County PIAT", "Panther Flat (OR border) PIAT", "San Bernardino PIAT", "Santa Cruz High PIAT", "Santa Cruz Low PIAT", "Santa Cruz Top PIAT", "Yosemite A PIAT", "Yosemite B PIAT", "Cambria PIRA", "Cedros North PIRA", "Cedros South PIRA", "Guadalupe PIRA", "Monterey PIRA", "Santa Cruz PIRA", "Monterey Peninsula PIRA"), pch=c(16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16), ncol=2, col=colors[1:35], cex=.65)
 
 	# save plot window as pinesCombined_firstLook_miss30_maf05.pdf
 
@@ -772,13 +817,29 @@ Initial look at PCAs to make sure data is okay, done in R.
     # save window as pinesCombined_firstLook_bySpecies.pdf
 	# copy and paste back to notes file
 
-![PCA_pinesCombined](https://github.com/tparchman/CalSerPines/blob/master/pinesCombined_firstLook_miss30_maf05.pdf) 
 
-![PCA_pinesCombined_groupedBySpecies](https://github.com/tparchman/CalSerPines/blob/master/pinesCombined_firstLook_bySpecies.pdf) 
 
+    
+
+
+
+
+
+
+
+
+
+DONE TO HERE!
+
+
+
+
+
+    
+  
 Make coverage file. Give it your  mpgl file, your ids file, and the location of your `bam` files. The output file is *.recode.mpgl_coverage.csv. You can go in another terminal window and verify this file is increasing in size.
 	
-	perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf05_noBadInds.recode.mpgl pine_ids_553_good_head.txt /working/lgalland/pines_combined/bwa/sam_sai/ &
+	perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf05_noBadInds.recode.mpgl pine_ids_517_good_head.txt /working/lgalland/pines_combined/bwa/sam_sai/ &
 	
 Need to filter out over-assembled loci. Start by cutting the scaffold names column from the original file into the new file, for use in R.    
 
@@ -797,7 +858,7 @@ Identify over-assembled loci in R
     setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies")
 
     dat <- read.csv("variants_miss30_maf05_noBadInds.recode.mpgl_coverage.csv", header=F)
-        dim(dat) #553 * 15405 - yes, because first column is ID
+        dim(dat) #517 * 15405 - yes, because first column is ID
         dat[1:10,1:10]
 
     loc_names <- read.delim("loc_names_15404.txt", header=F)
@@ -805,7 +866,7 @@ Identify over-assembled loci in R
         dim(loc_names) #15404 * 1
 
     dat_noname <- dat[,-1] # rip off the first column, which is ID
-        dim(dat_noname) #553 * 15404
+        dim(dat_noname) #517 * 15404
         dat_noname[1:10,1:10]
 
     #RERUN THIS FOLLOWING VECTOR EVERY TIME YOU CHANGE PARAMETERS, BECAUSE THE FOR LOOP BELOW APPENDS AND AMMENDS IT
@@ -858,7 +919,7 @@ Identify over-assembled loci in R
         ## 13637
     sub_40 <- dat_noname[,in_out_15404_40==1]
         dim(sub_40)
-        # 553 x 13637    
+        # 517 x 13637    
     sub_40_avg <- subset(avg_15404, in_out_15404_40==1)	
 
     kill_locs <- subset(loc_names, in_out_15404_40==0)
@@ -891,7 +952,7 @@ Create mpgl file NEW .mpgl file (no bad inds, no over-assembled loci)
 
 Calculate coverage
 
-    $ perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf05_noBadInds_noHighCov.recode.mpgl pine_ids_553_good_head.txt /working/lgalland/pines_combined/bwa/sam_sai/ &
+    $ perl /working/lgalland/perl_scripts/coverage_calc_bam.pl variants_miss30_maf05_noBadInds_noHighCov.recode.mpgl pine_ids_517_good_head.txt /working/lgalland/pines_combined/bwa/sam_sai/ &
             # this writes out the variants_miss40_noBadInds_noHighCov.recode.mpgl_coverage.csv
  
 Create pntest file
@@ -996,7 +1057,7 @@ Grab the IDs from out.imiss and copy and paste into weirdOnes.indv
 Remove the weird ones.
 
     $ vcftools --vcf variants_miss30_maf05_noBadInds_noHighCov_noParalogs.recode.vcf --remove weirdOnes.indv --recode --recode-INFO-all --out variants_miss30_maf05_noBadInds_noHighCov_noParalogs_noWeird
-			After filtering, kept 543 out of 553 Individuals
+			After filtering, kept 543 out of 517 Individuals
             After filtering, kept 12100 out of a possible 12100 Sites
 
 Need to make new IDs and pops files that do not include these weird individuals. Easiest to do this manually. Remove the following individuals from EACH of the ID and pop files below.
@@ -1012,19 +1073,19 @@ Need to make new IDs and pops files that do not include these weird individuals.
     PR_CN_0749,488616
     PR_MP_0827,1378882
 
-    $ cp pine_553_ids_col.txt pine_543_ids_col.txt
+    $ cp pine_517_ids_col.txt pine_543_ids_col.txt
     $ nano pine_543_ids_col.txt
     
-    $ cp pine_ids_553_good_head.txt pine_ids_543_good_head.txt
+    $ cp pine_ids_517_good_head.txt pine_ids_543_good_head.txt
     $ nano pine_ids_543_good_head.txt
 
-    $ cp pine_ids_553_good_noHead_original.txt pine_ids_543_good_noHead_original.txt
+    $ cp pine_ids_517_good_noHead_original.txt pine_ids_543_good_noHead_original.txt
     $ nano pine_ids_543_good_noHead_original.txt
 
-    $ cp pine_ids_553_good_noHead.txt pine_ids_543_good_noHead.txt
+    $ cp pine_ids_517_good_noHead.txt pine_ids_543_good_noHead.txt
     $ nano pine_ids_543_good_noHead.txt
 
-    $ cp pine_ids_553.txt pine_ids_543.txt
+    $ cp pine_ids_517.txt pine_ids_543.txt
     $ nano pine_ids_543.txt
 
 Then, `sed` out the parts you don't want for your pops file (removing the "first term" in your ID file, in this case). (The following worked here, which was in format XX(species)_XX(population)_XXXX(ind).) 
@@ -2001,7 +2062,7 @@ Using the gprob4.txt from the run with the lowest DIC (which is gprob2.txt from 
 ##############################################################
 ##### in R, to make entropy gprob PCAs
 ##############################################################
-
+    
     setwd("/Users/lanie/lanie/PhD/genomics/pines/combined_allSpecies/entropy/PCA")
 
     ######################
@@ -2014,18 +2075,19 @@ Using the gprob4.txt from the run with the lowest DIC (which is gprob2.txt from 
     # gprob file output from entropy, from the run with the lowest k4 DIC
     gprobs <- read.csv("gprob4.txt", header=TRUE)
     dim(gprobs)
-    # 543 x 12101 (one more than the actual 12100 loci). the first column is "ind_0" etc etc (which we don't need)
+    # 543 x 12101 (one more than the actual 12807 loci). the first column is "ind_0" etc etc (which we don't need)
     gprobs[1:10,1:10]
 
     gprobs_noname <- gprobs[,-1] # taking off the first column, which is ind_0, etc etc etc
     dim(gprobs_noname)
-    # 543 x 12100
+    # 543 x 12100. 
     gprobs_noname[1:10,1:10]
 
-    # need to cbind the pops with gprob, so we have the gprob file with IDs for plotting points and colors
+    # cbind pops with gprob
     gprob <- cbind(popIDs, gprobs_noname)
     dim(gprob) # 543 * 12101
     gprob[1:10,1:10] # perfect
+
 
     ##############
     # run PCA
@@ -2152,7 +2214,7 @@ Using the gprob4.txt from the run with the lowest DIC (which is gprob2.txt from 
 	# must change these to 2 and 3 for PCs 2 v 3, for example!
 
     # P. muricata
-    points(pcaout$x[which(gprob[,1]=="DC"),1], pcaout$x[which(gprob[,1]=="DC"), 2], pch=21, bg=color2s[1], cex=1)
+    points(pcaout$x[which(gprob[,1]=="DC"),1], pcaout$x[which(gprob[,1]=="DC"), 2], pch=21, bg=colors2[1], cex=1)
     points(pcaout$x[which(gprob[,1]=="FR"),1], pcaout$x[which(gprob[,1]=="FR"), 2], pch=21, bg=colors2[1], cex=1)
     points(pcaout$x[which(gprob[,1]=="NR"),1], pcaout$x[which(gprob[,1]=="NR"), 2], pch=21, bg=colors2[1], cex=1)
     points(pcaout$x[which(gprob[,1]=="PA"),1], pcaout$x[which(gprob[,1]=="PA"), 2], pch=21, bg=colors2[1], cex=1)
